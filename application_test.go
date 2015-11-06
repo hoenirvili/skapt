@@ -47,5 +47,7 @@ func TestApplicatin(t *testing.T) {
 		fmt.Printf("%s ", val.name)
 		val.Run()
 	}
+	fmt.Printf("Args off applicaiton provided: %s", app.GetArgs())
 	fmt.Println()
+
 }

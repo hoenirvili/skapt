@@ -1,6 +1,9 @@
 package Skapt
 
-import "strings"
+import (
+	"os"
+	"strings"
+)
 
 // App struct is the block of dataype that will store
 // all of the semantic and accessories in order to
@@ -17,11 +20,20 @@ type App struct {
 	options []Options
 	// Version number of the cli tool
 	version Version
+	// flgas
+	args []string
+}
+
+// initFlags cache all flags that was driven in the app
+func (a *App) initFlags() {
+	a.args = os.Args[1:]
 }
 
 // New returns a new instance
 func New() *App {
-	return &App{}
+	var app App
+	app.initFlags()
+	return &app
 }
 
 //The main Setters
@@ -64,7 +76,6 @@ func (a *App) SetVersion(fromFile bool, versNum string) {
 				a.version.fixRevisionDet = val
 				break
 			}
-
 		}
 	}
 }
@@ -84,22 +95,6 @@ func (a *App) SetOptionHandlers(handler []FlagFunc) {
 	for i := 0; i < len(a.options); i++ {
 		a.options[i].handler = handler[i]
 	}
-}
-
-// GetNameOptions func returns all flags
-// or if the is not a single flag set it will
-// return nil
-func (a App) GetNameOptions() []string {
-	if len(a.options) > 0 {
-		var rOpt = make([]string, len(a.options))
-		for i, val := range a.options {
-			rOpt[i] = val.name
-		}
-		// Return the exact options that are set
-		return rOpt
-	}
-	// Return empty string
-	return nil
 }
 
 // The main Getters
@@ -122,4 +117,26 @@ func (a App) GetDescription() string {
 //GetVersion return the versioning number
 func (a App) GetVersion() string {
 	return a.version.GetVersion()
+}
+
+// GetNameOptions func returns all flags
+// or if the is not a single flag set it will
+// return nil
+func (a App) GetNameOptions() []string {
+	if len(a.options) > 0 {
+		var rOpt = make([]string, len(a.options))
+		for i, val := range a.options {
+			rOpt[i] = val.name
+		}
+		// Return the exact options that are set
+		return rOpt
+	}
+	// Return empty string
+	return nil
+}
+
+// GetArgs returns the arguments passed on the command line
+// This uses os.args but without the first element of the slice[0]
+func (a App) GetArgs() []string {
+	return a.args
 }
