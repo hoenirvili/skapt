@@ -5,61 +5,65 @@ import (
 	"strings"
 )
 
+///////////////////////////////////////////////////////
+//
+//				GLOBAL TYPE
+//
+///////////////////////////////////////////////////////
+
 // App struct is the block of dataype that will store
 // all of the semantic and accessories in order to
-// access the application in a better way incapsulating
+// handle the application in a better way incapsulating
 // filds of interest
 type App struct {
-	// The name of the application
+	// App name
 	name string
-	// The description of the cli tool
+	// Describes the app
 	description string
-	// The map of the command
+	// Descibes the app usage
 	usage string
-	// A slice of options aka flags
+	// A slice of predefined options/flags for the app to interpret
 	options []Options
-	// Version number of the cli tool
+	// Version number of the app
 	version Version
-	// flgas
+	// the application command line arguments
 	args []string
 }
 
-// initFlags cache all flags that was driven in the app
+// Cache all flags in the args attribute of App
 func (a *App) initFlags() {
 	a.args = os.Args[1:]
 }
 
-// New returns a new instance
-func New() *App {
-	var app App
-	app.initFlags()
-	return &app
-}
+///////////////////////////////////////////////////////
+//
+//				METHODS
+//				SET
+///////////////////////////////////////////////////////
 
-//The main Setters
-
-// SetName set's the name of the comandline tools
+// SetName func set's the name of the app
 func (a *App) SetName(appName string) {
 	a.name = appName
 }
 
-// SetUsage set's the usage description of the command line.
+// SetUsage func set's the usage description of the app
 func (a *App) SetUsage(usgDesc string) {
 	a.usage = usgDesc
 }
 
-// SetDescription set's the description of the tool text
+// SetDescription func set's the description of the app
 func (a *App) SetDescription(desc string) {
 	a.description = desc
 }
 
-// SetVersion sets the current version from file or manual
+// SetVersion func set's the current version
+// from the main VERSION file or hardcoded one
 func (a *App) SetVersion(fromFile bool, versNum string) {
-	// set version automated from file
+	// Set version automated from VERSION file
 	if fromFile {
 		a.version.loadVersion()
 	} else {
-		// or wrie it manually
+		// Or wrie it manually
 		s := strings.Split(versNum, ".")
 		for i, val := range s {
 			switch i {
@@ -80,7 +84,7 @@ func (a *App) SetVersion(fromFile bool, versNum string) {
 	}
 }
 
-// SetNameOptions set's all the flags that our cmd will parse
+// SetNameOptions func set's all the flags that our app will parse
 func (a *App) SetNameOptions(flags []string) {
 	var opt = make([]Options, len(flags))
 	for i := 0; i < len(flags); i++ {
@@ -89,15 +93,19 @@ func (a *App) SetNameOptions(flags []string) {
 	a.options = opt
 }
 
-// SetOptionHandler set's all the handlers for every flag that we
-// have in our application
+// SetOptionHandlers func set's all the handlers
+// for every flag that we have in our app
 func (a *App) SetOptionHandlers(handler []FlagFunc) {
 	for i := 0; i < len(a.options); i++ {
 		a.options[i].handler = handler[i]
 	}
 }
 
-// The main Getters
+///////////////////////////////////////////////////////
+//
+//				METHODS
+//				GET
+///////////////////////////////////////////////////////
 
 // GetName returns the name of the app
 func (a App) GetName() string {
@@ -139,4 +147,17 @@ func (a App) GetNameOptions() []string {
 // This uses os.args but without the first element of the slice[0]
 func (a App) GetArgs() []string {
 	return a.args
+}
+
+///////////////////////////////////////////////////////
+//
+//				New App Instance
+//
+///////////////////////////////////////////////////////
+
+// New returns a new App instance
+func New() *App {
+	var app App
+	app.initFlags()
+	return &app
 }

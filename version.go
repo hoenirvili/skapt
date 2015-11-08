@@ -1,18 +1,23 @@
 package Skapt
 
-import (
-	"fmt"
-	"os"
-	"strings"
-)
+import "strings"
 
-/**
- * Private vars
- */
+///////////////////////////////////////////////////////
+//
+//				GLOBAL PACKAGE
+//					VARS
+///////////////////////////////////////////////////////
+
 var (
 	filePath    = getPathVersion()
 	contentFile string
 )
+
+///////////////////////////////////////////////////////
+//
+//				GLOBAL TYPE
+//
+///////////////////////////////////////////////////////
 
 // Version that stores all the
 // basic information
@@ -27,57 +32,23 @@ type Version struct {
 	fixRevisionDet string
 }
 
-func getPathVersion() string {
-	// our file name
-	name := "VERSION"
+///////////////////////////////////////////////////////
+//
+//				METHODS
+//				GET
+///////////////////////////////////////////////////////
 
-	rootPath, err := os.Getwd()
+// GetVersion does the same thing above but return just the
+// version loaded from keyboard not from file.
+func (v Version) GetVersion() string {
+	s := []string{
+		v.version,
+		v.majorRevision,
+		v.minorRevision,
+		v.fixRevisionDet}
+	n := strings.Join(s, ".")
 
-	if err != nil {
-		fmt.Println("Can't optain the root path of the project")
-	}
-	//host our root/base path and our fileName(VERSION)
-	holder := []string{
-		rootPath,
-		name}
-
-	path := strings.Join(holder, "/")
-
-	return path
-}
-
-func openFileVersion(path string) *os.File {
-
-	file, err := os.OpenFile(path, os.O_RDONLY, 0666)
-
-	if err != nil {
-		fmt.Println("Can't open file VERSION")
-	}
-
-	return file
-
-}
-
-func getContentVersion() string {
-	// local var that stores the content
-	cnt := make([]byte, 10)
-	//var path string
-
-	file := openFileVersion(filePath)
-
-	defer func() {
-		if err := file.Close(); err != nil {
-			panic(err)
-		}
-	}()
-
-	_, err := file.Read(cnt)
-
-	if err != nil {
-		fmt.Println("Can't read VERSION file")
-	}
-
-	return string(cnt)
+	return n
 }
 
 func (v *Version) loadVersion() {
@@ -91,25 +62,18 @@ func (v *Version) loadVersion() {
 
 }
 
+///////////////////////////////////////////////////////
+//
+//				METHODS
+//				SET
+///////////////////////////////////////////////////////
+
 // SetVersionFromFile public metod to export the version
 // number of the tool
 func (v *Version) SetVersionFromFile() string {
 	// loading the new version
 	v.loadVersion()
 	// join all the fields into one bulk of data
-	s := []string{
-		v.version,
-		v.majorRevision,
-		v.minorRevision,
-		v.fixRevisionDet}
-	n := strings.Join(s, ".")
-
-	return n
-}
-
-// GetVersion does the same thing above but return just the
-// version loaded from keyboard not from file.
-func (v Version) GetVersion() string {
 	s := []string{
 		v.version,
 		v.majorRevision,
