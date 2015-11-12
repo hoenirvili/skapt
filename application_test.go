@@ -19,13 +19,15 @@ func TestApplicatin(t *testing.T) {
 		fmt.Println("The last bullshit test")
 	}
 	handlers = append(handlers, firstHandler, secondHandler, thirdHandler)
+
 	app := New()
 	app.SetName("Golang\n")
 	app.SetUsage("Usage: \n This is just an echo program simple app\n For displaying content and such things\n")
 	app.SetDescription("Description dasjigsafsahgosafushaf")
 	app.SetVersion(true, "")
-	app.SetNameOptions(myOptions)
-	app.SetOptionHandlers(handlers)
+	app.SetOptions(myOptions, handlers)
+	//app.SetNameOptions(myOptions)
+	//app.SetOptionHandlers(handlers)
 	// Name of the App
 	fmt.Println("Name: " + app.GetName())
 	// Usage of the program
@@ -42,12 +44,13 @@ func TestApplicatin(t *testing.T) {
 			fmt.Printf("%s ", val)
 		}
 	}
+	// Run function handlers
 	fmt.Println("Test handler for every flag")
 	for _, val := range app.options {
 		fmt.Printf("%s ", val.name)
 		val.Run()
 	}
+	// oS args
 	fmt.Printf("Args off applicaiton provided: %s", app.GetArgs())
 	fmt.Println()
-
 }

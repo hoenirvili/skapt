@@ -84,21 +84,20 @@ func (a *App) SetVersion(fromFile bool, versNum string) {
 	}
 }
 
-// SetNameOptions func set's all the flags that our app will parse
-func (a *App) SetNameOptions(flags []string) {
-	var opt = make([]Options, len(flags))
-	for i := 0; i < len(flags); i++ {
-		opt[i].SetName(flags[i])
-	}
-	a.options = opt
-}
+// SetOptions func set's all the flags name and handler
+func (a *App) SetOptions(name []string, handler []FlagFunc) {
+	var opt = make([]Options, len(name))
 
-// SetOptionHandlers func set's all the handlers
-// for every flag that we have in our app
-func (a *App) SetOptionHandlers(handler []FlagFunc) {
-	for i := 0; i < len(a.options); i++ {
-		a.options[i].handler = handler[i]
+	if lenOpt := len(name); len(name) == len(handler) {
+		for i := 0; i < lenOpt; i++ {
+			opt[i].SetName(name[i])
+			opt[i].SetHandler(handler[i])
+		}
+	} else {
+		panic("Can't set name and handler options of the app")
 	}
+
+	a.options = opt
 }
 
 ///////////////////////////////////////////////////////
