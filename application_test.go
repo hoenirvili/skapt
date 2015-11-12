@@ -18,6 +18,7 @@ func TestApplicatin(t *testing.T) {
 	thirdHandler := func() {
 		fmt.Println("The last bullshit test")
 	}
+
 	handlers = append(handlers, firstHandler, secondHandler, thirdHandler)
 
 	app := New()
@@ -36,6 +37,7 @@ func TestApplicatin(t *testing.T) {
 	fmt.Println(app.GetDescription())
 	// Get the description of the program
 	fmt.Println("Version: " + app.GetVersion())
+
 	// Get all the flags
 	std := app.GetNameOptions()
 	fmt.Printf("Options: ")
