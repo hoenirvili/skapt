@@ -45,18 +45,4 @@ func (a *App) SetVersion(fromFile bool, versNum string) {
 	}
 }
 
-// SetOptions func set's all the flags name and handler
-func (a *App) SetOptions(name []string, handler []FlagFunc) {
-	var opt = make([]Options, len(name))
-
-	if lenOpt := len(name); len(name) == len(handler) {
-		for i := 0; i < lenOpt; i++ {
-			opt[i].SetName(name[i])
-			opt[i].SetHandler(handler[i])
-		}
-	} else {
-		panic("Can't set name and handler options of the app")
-	}
-
-	a.options = opt
-}
+//func (a *App) SetCommands(

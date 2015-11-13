@@ -38,9 +38,9 @@ func getContentVersion() string {
 		}
 	}()
 
-	_, err := file.Read(cnt)
+	n, err := file.Read(cnt)
 
-	if err != nil {
+	if err != nil && n == 0 {
 		fmt.Println("Can't read VERSION file")
 	}
 

@@ -13,8 +13,8 @@ type App struct {
 	description string
 	// Descibes the app usage
 	usage string
-	// A slice of predefined options/flags for the app to interpret
-	options []Options
+	// A slice of predefined commands for the app to exec
+	commands []Command
 	// Version number of the app
 	version Version
 	// the application command line arguments
@@ -31,4 +31,17 @@ func New() *App {
 	var app App
 	app.initFlags()
 	return &app
+}
+
+func SetCommands(names, descriptions, usages []string, opt []Options) {
+	var commands = make([]Command, len(names))
+	lenComm := len(commands)
+
+	for i := 0; i < lenComm; i++ {
+		commands[i].SetName(names[i])
+		commands[i].SetUsage(usages[i])
+		commands[i].SetDescription(descriptions[i])
+		// TODO: set options for every command to parse
+		//commands[i].SetOptions(optNames, handlers)
+	}
 }
