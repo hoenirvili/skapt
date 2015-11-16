@@ -33,15 +33,22 @@ func New() *App {
 	return &app
 }
 
-func SetCommands(names, descriptions, usages []string, opt []Options) {
+func (a *App) SetCommands(names, descriptions, usages []string, opt [][]Options) {
 	var commands = make([]Command, len(names))
 	lenComm := len(commands)
+	lenOpt := len(opt)
 
 	for i := 0; i < lenComm; i++ {
 		commands[i].SetName(names[i])
 		commands[i].SetUsage(usages[i])
 		commands[i].SetDescription(descriptions[i])
+		//options := make([]Options, lenOpt)
+		for j := 0; j < lenOpt; j++ {
+
+		}
 		// TODO: set options for every command to parse
 		//commands[i].SetOptions(optNames, handlers)
 	}
+
+	a.commands = commands
 }
