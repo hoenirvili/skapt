@@ -15,6 +15,11 @@ func (a App) GetDescription() string {
 	return a.description
 }
 
+// GetModeApp return if the mode is actived or not
+func (a App) GetAppMode() bool {
+	return a.mode
+}
+
 //GetVersion return the versioning number
 func (a App) GetVersion() string {
 	return a.version.GetVersion()

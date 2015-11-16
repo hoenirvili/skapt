@@ -17,6 +17,8 @@ type App struct {
 	commands []Command
 	// Version number of the app
 	version Version
+	// set the type of cli app
+	mode bool
 	// the application command line arguments
 	args []string
 }
@@ -27,28 +29,13 @@ func (a *App) initFlags() {
 }
 
 // New returns a new App instance
-func New() *App {
+// true => sub-command type
+// false => flag type
+func New(mode bool) *App {
 	var app App
+	// init
+	app.SetAppMode(mode)
 	app.initFlags()
+	//return
 	return &app
-}
-
-func (a *App) SetCommands(names, descriptions, usages []string, opt [][]Options) {
-	var commands = make([]Command, len(names))
-	lenComm := len(commands)
-	lenOpt := len(opt)
-
-	for i := 0; i < lenComm; i++ {
-		commands[i].SetName(names[i])
-		commands[i].SetUsage(usages[i])
-		commands[i].SetDescription(descriptions[i])
-		//options := make([]Options, lenOpt)
-		for j := 0; j < lenOpt; j++ {
-
-		}
-		// TODO: set options for every command to parse
-		//commands[i].SetOptions(optNames, handlers)
-	}
-
-	a.commands = commands
 }
