@@ -13,21 +13,25 @@ func TestApplicatin(t *testing.T) {
 	app.SetDescription("Description dasjigsafsahgosafushaf")
 	app.SetVersion(true, "")
 	// Name of the App
-	fmt.Println("Name: " + app.GetName())
+	fmt.Println("Name: " + app.Name())
 	// Usage of the program
-	fmt.Println(app.GetUsage())
+	fmt.Println(app.Usage())
 	// Description of te program
-	fmt.Println(app.GetDescription())
+	fmt.Println(app.Description())
 	// Get the description of the program
-	fmt.Println("Version: " + app.GetVersion())
+	fmt.Println("Version: " + app.Version())
 	// Get the Mode of the app
-	if app.GetAppMode() {
+	if app.Mode() {
 		fmt.Println("App Mode : true")
 	} else {
 		fmt.Println("App Mode : false")
 	}
-
+	// set the command for the application
+	containerCommands := make([][]string, 3)
+	for i := range containerCommands {
+		containerCommands[i] = make([]string, 3)
+	}
 	// oS args
-	fmt.Printf("Args off applicaiton provided: %s", app.GetArgs())
+	fmt.Printf("Args off applicaiton provided: %s", app.Args())
 	fmt.Println()
 }

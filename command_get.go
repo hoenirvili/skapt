@@ -1,24 +1,24 @@
 package Skapt
 
 // Get the name of the command
-func (c Command) GetName() string {
+func (c Command) Name() string {
 	return c.name
 }
 
 // Get the usage of the command
-func (c Command) GetUsage() string {
+func (c Command) Usage() string {
 	return c.usage
 }
 
-// Ge the description of the command
-func (c Command) GetDescription() string {
+// Get the description of the command
+func (c Command) Description() string {
 	return c.description
 }
 
-// GetNameOptions func returns all flags
+// NameOptions func returns all flags
 // or if the is not a single flag set it will
 // return nil
-func (c Command) GetNameOptions() []string {
+func (c Command) NameOptions() []string {
 	if len(c.options) > 0 {
 		var rOpt = make([]string, len(c.options))
 		for i, val := range c.options {

@@ -1,32 +1,32 @@
 package Skapt
 
-// GetName returns the name of the app
-func (a App) GetName() string {
+// Name returns the name of the app
+func (a App) Name() string {
 	return a.name
 }
 
-//GetUsage return the text usage of the app
-func (a App) GetUsage() string {
+// Usage return the text usage of the app
+func (a App) Usage() string {
 	return a.usage
 }
 
-//GetDescription return the description of the app
-func (a App) GetDescription() string {
+// Description return the description of the app
+func (a App) Description() string {
 	return a.description
 }
 
-// GetModeApp return if the mode is actived or not
-func (a App) GetAppMode() bool {
+// Mode return if the mode is actived or not
+func (a App) Mode() bool {
 	return a.mode
 }
 
-//GetVersion return the versioning number
-func (a App) GetVersion() string {
-	return a.version.GetVersion()
+// Version return the versioning number
+func (a App) Version() string {
+	return a.version.Version()
 }
 
-// GetArgs returns the arguments passed on the command line
+// Args returns the arguments passed on the command line
 // This uses os.args but without the first element of the slice[0]
-func (a App) GetArgs() []string {
+func (a App) Args() []string {
 	return a.args
 }

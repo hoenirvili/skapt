@@ -18,7 +18,7 @@ func (a *App) SetDescription(desc string) {
 }
 
 // Set app mode to be flag or sub-command type
-func (a *App) SetAppMode(mode bool) {
+func (a *App) SetMode(mode bool) {
 	a.mode = mode
 }
 
@@ -51,24 +51,11 @@ func (a *App) SetVersion(fromFile bool, versNum string) {
 }
 
 // Set command-flags or flags of the applications
-func (a *App) SetCommandOption(names, descriptions, usages []string, opt [][]Options) {
-	switch a.GetAppMode() {
+// infoContainer stores the name, desciption usage of the command
+func (a *App) SetCommandOption(infoContainer [][]string, opt [][]Options) {
+	switch a.Mode() {
 	case true:
-		var commands = make([]Command, len(names))
-		lenComm := len(commands)
-		lenOpt := len(opt)
-
-		for i := 0; i < lenComm; i++ {
-			commands[i].SetName(names[i])
-			commands[i].SetUsage(usages[i])
-			commands[i].SetDescription(descriptions[i])
-			//options := make([]Options, lenOpt)
-			for j := 0; j < lenOpt; j++ {
-			}
-			// TODO: set options for every command to parse
-			//commands[i].SetOptions(optNames, handlers)
-		}
-		a.commands = commands
+		// TODO: set command and for every command the options
 	case false:
 		// TODO: set just options for every command to parse
 	default:

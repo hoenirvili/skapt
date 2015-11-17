@@ -4,7 +4,7 @@ package Skapt
 import "strings"
 
 // version loaded from keyboard not from file.
-func (v Version) GetVersion() string {
+func (v Version) Version() string {
 	s := []string{
 		v.version,
 		v.majorRevision,

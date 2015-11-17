@@ -34,7 +34,7 @@ func (a *App) initFlags() {
 func New(mode bool) *App {
 	var app App
 	// init
-	app.SetAppMode(mode)
+	app.SetMode(mode)
 	app.initFlags()
 	//return
 	return &app
