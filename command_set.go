@@ -17,7 +17,7 @@ func (c *Command) SetDescription(desc string) {
 
 // SetOptions func set's all the flags name and handler
 func (c *Command) SetOptions(name []string, handler []FlagFunc) {
-	var opt = make([]Options, len(name))
+	var opt = make([]Option, len(name))
 
 	if lenOpt := len(name); len(name) == len(handler) {
 		for i := 0; i < lenOpt; i++ {

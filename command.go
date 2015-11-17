@@ -10,5 +10,5 @@ type Command struct {
 	// usage
 	usage string
 	// Slice of prefefined options aka flags for the command to parse
-	options []Options
+	options []Option
 }

@@ -1,7 +1,11 @@
 package Skapt
 
 // SetName func set's the name of the app
-import "strings"
+import (
+	"fmt"
+	"os"
+	"strings"
+)
 
 func (a *App) SetName(appName string) {
 	a.name = appName
@@ -50,12 +54,49 @@ func (a *App) SetVersion(fromFile bool, versNum string) {
 	}
 }
 
+// TODO: Thinking of a better way to implement this clutter
+
 // Set command-flags or flags of the applications
 // infoContainer stores the name, desciption usage of the command
-func (a *App) SetCommandOption(infoContainer [][]string, opt [][]Options) {
+func (a *App) SetCommandOption(infoCommands [][]string, optionName []string, handlers []FlagFunc) {
 	switch a.Mode() {
 	case true:
-		// TODO: set command and for every command the options
+		// how many command we have
+		ncomm := len(infoCommands)
+		// each attribute  of the command
+		nattr := len(infoCommands[0])
+
+		// test if we have entered a valid number
+		// of attributes
+		if nattr != 3 {
+			fmt.Println("Invalid numver of attributes ! ")
+			os.Exit(1)
+		}
+
+		// slice of command of how many command we have
+		comm := make([]Command, ncomm)
+
+		// for every command we have a namme,usgae,description
+		// and options for the command
+		// i => number of command
+		// j for every description
+		for i := 0; i < ncomm; i++ {
+			for j := 0; j < nattr; j++ {
+				switch j {
+				//name of the command
+				case 0:
+					comm[i].SetName(infoCommands[i][j])
+				//the description of the command
+				case 1:
+					comm[i].SetDescription(infoCommands[i][j])
+				// the usage of the command
+				case 2:
+					comm[i].SetUsage(infoCommands[i][j])
+				}
+			}
+			// TODO: setOption for every command now
+		}
+
 	case false:
 		// TODO: set just options for every command to parse
 	default:
