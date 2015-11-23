@@ -9,4 +9,4 @@
 ### Sub-Command                                                                                                                                                                                      
 **Sub-Command** pattern is the pattern that executable takes sub-command for change its behavior. git command is one example for this pattern or node package manager(npm) It takes push, pull subcommand  s and as for npm init, start, stop, update, upgrade etc.                                                                                                                                            
 ### Flag                                                                                                                                                                                             
-**Flag** pattern is the pattern that executable has flag options for changing its behavior. For example, grep command is this pattern.
+**Flag** pattern is the pattern that executable has flag options for changing its behavior. For example, grep command inherits this pattern. 

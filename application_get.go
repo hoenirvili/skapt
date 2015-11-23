@@ -15,14 +15,18 @@ func (a App) Description() string {
 	return a.description
 }
 
-// Mode return if the mode is actived or not
-func (a App) Mode() bool {
-	return a.mode
-}
-
 // Version return the versioning number
 func (a App) Version() string {
 	return a.version.Version()
+}
+
+// Return slice of authors
+func (a App) Authors() []string {
+	return a.authors
+}
+
+func (a App) Options() []Option {
+	return a.options
 }
 
 // Args returns the arguments passed on the command line
