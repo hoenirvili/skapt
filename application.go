@@ -15,8 +15,6 @@ type App struct {
 	description string
 	// Descibes the app usage
 	options []Option
-	// TODO: now we must implement the checkers if is a flag patter or sub-command pattern
-
 	// A slice of predefined commands for the app to exec
 	commands []Command
 	// Authors of the app

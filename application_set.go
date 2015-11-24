@@ -17,7 +17,7 @@ func (a *App) SetDescription(desc string) {
 	a.description = desc
 }
 
-// SetOptionf cun set's the all app option/flags and their handlers
+// SetOptionf func set's the all app option/flags and their handlers
 func (a *App) SetOptions(flags [][]string, actions []Handler) {
 	// return the number of lines
 	nFlags := len(flags)
@@ -30,6 +30,34 @@ func (a *App) SetOptions(flags [][]string, actions []Handler) {
 		a.options[i].SetRequireFlags(flags[i][2:])
 		a.options[i].SetAction(actions[i])
 	}
+}
+
+// AppendNewCommand appends a new command to our cli App
+func (a *App) AppendNewCommand(name, desc, usg string, flags [][]string, actions []Handler) {
+	// flag pattern not intended
+	if a.options == nil {
+		var cmd Command
+		cmd.SetName(name)
+		cmd.SetDescription(desc)
+		cmd.SetUsage(usg)
+		// return the number of lines
+		nFlags := len(flags)
+		// create a slice of options
+		cmd.options = make([]Option, nFlags)
+		// fil the slice
+		for i := 0; i < nFlags; i++ {
+			cmd.options[i].SetName(flags[i][0])
+			cmd.options[i].SetAlias(flags[i][1])
+			cmd.options[i].SetRequireFlags(flags[i][2:])
+			cmd.options[i].SetAction(actions[i])
+		}
+		a.commands = append(a.commands, cmd)
+	}
+}
+
+// Set's the authors of the app
+func (a *App) SetAuthors(auth []string) {
+	a.authors = auth
 }
 
 // SetVersion func set's the current version

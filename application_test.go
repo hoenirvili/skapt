@@ -45,8 +45,11 @@ func TestApplicatin(t *testing.T) {
 	app.SetDescription("Description dasjigsafsahgosafushaf")
 	app.SetVersion(true, "")
 	// Set OPTIONS
-	app.SetOptions(f, h)
-
+	//app.SetOptions(f, h)
+	// Declare new commands
+	app.AppendNewCommand("test1", "test2", "test3", f, h)
+	app.AppendNewCommand("q1", "q2", "q3", f, h)
+	app.AppendNewCommand("r1", "r2", "r3", f, h)
 	// ====================== PRINT ==========================
 
 	// Name of the App
@@ -59,11 +62,20 @@ func TestApplicatin(t *testing.T) {
 	fmt.Println(app.Description())
 
 	// Options
-	fmt.Println(app.Options())
-	for _, val := range app.options {
-		val.Run()
-	}
+	//fmt.Println(app.Options())
+	//for _, val := range app.options {
+	//	val.Run()
+	//}
 
+	// Print Commands
+	for _, cmd := range app.commands {
+		fmt.Println(cmd.Name())
+		fmt.Println(cmd.Usage())
+		fmt.Println(cmd.Description())
+		for _, opt := range cmd.options {
+			fmt.Println(opt)
+		}
+	}
 	// Get the description of the program
 	fmt.Println("Version: " + app.Version())
 	// set the command for the application
