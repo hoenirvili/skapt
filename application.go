@@ -25,16 +25,6 @@ type App struct {
 	args []string
 }
 
-// Check if all flags have one alis or none
-func flagNCheck(container [][]string) error {
-	for _, val := range container {
-		if len(val) < 3 {
-			return errNFlagAlias
-		}
-	}
-	return nil
-}
-
 // Cache all flags in the args attribute of App
 func (a *App) initFlags() {
 	a.args = os.Args[1:]
@@ -49,4 +39,17 @@ func NewApp() *App {
 	app.initFlags()
 	//return
 	return &app
+}
+
+//TODO: we must make the parssing function
+// to execute every command flag / flags
+// Run the App
+func (a *App) Run() {
+	if len(a.args) > 0 {
+		//		for i, val := range a.args {
+		//
+		//		}
+	} else {
+		//help_tempalte()
+	}
 }

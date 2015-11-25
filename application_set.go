@@ -36,21 +36,13 @@ func (a *App) SetOptions(flags [][]string, actions []Handler) {
 func (a *App) AppendNewCommand(name, desc, usg string, flags [][]string, actions []Handler) {
 	// flag pattern not intended
 	if a.options == nil {
+		//cache object
 		var cmd Command
+		// set the  content of obj
 		cmd.SetName(name)
 		cmd.SetDescription(desc)
 		cmd.SetUsage(usg)
-		// return the number of lines
-		nFlags := len(flags)
-		// create a slice of options
-		cmd.options = make([]Option, nFlags)
-		// fil the slice
-		for i := 0; i < nFlags; i++ {
-			cmd.options[i].SetName(flags[i][0])
-			cmd.options[i].SetAlias(flags[i][1])
-			cmd.options[i].SetRequireFlags(flags[i][2:])
-			cmd.options[i].SetAction(actions[i])
-		}
+		cmd.SetOptionsOfACommand(flags, actions)
 		a.commands = append(a.commands, cmd)
 	}
 }

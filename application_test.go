@@ -38,7 +38,6 @@ func TestApplicatin(t *testing.T) {
 		}}
 
 	app := NewApp()
-
 	app.SetName("Golang\n")
 
 	app.SetUsage("Usage: \n This is just an echo program simple app\n For displaying content and such things\n")
@@ -50,6 +49,10 @@ func TestApplicatin(t *testing.T) {
 	app.AppendNewCommand("test1", "test2", "test3", f, h)
 	app.AppendNewCommand("q1", "q2", "q3", f, h)
 	app.AppendNewCommand("r1", "r2", "r3", f, h)
+	// ====================== RUN ============================
+	fmt.Println("================")
+	app.Run()
+	fmt.Println("================")
 	// ====================== PRINT ==========================
 
 	// Name of the App
