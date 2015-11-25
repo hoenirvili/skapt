@@ -14,6 +14,18 @@ type Option struct {
 }
 
 // Run run the handler
-func (o Option) Run() {
+func (o Option) Exec() {
 	o.action()
+}
+
+func (o Option) Name() string {
+	return o.name
+}
+
+func (o Option) Alias() string {
+	return o.alias
+}
+
+func (o Option) RequireFlags() []string {
+	return o.requireFlags
 }

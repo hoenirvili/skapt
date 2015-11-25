@@ -23,7 +23,6 @@ type Version struct {
 func (v *Version) loadVersion() {
 	contentFile = getContentVersion()
 	s := strings.Split(contentFile, ".")
-
 	v.version = s[0]
 	v.majorRevision = s[1]
 	v.minorRevision = s[2]
