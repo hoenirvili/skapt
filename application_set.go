@@ -32,22 +32,6 @@ func (a *App) SetOptions(flags [][]string, actions []Handler) {
 	}
 }
 
-// AppendNewCommand appends a new command to our cli App
-func (a *App) AppendNewCommand(name, desc, usg string, flags [][]string, actions []Handler) {
-	// flag pattern not intended
-	if a.options == nil {
-		//cache object
-		var cmd Command
-		// set the  content of obj
-		cmd.SetName(name)
-		cmd.SetDescription(desc)
-		cmd.SetUsage(usg)
-		cmd.SetOptionsOfACommand(flags, actions)
-		// add a the new command to the slice of commands
-		a.commands = append(a.commands, cmd)
-	}
-}
-
 // Set's the authors of the app
 func (a *App) SetAuthors(auth []string) {
 	a.authors = auth
