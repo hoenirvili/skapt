@@ -1,5 +1,10 @@
 package Skapt
 
+import (
+	"fmt"
+	"os"
+)
+
 // SetName func set's the name of the flag
 func (o *Option) SetName(flag string) {
 	o.name = flag
@@ -21,7 +26,28 @@ func (o *Option) SetAction(handlr Handler) {
 	o.action = handlr
 }
 
-func (a *App) AppenNewOption(name, alias string, reqflg []string, action Handler) {
+// Set the type of flag
+// bool
+// string
+func (o *Option) SetTypeFlag(typeOfFlag uint8) {
+	switch typeOfFlag {
+	case BOOL:
+		o.typeFlag = BOOL
+		break
+	case STRING:
+		o.typeFlag = STRING
+		break
+	default:
+		o.typeFlag = UNKNOWN
+	}
+
+	if o.typeFlag == UNKNOWN {
+		fmt.Fprintf(os.Stderr, "Unknown type flag")
+		os.Exit(EXIT_FAILURE)
+	}
+}
+
+func (a *App) AppenNewOption(name, alias string, reqflg []string, typeFlag uint8, action Handler) {
 	// sub command pattern not intended
 	if a.commands == nil {
 		var opt Option
@@ -30,6 +56,7 @@ func (a *App) AppenNewOption(name, alias string, reqflg []string, action Handler
 		opt.SetAlias(alias)
 		opt.SetRequireFlags(reqflg)
 		opt.SetAction(action)
+		opt.SetTypeFlag(typeFlag)
 		a.options = append(a.options, opt)
 	}
 }

@@ -43,7 +43,7 @@ var h = []Handler{
 //========================================================
 
 func TestApplicatin(t *testing.T) {
-	os.Args = []string{"", "-k", "-C", "-f", "--path=file/to/file/peer"}
+	os.Args = []string{"", "-k", "-C", "-f", "--path file/to/file/peer"}
 	app := NewApp()
 	app.SetName("Golang\n")
 
@@ -56,10 +56,11 @@ func TestApplicatin(t *testing.T) {
 	//app.AppendNewCommand("test1", "test2", "test3", f, h)
 	//app.AppendNewCommand("q1", "q2", "q3", f, h)
 	//app.AppendNewCommand("r1", "r2", "r3", f, h)
-	app.AppenNewOption("-f", "-FUL", nil, h[0])
-	app.AppenNewOption("-C", "--create", []string{"--path="}, h[1])
-	app.AppenNewOption("-G", "--mik", nil, h[2])
-	app.AppenNewOption("-k", "", nil, h[3])
+	app.AppenNewOption("-f", "-FUL", nil, BOOL, h[0])
+	app.AppenNewOption("-C", "--create", []string{"--path"}, BOOL, h[1])
+	app.AppenNewOption("--path", "-pth", nil, STRING, h[1])
+	app.AppenNewOption("-G", "--mik", nil, BOOL, h[2])
+	app.AppenNewOption("-k", "", nil, BOOL, h[3])
 	// Declare new options
 
 	// ====================== RUN ============================
@@ -83,6 +84,13 @@ func TestApplicatin(t *testing.T) {
 			fmt.Println(val.Name())
 			fmt.Println(val.Alias())
 			fmt.Println(val.RequireFlags())
+			if val.TypeFlag() == 0 {
+				fmt.Println("BOOL")
+			} else {
+				if val.TypeFlag() == 1 {
+					fmt.Println("STRING")
+				}
+			}
 		}
 	}
 

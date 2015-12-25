@@ -11,3 +11,7 @@ func (o Option) Alias() string {
 func (o Option) RequireFlags() []string {
 	return o.requireFlags
 }
+
+func (o Option) TypeFlag() uint8 {
+	return o.typeFlag
+}
