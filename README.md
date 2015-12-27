@@ -1,9 +1,12 @@
 # Skapt                                                                                                                                                                                                                                                                                      
-  [![Build Status](https://travis-ci.org/hoenirvili/Skapt.svg)](https://travis-ci.org/hoenirvili/Skapt)                                                                                               
+	[![Build Status](https://travis-ci.org/hoenirvili/Skapt.svg)](https://travis-ci.org/hoenirvili/Skapt)                                                                                               
                                                                                                                                                                                                 
 ### Package for building command line apps in Go
+	![experimental](doc/ref.png)
 
 > I was inspired from other cli frameworks in goLang and for the fun/learning purpose i'm trying to do my own little framework.                                                                       
+
+## This package is still in development
 
 **Note** : This package will support the two main command line patterns.¬                                                                                                                                 
 ### Sub-Command                                                                                                                                                                                      
