@@ -1,9 +1,6 @@
 package Skapt
 
-import (
-	"fmt"
-	"os"
-)
+import "os"
 
 // App struct is the block of dataype that will store
 // all of the semantic and accessories in order to
@@ -33,6 +30,43 @@ func (a *App) initArgs() {
 	a.args = os.Args[1:]
 }
 
+func (a App) String(name string) string {
+	var (
+		//	doubleQuotes byte = 0x22
+		//	singleQuote  byte = 0x27
+		i int
+	)
+	// flag based app
+	if a.commands == nil {
+		for _, val := range a.options {
+			if val.name == name || val.alias == name {
+				if val.typeFlag == STRING {
+					for i = 0; i < len(a.args); i++ {
+						if a.args[i] == name {
+							// TODO:
+							// We need a better way to find if the string
+							// is a flag/command-subflag of our app and return
+							// the target
+							// Note that we need to sanitize our flag
+							// 1) [--flag=="/to/smth"]
+							// 2) [--flag=='to/smth']
+							// 3) [--flag==to/smth]
+							// 4) [--flag==] [to/smth]
+							// etc.
+						}
+					}
+				}
+			}
+		}
+	} else {
+		//command base app
+		if a.options == nil {
+
+		}
+	}
+	return ""
+}
+
 // New returns a new App instance
 // true => sub-command type
 // false => flag type
@@ -60,68 +94,18 @@ func (a *App) AppendNewCommand(name, desc, usg string, flags [][]string, actions
 	}
 }
 
-// function that parses Options
-func optionBaseApp(args []string, opts []Option) {
-	// cache all option that was executed
-	cacheLen := len(args)
-	var cacheOpt = make([]uint8, cacheLen)
-	var flagCount uint8
-	// TODO: major refactoring of the code
-
-	// for every argument in our cli
-	for i, arg := range args {
-		// for every option in our flag cli
-		for _, opt := range opts {
-			// if we found a valid option given as arg
-			if (opt.name == arg || opt.alias == arg) && arg != "" {
-				// try to find it's dependencys
-				if opt.requireFlags == nil {
-					// it dosen't have any sort of dependency
-					// execute the handler
-					opt.Exec()
-					// cache the process
-					cacheOpt[i] = 1
-					flagCount++
-				} else {
-
-					// we have dependecyflags that the flag handler of the flag
-					// TODO:find a way to implement the target flag like --path="to/path/file"
-
-				}
-			}
+func (a *App) AppenNewOption(name, alias string, reqflg []string, typeFlag uint8, action Handler) {
+	// sub command pattern not intended
+	if a.commands == nil {
+		var opt Option
+		// set the conent of the obj
+		opt.SetName(name)
+		opt.SetAlias(alias)
+		opt.SetRequireFlags(reqflg)
+		if action != nil {
+			opt.SetAction(action)
 		}
-	}
-
-	fmt.Println(args)
-	fmt.Println(cacheOpt, flagCount)
-}
-
-// Function that parses subcommands
-//TODO: make the func to parse all the commands
-func commandBaseApp() {
-	fmt.Println("nothing happening")
-}
-
-//TODO: we must make the parssing function
-// to execute every command flag / flags
-// Run the App
-func (a App) Run() {
-
-	// we have filled the args buffer
-	if len(a.args) > 0 {
-		// we have defined our app to be flag based
-		if a.commands == nil {
-			// parse all our args and execute the handlers
-			optionBaseApp(a.args, a.options)
-		} else {
-			// we have define our app to be sub-command based
-			if a.options == nil {
-				// parse SubCommand and execute the hadlers of the flags
-				commandBaseApp()
-			}
-		}
-	} else {
-		//TODO: make the template system to generate all the echo content
-		//help_tempalte()
+		opt.SetTypeFlag(typeFlag)
+		a.options = append(a.options, opt)
 	}
 }
