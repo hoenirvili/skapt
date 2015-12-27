@@ -30,38 +30,73 @@ func (a *App) initArgs() {
 	a.args = os.Args[1:]
 }
 
-func (a App) String(name string) string {
-	var (
-		//	doubleQuotes byte = 0x22
-		//	singleQuote  byte = 0x27
-		i int
-	)
+func (a App) Bool(name string) bool {
 	// flag based app
 	if a.commands == nil {
 		for _, val := range a.options {
-			if val.name == name || val.alias == name {
-				if val.typeFlag == STRING {
-					for i = 0; i < len(a.args); i++ {
-						if a.args[i] == name {
-							// TODO:
-							// We need a better way to find if the string
-							// is a flag/command-subflag of our app and return
-							// the target
-							// Note that we need to sanitize our flag
-							// 1) [--flag=="/to/smth"]
-							// 2) [--flag=='to/smth']
-							// 3) [--flag==to/smth]
-							// 4) [--flag==] [to/smth]
-							// etc.
-						}
-					}
-				}
+			if (val.name == name || val.alias == name) && val.typeFlag == BOOL {
+				return true
 			}
 		}
 	} else {
 		//command base app
 		if a.options == nil {
+			for _, cmd := range a.commands {
+				for _, opt := range cmd.options {
+					if (opt.name == name || opt.alias == name) && opt.typeFlag == BOOL {
+						return true
+					}
+				}
+			}
+		}
+	}
 
+	return false
+
+}
+
+// Return string target
+func (a App) String(name string) string {
+
+	var (
+		target string
+		found  bool = true
+	)
+
+	// flag based app
+	if a.commands == nil {
+		for _, val := range a.options {
+			if (val.name == name || val.alias == name) && val.typeFlag == STRING {
+				target = getStringTarget(name, a.args)
+				break
+			}
+		}
+	} else {
+		//command base app
+		if a.options == nil {
+			for _, cmd := range a.commands {
+				for _, opt := range cmd.options {
+					if (opt.name == name || opt.alias == name) && opt.typeFlag == STRING {
+						target = getStringTarget(name, a.args)
+						found = true
+						break
+					}
+				}
+				if found {
+					break
+				}
+			}
+		}
+	}
+
+	return target
+}
+
+func getStringTarget(name string, args []string) string {
+	var i int
+	for i = 0; i < len(args); i++ {
+		if args[i] == name {
+			return args[i+1]
 		}
 	}
 	return ""

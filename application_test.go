@@ -7,25 +7,6 @@ import (
 )
 
 // ====================== INIT ===========================
-/*var f = [][]string{
-	[]string{
-		"-f",
-		"--full-path",
-		"-g",
-		"-c",
-		"-hf",
-	},
-	[]string{
-		"-l",
-		"--link-pink",
-		"-f",
-		"-k",
-	},
-	[]string{
-		"-d",
-		"--direct-pink",
-	}}
-**/
 var h = []Handler{
 	func() {
 		fmt.Println("func 0")
@@ -93,6 +74,14 @@ func TestApplicatin(t *testing.T) {
 			fmt.Println()
 		}
 	}
+	// String
+	fmt.Println()
+	fmt.Println(app.String("-pth"))
+	fmt.Println(app.Bool("-k"))
+	fmt.Println(app.Bool("-G"))
+	fmt.Println(app.Bool("-FUL"))
+	fmt.Println(app.Bool("mmm"))
+	fmt.Println()
 
 	// Print Commands
 	if app.commands != nil {

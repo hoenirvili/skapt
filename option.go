@@ -6,6 +6,7 @@ type Handler func()
 const (
 	BOOL = iota
 	STRING
+	INT
 	UNKNOWN
 )
 
