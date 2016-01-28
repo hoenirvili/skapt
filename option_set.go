@@ -1,10 +1,5 @@
 package Skapt
 
-import (
-	"fmt"
-	"os"
-)
-
 // SetName func set's the name of the flag
 func (o *Option) SetName(flag string) {
 	o.name = flag
@@ -37,12 +32,14 @@ func (o *Option) SetTypeFlag(typeOfFlag uint8) {
 	case STRING:
 		o.typeFlag = STRING
 		break
+	case INT:
+		o.typeFlag = INT
+		break
 	default:
 		o.typeFlag = UNKNOWN
 	}
 
 	if o.typeFlag == UNKNOWN {
-		fmt.Fprintf(os.Stderr, "Unknown type flag")
-		os.Exit(EXIT_FAILURE)
+		errOnExit(unkFLAG)
 	}
 }

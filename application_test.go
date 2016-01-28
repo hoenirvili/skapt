@@ -21,10 +21,11 @@ var h = []Handler{
 		fmt.Println("func 3")
 	}}
 
+//TODO: split test files
 //========================================================
 
 func TestApplicatin(t *testing.T) {
-	os.Args = []string{"", "-k", "-C", "-f", "--path", "file/to/file/peer"}
+	os.Args = []string{"", "-k", "-C", "-f", "--path", "file/to/file/peer", "--number", "522"}
 	app := NewApp()
 	app.SetName("Golang\n")
 
@@ -42,6 +43,7 @@ func TestApplicatin(t *testing.T) {
 	app.AppenNewOption("--path", "-pth", nil, STRING, nil)
 	app.AppenNewOption("-G", "--mik", nil, BOOL, h[2])
 	app.AppenNewOption("-k", "", nil, BOOL, h[3])
+	app.AppenNewOption("--number", "-nr", nil, INT, nil)
 	// Declare new options
 
 	// ====================== RUN ============================
@@ -56,9 +58,10 @@ func TestApplicatin(t *testing.T) {
 	// Usage of the program
 	fmt.Println(app.Usage())
 
-	// Description of te program
+	// Description of the program
 	fmt.Println(app.Description())
 	fmt.Println()
+
 	// Options
 	if app.Options != nil {
 		for _, val := range app.options {
@@ -69,6 +72,10 @@ func TestApplicatin(t *testing.T) {
 			} else {
 				if val.TypeFlag() == 1 {
 					fmt.Print(" STRING")
+				} else {
+					if val.TypeFlag() == 2 {
+						fmt.Print(" INT")
+					}
 				}
 			}
 			fmt.Println()
@@ -81,6 +88,7 @@ func TestApplicatin(t *testing.T) {
 	fmt.Println(app.Bool("-G"))
 	fmt.Println(app.Bool("-FUL"))
 	fmt.Println(app.Bool("mmm"))
+	fmt.Println(app.Int("--number"))
 	fmt.Println()
 
 	// Print Commands
@@ -103,4 +111,9 @@ func TestApplicatin(t *testing.T) {
 	fmt.Println()
 	fmt.Println()
 	fmt.Println()
+}
+
+//TODO
+func TestFlag(t *testing.T) {
+	fmt.Println("test")
 }

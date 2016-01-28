@@ -1,6 +1,9 @@
 package Skapt
 
-import "os"
+import (
+	"os"
+	"strconv"
+)
 
 // App struct is the block of dataype that will store
 // all of the semantic and accessories in order to
@@ -50,9 +53,7 @@ func (a App) Bool(name string) bool {
 			}
 		}
 	}
-
 	return false
-
 }
 
 // Return string target
@@ -67,7 +68,7 @@ func (a App) String(name string) string {
 	if a.commands == nil {
 		for _, val := range a.options {
 			if (val.name == name || val.alias == name) && val.typeFlag == STRING {
-				target = getStringTarget(name, a.args)
+				_, target = getTarget(name, a.args, STRING)
 				break
 			}
 		}
@@ -77,7 +78,7 @@ func (a App) String(name string) string {
 			for _, cmd := range a.commands {
 				for _, opt := range cmd.options {
 					if (opt.name == name || opt.alias == name) && opt.typeFlag == STRING {
-						target = getStringTarget(name, a.args)
+						_, target = getTarget(name, a.args, STRING)
 						found = true
 						break
 					}
@@ -92,14 +93,70 @@ func (a App) String(name string) string {
 	return target
 }
 
-func getStringTarget(name string, args []string) string {
+func (a App) Int(name string) int {
+	var (
+		target int
+		found  bool
+	)
+
+	// flag based app
+	if a.commands == nil {
+		for _, val := range a.options {
+			if (val.name == name || val.alias == name) && val.typeFlag == INT {
+				target, _ = getTarget(name, a.args, INT)
+				break
+			}
+		}
+	} else {
+		if a.options == nil {
+			for _, cmd := range a.commands {
+				for _, opt := range cmd.options {
+					if (opt.name == name || opt.alias == name) && opt.typeFlag == INT {
+						target, _ = getTarget(name, a.args, INT)
+						found = true
+						break
+					}
+				}
+				if found {
+					break
+				}
+			}
+		}
+	}
+	return target
+}
+
+// Checks if the flag/command-flag exists
+// and returns the value of that target
+func getTarget(name string, args []string, typeFlag uint8) (int, string) {
 	var i int
 	for i = 0; i < len(args); i++ {
 		if args[i] == name {
-			return args[i+1]
+			switch typeFlag {
+			case INT:
+				if v, err := atoiWrapper(args[i+1]); err == nil {
+					return v, ""
+				} else {
+					errOnExit(err)
+				}
+			case STRING:
+				return 0, args[i+1]
+			}
 		}
 	}
-	return ""
+	return 0, ""
+}
+
+// Basic simple wrapper for strConv
+// providing custom error output
+func atoiWrapper(value string) (int, error) {
+	val, err := strconv.Atoi(value)
+	//if error
+	if err != nil {
+		return val, errTINT
+	} else {
+		return val, nil
+	}
 }
 
 // New returns a new App instance
