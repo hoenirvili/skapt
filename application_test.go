@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-// ====================== INIT ===========================
 var h = []Handler{
 	func() {
 		fmt.Println("func 0")
@@ -20,9 +19,6 @@ var h = []Handler{
 	func() {
 		fmt.Println("func 3")
 	}}
-
-//TODO: split test files
-//========================================================
 
 func TestApplicatin(t *testing.T) {
 	os.Args = []string{"", "-k", "-C", "-f", "--path", "file/to/file/peer", "--number", "522"}
@@ -81,16 +77,6 @@ func TestApplicatin(t *testing.T) {
 			fmt.Println()
 		}
 	}
-	// String
-	fmt.Println()
-	fmt.Println(app.String("-pth"))
-	fmt.Println(app.Bool("-k"))
-	fmt.Println(app.Bool("-G"))
-	fmt.Println(app.Bool("-FUL"))
-	fmt.Println(app.Bool("mmm"))
-	fmt.Println(app.Int("--number"))
-	fmt.Println()
-
 	// Print Commands
 	if app.commands != nil {
 		for _, cmd := range app.commands {
@@ -115,5 +101,48 @@ func TestApplicatin(t *testing.T) {
 
 //TODO
 func TestFlag(t *testing.T) {
-	fmt.Println("test")
+	os.Args = []string{"", "-k", "-C", "-f", "--path", "file/to/file/peer", "--number", "522"}
+
+	app := NewApp()
+
+	app.SetVersion(true, "")
+
+	app.AppenNewOption("-f", "-FUL", nil, BOOL, h[0])
+	app.AppenNewOption("-C", "--create", []string{"--path"}, BOOL, h[1])
+	app.AppenNewOption("--path", "-pth", nil, STRING, nil)
+	app.AppenNewOption("-G", "--mik", nil, BOOL, h[2])
+	app.AppenNewOption("-k", "", nil, BOOL, h[3])
+	app.AppenNewOption("--number", "-nr", nil, INT, nil)
+	// Declare new options
+
+	// ====================== RUN ============================
+	fmt.Println("================")
+	app.Run()
+	fmt.Println("================")
+	// ====================== PRINT ==========================
+
+	fmt.Println()
+	fmt.Print("-pth STRING= ")
+	fmt.Println(app.String("-pth"))
+	fmt.Print("-k BOOL= ")
+	fmt.Println(app.Bool("-k"))
+	fmt.Print("-G BOOL= ")
+	fmt.Println(app.Bool("-G"))
+	fmt.Print("-FUL BOOL= ")
+	fmt.Println(app.Bool("-FUL"))
+	fmt.Print("mmm BOOL= ")
+	fmt.Println(app.Bool("mmm"))
+	fmt.Print("--number INT= ")
+	fmt.Println(app.Int("--number"))
+	fmt.Println()
+
+	// Get the description of the program
+	fmt.Println("Version: " + app.Version())
+	// set the command for the application
+	fmt.Println()
+	fmt.Println()
+	fmt.Printf("Args off applicaiton provided: %s", app.Args())
+	fmt.Println()
+	fmt.Println()
+	fmt.Println()
 }

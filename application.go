@@ -36,8 +36,8 @@ func (a *App) initArgs() {
 func (a App) Bool(name string) bool {
 	// flag based app
 	if a.commands == nil {
-		for _, val := range a.options {
-			if (val.name == name || val.alias == name) && val.typeFlag == BOOL {
+		for _, opt := range a.options {
+			if (opt.name == name || opt.alias == name) && opt.typeFlag == BOOL {
 				return true
 			}
 		}
@@ -56,6 +56,7 @@ func (a App) Bool(name string) bool {
 	return false
 }
 
+// TODO make string,int flag alias consistent
 // Return string target
 func (a App) String(name string) string {
 
@@ -66,8 +67,8 @@ func (a App) String(name string) string {
 
 	// flag based app
 	if a.commands == nil {
-		for _, val := range a.options {
-			if (val.name == name || val.alias == name) && val.typeFlag == STRING {
+		for _, opt := range a.options {
+			if (name == opt.name || name == opt.alias) && opt.typeFlag == STRING {
 				_, target = getTarget(name, a.args, STRING)
 				break
 			}
@@ -77,7 +78,7 @@ func (a App) String(name string) string {
 		if a.options == nil {
 			for _, cmd := range a.commands {
 				for _, opt := range cmd.options {
-					if (opt.name == name || opt.alias == name) && opt.typeFlag == STRING {
+					if (name == opt.name || name == opt.alias) && opt.typeFlag == STRING {
 						_, target = getTarget(name, a.args, STRING)
 						found = true
 						break
@@ -93,6 +94,7 @@ func (a App) String(name string) string {
 	return target
 }
 
+// TODO make string,int flag alias consistent
 func (a App) Int(name string) int {
 	var (
 		target int
@@ -101,8 +103,8 @@ func (a App) Int(name string) int {
 
 	// flag based app
 	if a.commands == nil {
-		for _, val := range a.options {
-			if (val.name == name || val.alias == name) && val.typeFlag == INT {
+		for _, opt := range a.options {
+			if (opt.name == name || opt.alias == name) && opt.typeFlag == INT {
 				target, _ = getTarget(name, a.args, INT)
 				break
 			}
@@ -130,7 +132,8 @@ func (a App) Int(name string) int {
 // and returns the value of that target
 func getTarget(name string, args []string, typeFlag uint8) (int, string) {
 	var i int
-	for i = 0; i < len(args); i++ {
+	lenArg := len(args)
+	for i = 0; i < lenArg; i++ {
 		if args[i] == name {
 			switch typeFlag {
 			case INT:
