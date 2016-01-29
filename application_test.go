@@ -101,7 +101,7 @@ func TestApplicatin(t *testing.T) {
 
 //TODO
 func TestFlag(t *testing.T) {
-	os.Args = []string{"", "-k", "-C", "-f", "--path", "file/to/file/peer", "--number", "522"}
+	os.Args = []string{"", "-k", "-C", "-f", "-pth", "file/to/file/peer", "--number", "522"}
 
 	app := NewApp()
 
@@ -120,10 +120,12 @@ func TestFlag(t *testing.T) {
 	app.Run()
 	fmt.Println("================")
 	// ====================== PRINT ==========================
+
+	fmt.Println()
+	fmt.Print("--path STRING=")
+	fmt.Println(app.String("--path"))
+	fmt.Println()
 	/*
-		fmt.Println()
-		fmt.Print("-pth STRING= ")
-		fmt.Println(app.String("-pth"))
 		fmt.Print("-k BOOL= ")
 		fmt.Println(app.Bool("-k"))
 		fmt.Print("-G BOOL= ")

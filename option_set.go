@@ -22,8 +22,9 @@ func (o *Option) SetAction(handlr Handler) {
 }
 
 // Set the type of flag
-// bool
-// string
+// INT
+// STRING
+// INT
 func (o *Option) SetTypeFlag(typeOfFlag uint8) {
 	switch typeOfFlag {
 	case BOOL:

@@ -1,9 +1,6 @@
 package Skapt
 
-import (
-	"os"
-	"strconv"
-)
+import "os"
 
 // App struct is the block of dataype that will store
 // all of the semantic and accessories in order to
@@ -56,59 +53,54 @@ func (a App) Bool(name string) bool {
 	return false
 }
 
-// wrapper for getTarget
-func valueOption(opt Option, args []string, optionName string) string {
+func getTarget(opt Option, name string, args []string) string {
 	var (
+		lenArgs = len(args)
 		i       int
 		target  string
-		argsLen = len(args)
 	)
 
-	for i = 0; i < argsLen; i++ {
-		if args[i] == opt.name && opt.typeFlag == STRING {
-			_, target = getTarget(opt.name, args, i, opt.typeFlag)
+	for i = 0; i < lenArgs; i++ {
+		// if it's an alias
+		if args[i] == opt.alias {
+			target = args[i+1]
 			break
 		} else {
-			if args[i] == opt.alias && opt.typeFlag == STRING {
-				_, target = getTarget(opt.alias, args, i, opt.typeFlag)
+			// if it's the std-name
+			if args[i] == opt.name {
+				target = args[i+1]
 				break
 			}
 		}
-	} //for
+	}
+
 	return target
 }
 
-//TODO make string ,int flags
-//work with aliases and primary names
-
-// Checks if the flag/command-flag exists
-// and returns the value of that target
-func getTarget(name string, args []string, i int, typeFlag uint8) (int, string) {
-	if args[i] == name {
-		switch typeFlag {
-		case INT:
-			if v, err := atoiWrapper(args[i+1]); err == nil {
-				return v, ""
-			} else {
-				errOnExit(err)
+func (a App) String(name string) string {
+	var target string
+	// flag based app
+	if a.commands == nil {
+		// for every option in app
+		for _, opt := range a.options {
+			// if we find the flag that means that
+			// is declared in our app
+			// standard-name
+			if (opt.name == name || opt.alias == name) && opt.typeFlag == STRING {
+				target = getTarget(opt, name, a.args)
+				break
 			}
-		case STRING:
-			return 0, args[i+1]
+		}
+	} else {
+		// command base app
+		// TODO make it also for
+		// command line oriented mode app
+		if a.options == nil {
+
 		}
 	}
-	return 0, ""
-}
 
-// Basic simple wrapper for strConv
-// providing custom error output
-func atoiWrapper(value string) (int, error) {
-	val, err := strconv.Atoi(value)
-	//if error
-	if err != nil {
-		return val, errTINT
-	} else {
-		return val, nil
-	}
+	return target
 }
 
 // New returns a new App instance
