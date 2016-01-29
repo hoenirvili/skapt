@@ -30,10 +30,6 @@ func TestApplicatin(t *testing.T) {
 	app.SetVersion(true, "")
 	// Set OPTIONS
 
-	// Declare new commands
-	//app.AppendNewCommand("test1", "test2", "test3", f, h)
-	//app.AppendNewCommand("q1", "q2", "q3", f, h)
-	//app.AppendNewCommand("r1", "r2", "r3", f, h)
 	app.AppenNewOption("-f", "-FUL", nil, BOOL, h[0])
 	app.AppenNewOption("-C", "--create", []string{"--path"}, BOOL, h[1])
 	app.AppenNewOption("--path", "-pth", nil, STRING, nil)
@@ -124,19 +120,46 @@ func TestFlag(t *testing.T) {
 	fmt.Println()
 	fmt.Print("--path STRING=")
 	fmt.Println(app.String("--path"))
+	fmt.Print("-k BOOL= ")
+	fmt.Println(app.Bool("-k"))
+	fmt.Print("-G BOOL= ")
+	fmt.Println(app.Bool("-G"))
+	fmt.Print("-FUL BOOL= ")
+	fmt.Println(app.Bool("-FUL"))
+	fmt.Print("mmm BOOL= ")
+	fmt.Println(app.Bool("mmm"))
+	fmt.Print("--number INT= ")
+	fmt.Println(app.Int("-nr"))
 	fmt.Println()
+
+	// Get the description of the program
+	fmt.Println("Version: " + app.Version())
+	// set the command for the application
+	fmt.Println()
+	fmt.Println()
+	fmt.Printf("Args off applicaiton provided: %s", app.Args())
+	fmt.Println()
+	fmt.Println()
+	fmt.Println()
+}
+
+func TestFlagCommand(t *testing.T) {
+	os.Args = []string{"", "test1"}
+	app := NewApp()
+	app.SetName("Golang\n")
+	app.SetVersion(false, "1.0.0.0")
+
+	// ====================== RUN ============================
+	fmt.Println("================")
+	app.Run()
+	fmt.Println("================")
+	// ====================== PRINT ==========================
+
+	// Declare new commands
 	/*
-		fmt.Print("-k BOOL= ")
-		fmt.Println(app.Bool("-k"))
-		fmt.Print("-G BOOL= ")
-		fmt.Println(app.Bool("-G"))
-		fmt.Print("-FUL BOOL= ")
-		fmt.Println(app.Bool("-FUL"))
-		fmt.Print("mmm BOOL= ")
-		fmt.Println(app.Bool("mmm"))
-		fmt.Print("--number INT= ")
-		fmt.Println(app.Int("--number"))
-		fmt.Println()
+		app.AppendNewCommand("test1", "test2", "test3", f, h[0])
+		app.AppendNewCommand("q1", "q2", "q3", f, h[1])
+		app.AppendNewCommand("r1", "r2", "r3", f, h[2])
 	*/
 	// Get the description of the program
 	fmt.Println("Version: " + app.Version())

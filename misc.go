@@ -1,59 +1,51 @@
 package Skapt
 
-/*
-// wrapper for getTarget
-func valueOption(opt Option, args []string, optionName string) string {
+import "strconv"
+
+func getTarget(opt Option, args []string) (string, int) {
+
 	var (
+		lenArgs = len(args)
 		i       int
-		target  string
-		argsLen = len(args)
+		targetS string
+		targetI int
+		err     error
 	)
 
-	for i = 0; i < argsLen; i++ {
-		if args[i] == opt.name && opt.typeFlag == STRING {
-			_, target = getTarget(opt.name, args, i, opt.typeFlag)
-			break
-		} else {
-			if args[i] == opt.alias && opt.typeFlag == STRING {
-				_, target = getTarget(opt.alias, args, i, opt.typeFlag)
-				break
-			}
-		}
-	} //for
-	return target
-}
-
-//TODO make string ,int flags
-//work with aliases and primary names
-
-// Checks if the flag/command-flag exists
-// and returns the value of that target
-func getTarget(name string, args []string, i int, typeFlag uint8) (int, string) {
-	if args[i] == name {
-		switch typeFlag {
-		case INT:
-			if v, err := atoiWrapper(args[i+1]); err == nil {
-				return v, ""
+	// for every argument passed
+	for i = 0; i < lenArgs; i++ {
+		// if the arg is equal with the name or
+		// if the arg is equal with the alas
+		if args[i] == opt.alias || args[i] == opt.name {
+			if opt.typeFlag == STRING {
+				targetS = args[i+1]
 			} else {
-				errOnExit(err)
+				if opt.typeFlag == INT {
+					targetI, err = atoiWrapper(args[i+1])
+				}
 			}
-		case STRING:
-			return 0, args[i+1]
-		}
+			break
+		} //if
 	}
-	return 0, ""
+
+	//if err had occured
+	// handle it
+	if err != nil {
+		errOnExit(err)
+	}
+
+	return targetS, targetI
 }
 
 // Basic simple wrapper for strConv
 // providing custom error output
 func atoiWrapper(value string) (int, error) {
 	val, err := strconv.Atoi(value)
+
 	//if error
 	if err != nil {
 		return val, errTINT
-	} else {
-		return val, nil
 	}
-}
 
-*/
+	return val, nil
+}

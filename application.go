@@ -53,32 +53,8 @@ func (a App) Bool(name string) bool {
 	return false
 }
 
-func getTarget(opt Option, name string, args []string) string {
-	var (
-		lenArgs = len(args)
-		i       int
-		target  string
-	)
-
-	for i = 0; i < lenArgs; i++ {
-		// if it's an alias
-		if args[i] == opt.alias {
-			target = args[i+1]
-			break
-		} else {
-			// if it's the std-name
-			if args[i] == opt.name {
-				target = args[i+1]
-				break
-			}
-		}
-	}
-
-	return target
-}
-
 func (a App) String(name string) string {
-	var target string
+	var target string // empty defaul value
 	// flag based app
 	if a.commands == nil {
 		// for every option in app
@@ -87,7 +63,7 @@ func (a App) String(name string) string {
 			// is declared in our app
 			// standard-name
 			if (opt.name == name || opt.alias == name) && opt.typeFlag == STRING {
-				target = getTarget(opt, name, a.args)
+				target, _ = getTarget(opt, a.args)
 				break
 			}
 		}
@@ -96,10 +72,59 @@ func (a App) String(name string) string {
 		// TODO make it also for
 		// command line oriented mode app
 		if a.options == nil {
-
-		}
+			for _, cmd := range a.commands {
+				for _, opt := range cmd.options {
+					if (opt.name == name || opt.alias == name) && opt.typeFlag == STRING {
+						target, _ = getTarget(opt, a.args)
+						break
+					}
+				}
+				if len(target) > 0 {
+					break
+				}
+			}
+		} //if
 	}
+	return target
+}
 
+func (a App) Int(name string) int {
+	var (
+		target int // 0 default value
+		found  = false
+	)
+
+	// flag based app
+	if a.commands == nil {
+		// for every option in app
+		for _, opt := range a.options {
+			// if we find the flag that means that
+			// is declared in our app
+			// standard-name
+			if (opt.name == name || opt.alias == name) && opt.typeFlag == INT {
+				_, target = getTarget(opt, a.args)
+				break
+			}
+		}
+	} else {
+		// command base app
+		// TODO make it also for
+		// command line oriented mode app
+		if a.options == nil {
+			for _, cmd := range a.commands {
+				for _, opt := range cmd.options {
+					if (opt.name == name || opt.alias == name) && opt.typeFlag == INT {
+						_, target = getTarget(opt, a.args)
+						found = true
+						break
+					}
+				}
+				if found {
+					break
+				}
+			}
+		} //if
+	}
 	return target
 }
 
