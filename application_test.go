@@ -120,22 +120,22 @@ func TestFlag(t *testing.T) {
 	app.Run()
 	fmt.Println("================")
 	// ====================== PRINT ==========================
-
-	fmt.Println()
-	fmt.Print("-pth STRING= ")
-	fmt.Println(app.String("-pth"))
-	fmt.Print("-k BOOL= ")
-	fmt.Println(app.Bool("-k"))
-	fmt.Print("-G BOOL= ")
-	fmt.Println(app.Bool("-G"))
-	fmt.Print("-FUL BOOL= ")
-	fmt.Println(app.Bool("-FUL"))
-	fmt.Print("mmm BOOL= ")
-	fmt.Println(app.Bool("mmm"))
-	fmt.Print("--number INT= ")
-	fmt.Println(app.Int("--number"))
-	fmt.Println()
-
+	/*
+		fmt.Println()
+		fmt.Print("-pth STRING= ")
+		fmt.Println(app.String("-pth"))
+		fmt.Print("-k BOOL= ")
+		fmt.Println(app.Bool("-k"))
+		fmt.Print("-G BOOL= ")
+		fmt.Println(app.Bool("-G"))
+		fmt.Print("-FUL BOOL= ")
+		fmt.Println(app.Bool("-FUL"))
+		fmt.Print("mmm BOOL= ")
+		fmt.Println(app.Bool("mmm"))
+		fmt.Print("--number INT= ")
+		fmt.Println(app.Int("--number"))
+		fmt.Println()
+	*/
 	// Get the description of the program
 	fmt.Println("Version: " + app.Version())
 	// set the command for the application

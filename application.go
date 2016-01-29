@@ -56,95 +56,44 @@ func (a App) Bool(name string) bool {
 	return false
 }
 
-// TODO make string,int flag alias consistent
-// Return string target
-func (a App) String(name string) string {
-
+// wrapper for getTarget
+func valueOption(opt Option, args []string, optionName string) string {
 	var (
-		target string
-		found  bool = true
+		i       int
+		target  string
+		argsLen = len(args)
 	)
 
-	// flag based app
-	if a.commands == nil {
-		for _, opt := range a.options {
-			if (name == opt.name || name == opt.alias) && opt.typeFlag == STRING {
-				_, target = getTarget(name, a.args, STRING)
+	for i = 0; i < argsLen; i++ {
+		if args[i] == opt.name && opt.typeFlag == STRING {
+			_, target = getTarget(opt.name, args, i, opt.typeFlag)
+			break
+		} else {
+			if args[i] == opt.alias && opt.typeFlag == STRING {
+				_, target = getTarget(opt.alias, args, i, opt.typeFlag)
 				break
 			}
 		}
-	} else {
-		//command base app
-		if a.options == nil {
-			for _, cmd := range a.commands {
-				for _, opt := range cmd.options {
-					if (name == opt.name || name == opt.alias) && opt.typeFlag == STRING {
-						_, target = getTarget(name, a.args, STRING)
-						found = true
-						break
-					}
-				}
-				if found {
-					break
-				}
-			}
-		}
-	}
-
+	} //for
 	return target
 }
 
-// TODO make string,int flag alias consistent
-func (a App) Int(name string) int {
-	var (
-		target int
-		found  bool
-	)
-
-	// flag based app
-	if a.commands == nil {
-		for _, opt := range a.options {
-			if (opt.name == name || opt.alias == name) && opt.typeFlag == INT {
-				target, _ = getTarget(name, a.args, INT)
-				break
-			}
-		}
-	} else {
-		if a.options == nil {
-			for _, cmd := range a.commands {
-				for _, opt := range cmd.options {
-					if (opt.name == name || opt.alias == name) && opt.typeFlag == INT {
-						target, _ = getTarget(name, a.args, INT)
-						found = true
-						break
-					}
-				}
-				if found {
-					break
-				}
-			}
-		}
-	}
-	return target
-}
+//TODO make string ,int flags
+//work with aliases and primary names
 
 // Checks if the flag/command-flag exists
 // and returns the value of that target
-func getTarget(name string, args []string, typeFlag uint8) (int, string) {
-	var i int
-	lenArg := len(args)
-	for i = 0; i < lenArg; i++ {
-		if args[i] == name {
-			switch typeFlag {
-			case INT:
-				if v, err := atoiWrapper(args[i+1]); err == nil {
-					return v, ""
-				} else {
-					errOnExit(err)
-				}
-			case STRING:
-				return 0, args[i+1]
+func getTarget(name string, args []string, i int, typeFlag uint8) (int, string) {
+	if args[i] == name {
+		switch typeFlag {
+		case INT:
+			if v, err := atoiWrapper(args[i+1]); err == nil {
+				return v, ""
+			} else {
+				errOnExit(err)
 			}
+		case STRING:
+			return 0, args[i+1]
 		}
 	}
 	return 0, ""
