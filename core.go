@@ -1,6 +1,9 @@
 package Skapt
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 // function that parses Options
 func optionBaseApp(args []string, opts []Option) {
@@ -17,7 +20,7 @@ func optionBaseApp(args []string, opts []Option) {
 	}
 
 	fmt.Println(args)
-	//	fmt.Println(cacheOpt, nFlagsParsed)
+	fmt.Println(cacheOpt, nFlagsParsed)
 }
 
 // check option and if it's valid execute handler
@@ -64,7 +67,8 @@ func (a App) Run() {
 		// we have defined our app to be flag based
 		if a.commands == nil {
 			// parse all our args and execute the handlers
-			optionBaseApp(a.args, a.options)
+			//optionBaseApp(a.args, a.options)
+			parseAllOptions(a.args, a.options)
 		} else {
 			// we have define our app to be sub-command based
 			if a.options == nil {
@@ -77,6 +81,65 @@ func (a App) Run() {
 		//TODO: make the template system to generate all the echo content
 		//help_tempalte()
 	}
+}
+
+//TODO find a way in this mess
+func parseAllOptions(args []string, opts []Option) {
+
+	var (
+		i, j, k int
+		lenArgs = len(args)
+		lenOpts = len(opts)
+		lenReq  int
+		ack     int
+		//argAck    int
+		foundFlag bool
+	)
+
+	// for every arg passed in our app
+	for i = 0; i < lenArgs; i++ {
+		foundFlag = false
+		for j = 0; j < lenOpts; j++ {
+			// we found a flag
+			if opts[j].name == args[i] || opts[j].alias == args[i] {
+				foundFlag = true
+				// the flag depends on other flags
+				if opts[j].requireFlags != nil {
+					ack = 0 // no flag ack
+					// len of dependency flags
+					lenReq = len(opts[j].requireFlags)
+					// for every flag that was not yet checked
+					for k = i + 1; k < lenArgs; k++ {
+						// for every dependecy
+						for _, req := range opts[j].requireFlags {
+							// if we found dependency match with
+							// unparsed flags ack them
+							if req == args[k] {
+								ack++
+							}
+						}
+					}
+					// if the app dosen't have all the flags that was passed
+					// stop the exec
+					if ack != lenReq {
+						// TODO make a smart and nice template
+						fmt.Fprintf(os.Stderr, "\nThe flag %s requires %s \n", opts[j].name, opts[j].requireFlags)
+						goto grace_end
+					} else {
+						opts[j].Exec()
+					}
+				} else {
+					exec(opts[j])
+				}
+			}
+		}
+		if !foundFlag {
+			fmt.Fprintf(os.Stderr, "\nThe flag %s unknown\n", args[i])
+			goto grace_end
+		}
+	}
+
+grace_end:
 }
 
 // Function that parses subcommands

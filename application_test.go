@@ -35,7 +35,6 @@ func TestApplicatin(t *testing.T) {
 	app.AppenNewOption("--path", "-pth", nil, STRING, nil)
 	app.AppenNewOption("-G", "--mik", nil, BOOL, h[2])
 	app.AppenNewOption("-k", "", nil, BOOL, h[3])
-	app.AppenNewOption("--number", "-nr", nil, INT, nil)
 	// Declare new options
 
 	// ====================== RUN ============================
@@ -95,7 +94,7 @@ func TestApplicatin(t *testing.T) {
 	fmt.Println()
 }
 
-//TODO
+/*
 func TestFlag(t *testing.T) {
 	os.Args = []string{"", "-k", "-C", "-f", "-pth", "file/to/file/peer", "--number", "522"}
 
@@ -195,3 +194,4 @@ func TestFlagCommand(t *testing.T) {
 	fmt.Println()
 
 }
+*/
