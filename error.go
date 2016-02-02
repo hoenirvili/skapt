@@ -12,6 +12,7 @@ var (
 	errTINT       = errors.New("Can't parse the INT from this flag")
 	unkFLAG       = errors.New("Unknow type flag")
 	flagDEC       = errors.New("The app has no flag named this way")
+	errNFlags     = errors.New("The numebr of flags dosen't correspond")
 )
 
 // C style exit flgs

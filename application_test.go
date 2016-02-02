@@ -149,12 +149,6 @@ func TestFlagCommand(t *testing.T) {
 	app.SetName("Golang\n")
 	app.SetVersion(false, "1.0.0.0")
 
-	// ====================== RUN ============================
-	fmt.Println("================")
-	app.Run()
-	fmt.Println("================")
-	// ====================== PRINT ==========================
-
 	// Declare new commands
 	var f [][]string
 	//set all things
@@ -178,12 +172,17 @@ func TestFlagCommand(t *testing.T) {
 			fmt.Println("Opt n = " + opt.Name())
 			fmt.Println("Alias a= " + opt.Alias())
 			fmt.Println(opt.RequireFlags())
-			//fmt.Println(opt.TypeFlag())
-			opt.Exec()
+			fmt.Println(opt.TypeFlag())
 			fmt.Println("=========================")
 			fmt.Println()
 		}
 	}
+
+	// ====================== RUN ============================
+	fmt.Println("================")
+	app.Run()
+	fmt.Println("================")
+	// ====================== PRINT ==========================
 
 	// Get the description of the program
 	fmt.Println("Version: " + app.Version())
@@ -194,4 +193,5 @@ func TestFlagCommand(t *testing.T) {
 	fmt.Println()
 	fmt.Println()
 	fmt.Println()
+
 }

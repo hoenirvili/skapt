@@ -24,37 +24,14 @@ func (c *Command) SetOptionsOfACommand(flags [][]string, actions []Handler) {
 	c.options = make([]Option, nFlags)
 	// fil the slice
 	for i := 0; i < nFlags; i++ {
-		c.options[i].SetName(flags[i][0])
-		c.options[i].SetAlias(flags[i][1])
-		c.options[i].SetTypeFlag(cmdFlagOptInsert(flags[i][2]))
-		c.options[i].SetRequireFlags(flags[i][2:])
-		c.options[i].SetAction(actions[i])
+		if len(flags[i][:]) > 3 {
+			c.options[i].SetName(flags[i][0])
+			c.options[i].SetAlias(flags[i][1])
+			c.options[i].SetTypeFlag(flags[i][2])
+			c.options[i].SetRequireFlags(flags[i][3:])
+			c.options[i].SetAction(actions[i])
+		} else {
+			errOnExit(errNFlags)
+		}
 	}
-}
-
-//TODO implement a better way
-//duplicate code
-func cmdFlagOptInsert(tFlag string) uint8 {
-	var typeFlag uint8
-
-	switch tFlag {
-
-	case "INT":
-		typeFlag = INT
-		break
-	case "STRING":
-		typeFlag = STRING
-		break
-	case "BOOL":
-		typeFlag = BOOL
-		break
-	default:
-		typeFlag = UNKNOWN
-	}
-
-	if typeFlag == UNKNOWN {
-		errOnExit(unkFLAG)
-	}
-
-	return typeFlag
 }

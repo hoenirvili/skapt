@@ -17,7 +17,7 @@ func optionBaseApp(args []string, opts []Option) {
 	}
 
 	fmt.Println(args)
-	fmt.Println(cacheOpt, nFlagsParsed)
+	//	fmt.Println(cacheOpt, nFlagsParsed)
 }
 
 // check option and if it's valid execute handler
@@ -73,15 +73,14 @@ func (a App) Run() {
 			}
 		}
 	} else {
+		fmt.Println("temaplte system")
 		//TODO: make the template system to generate all the echo content
 		//help_tempalte()
 	}
-
 }
 
 // Function that parses subcommands
 //TODO: make the func to parse all the commands
 func commandBaseApp() {
 	fmt.Println("nothing happening")
-
 }
