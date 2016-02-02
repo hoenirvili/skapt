@@ -144,7 +144,7 @@ func TestFlag(t *testing.T) {
 }
 
 func TestFlagCommand(t *testing.T) {
-	os.Args = []string{"", "test1"}
+	os.Args = []string{"", "init", "flag1"}
 	app := NewApp()
 	app.SetName("Golang\n")
 	app.SetVersion(false, "1.0.0.0")
@@ -156,11 +156,35 @@ func TestFlagCommand(t *testing.T) {
 	// ====================== PRINT ==========================
 
 	// Declare new commands
-	/*
-		app.AppendNewCommand("test1", "test2", "test3", f, h[0])
-		app.AppendNewCommand("q1", "q2", "q3", f, h[1])
-		app.AppendNewCommand("r1", "r2", "r3", f, h[2])
-	*/
+	var f [][]string
+	//set all things
+	f = append(f, []string{"flag1", "flag2", "INT", ""})
+	f = append(f, []string{"flag3", "flag4", "STRING", ""})
+	f = append(f, []string{"flag5", "flag6", "BOOL", ""})
+	//f = append(f, []string{"kkk", "ghsad"})
+
+	app.AppendNewCommand("init", "Init the tests or our application", "Inits all the app", f, h)
+	app.AppendNewCommand("save", "Saves all logs.", "Unwanted usage", f, h)
+	app.AppendNewCommand("install", "Install the system drivers", "Usage usage", f, h)
+
+	//print all things
+	for _, cmd := range app.commands {
+		fmt.Println("=========================")
+		fmt.Println("Name cmd " + cmd.Name())
+		fmt.Println("Descr cmd " + cmd.Description())
+		fmt.Println("Usg cmd " + cmd.Usage())
+		fmt.Println()
+		for _, opt := range cmd.options {
+			fmt.Println("Opt n = " + opt.Name())
+			fmt.Println("Alias a= " + opt.Alias())
+			fmt.Println(opt.RequireFlags())
+			//fmt.Println(opt.TypeFlag())
+			opt.Exec()
+			fmt.Println("=========================")
+			fmt.Println()
+		}
+	}
+
 	// Get the description of the program
 	fmt.Println("Version: " + app.Version())
 	// set the command for the application

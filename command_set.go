@@ -17,6 +17,7 @@ func (c *Command) SetDescription(desc string) {
 
 // Set the options of a command
 func (c *Command) SetOptionsOfACommand(flags [][]string, actions []Handler) {
+	//TODO verify length of options
 	// return the number of lines
 	nFlags := len(flags)
 	// create a slice of options
@@ -25,7 +26,35 @@ func (c *Command) SetOptionsOfACommand(flags [][]string, actions []Handler) {
 	for i := 0; i < nFlags; i++ {
 		c.options[i].SetName(flags[i][0])
 		c.options[i].SetAlias(flags[i][1])
+		c.options[i].SetTypeFlag(cmdFlagOptInsert(flags[i][2]))
 		c.options[i].SetRequireFlags(flags[i][2:])
 		c.options[i].SetAction(actions[i])
 	}
+}
+
+//TODO implement a better way
+//duplicate code
+func cmdFlagOptInsert(tFlag string) uint8 {
+	var typeFlag uint8
+
+	switch tFlag {
+
+	case "INT":
+		typeFlag = INT
+		break
+	case "STRING":
+		typeFlag = STRING
+		break
+	case "BOOL":
+		typeFlag = BOOL
+		break
+	default:
+		typeFlag = UNKNOWN
+	}
+
+	if typeFlag == UNKNOWN {
+		errOnExit(unkFLAG)
+	}
+
+	return typeFlag
 }
