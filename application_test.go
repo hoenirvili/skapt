@@ -32,7 +32,7 @@ func TestApplicatin(t *testing.T) {
 
 	app.AppenNewOption("-f", "-FUL", nil, BOOL, h[0])
 	app.AppenNewOption("-C", "--create", []string{"--path"}, BOOL, h[1])
-	app.AppenNewOption("--path", "-pth", nil, STRING, nil)
+	app.AppenNewOption("--path", "-pth", []string{"-C"}, STRING, nil)
 	app.AppenNewOption("-G", "--mik", nil, BOOL, h[2])
 	app.AppenNewOption("-k", "", nil, BOOL, h[3])
 	// Declare new options
