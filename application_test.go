@@ -21,7 +21,7 @@ var h = []Handler{
 	}}
 
 func TestApplicatin(t *testing.T) {
-	os.Args = []string{"", "-k", "-C", "-f", "--path", "file/to/file/peer", "--number", "522"}
+	os.Args = []string{"", "-k", "-C", "-f", "--path", "file/to/file/peer"}
 	app := NewApp()
 	app.SetName("Golang\n")
 

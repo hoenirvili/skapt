@@ -32,19 +32,21 @@ func (a App) Run() {
 
 func parser(args []string, opts []Option) {
 	var (
-		i, j        int
-		execHandler []Handler
-		targets     []string
-		k, l        int
-		dependency  []string
-		ack         int
-		tFlag       bool
+		i, j, nrTargets, nrHandler int
+		execHandler                []Handler
+		targets                    []string
+		k, l                       int
+		dependency                 []string
+		ack                        int
+		tFlag                      bool
+		checkedFlags               []string
 	)
+	_ = "breakpoint"
 
 	// for every arg in app
 	for i < len(args) {
 		//for every opt in app
-		for j < len(opts) {
+		for j = 0; j < len(opts); j++ {
 			// if arg is in the opt
 			if opts[j].name == args[i] || opts[j].alias == args[i] {
 				//if opt dosen't have req
@@ -52,33 +54,38 @@ func parser(args []string, opts []Option) {
 					tFlag = false
 					if opts[j].typeFlag == BOOL {
 						execHandler = append(execHandler, opts[j].action)
+						checkedFlags = append(checkedFlags, args[i])
 					} else { //it req a target
 						targets = append(targets, args[i+1])
 						tFlag = true
 						execHandler = append(execHandler, opts[j].action)
+						checkedFlags = append(checkedFlags, args[i])
 					}
 				} else { // we have dependency
 					dependency = opts[j].requireFlags
-					for k < len(args) {
-						for l < len(dependency) {
+					for k = 0; k < len(args); k++ {
+						ack = 0
+						for l = 0; l < len(dependency); l++ {
 							if dependency[l] == args[k] {
 								//test know if depencency is BOOL or need target
-								trgts := dependParse(args, dependency, opts)
-								targets = append(targets, trgts)
-								execHandler = append(execHandler, opts[j].action)
+								trgts, exe := dependParse(args, dependency[l], opts[j], opts)
+								if trgts != "" {
+									targets = append(targets, trgts)
+								}
+								if exe == nil {
+									execHandler = append(execHandler, exe)
+								}
 								ack++
 							}
-							l++
 						}
 						if ack != len(dependency) {
 							fmt.Fprintf(os.Stdout, "\n %s depends on %\n", opts[j].name, dependency)
 							goto grace_exit
 						}
-						k++
+						checkedFlags = append(checkedFlags, args[k])
 					}
 				}
 			}
-			j++
 		}
 		if tFlag {
 			i = i + 2
@@ -86,19 +93,53 @@ func parser(args []string, opts []Option) {
 			i++
 		}
 	}
+
+	nrTargets = len(targets)
+	nrHandler = len(execHandler)
+
+	fmt.Println(nrTargets)
+	fmt.Println(nrHandler)
+
+	//everythings it's fine just exec all
+	if nrTargets+nrHandler == len(args) {
+		for _, do := range execHandler {
+			do()
+		}
+	}
+
 grace_exit:
 }
 
-func dependParse(args []string, dependency []string, opts []Option) string {
+func dependParse(args []string, dependency string, opt Option, opts []Option) (string, Handler) {
 	var (
 		target string
+		exec   Handler
 	)
-	for i := 0; i < len(args); i++ {
-		for j := 0; j < len(dependency); j++ {
-			//test
+
+	for i := 0; i < len(opts); i++ {
+		if dependency == opts[i].name || opts[i].alias == dependency {
+			for j := 0; j < len(args); i++ {
+				if args[j] == opts[i].name || opts[i].alias == args[j] {
+					// test if dependency is valid
+					// a dependency flag does not require an action
+					// just target/presence
+					if opts[i].action == nil {
+						if opts[i].typeFlag == BOOL {
+							exec = opt.action
+							target = ""
+							goto return_it
+						} else {
+							exec = nil
+							target = args[j+1]
+							goto return_it
+						}
+					} //if
+				} //if
+			} //for
 		}
 	}
-	return target
+return_it:
+	return target, exec
 }
 
 /// Function that parses subcommands
