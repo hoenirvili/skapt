@@ -1,16 +1,16 @@
 package Skapt
 
-// Get the name of the command
+// Name method gets the name of the command
 func (c Command) Name() string {
 	return c.name
 }
 
-// Get the usage of the command
+// Usage method gets the usage of the command
 func (c Command) Usage() string {
 	return c.usage
 }
 
-// Get the description of the command
+// Description method gets the description of the command
 func (c Command) Description() string {
 	return c.description
 }

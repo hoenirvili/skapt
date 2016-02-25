@@ -3,7 +3,7 @@ package Skapt
 // SetVersionFromFile public metod to export the version
 import "strings"
 
-// number of the tool
+//SetVersionFromFile  number of the tool
 func (v *Version) SetVersionFromFile() string {
 	// loading the new version
 	v.loadVersion()

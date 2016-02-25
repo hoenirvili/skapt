@@ -1,21 +1,21 @@
 package Skapt
 
-// Set the name of the command
+// SetName sets the name of the command
 func (c *Command) SetName(commName string) {
 	c.name = commName
 }
 
-// Set the usage of the command
+// SetUsage sets the usage of the command
 func (c *Command) SetUsage(usg string) {
 	c.usage = usg
 }
 
-// Set description of the command
+// SetDescription sets description of the command
 func (c *Command) SetDescription(desc string) {
 	c.description = desc
 }
 
-// Set the options of a command
+// SetOptionsOfACommand sets the options of a command
 func (c *Command) SetOptionsOfACommand(flags [][]string, actions []Handler) {
 	//TODO verify length of options
 	// return the number of lines

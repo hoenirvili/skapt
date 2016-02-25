@@ -8,11 +8,11 @@ import (
 
 // Error flags
 var (
-	errNFlagAlias = errors.New("Inappropriate number of aliases")
-	errTINT       = errors.New("Can't parse the INT from this flag")
-	unkFLAG       = errors.New("Unknow type flag")
-	flagDEC       = errors.New("The app has no flag named this way")
-	errNFlags     = errors.New("The numebr of flags dosen't correspond")
+	errNFlagAlias  = errors.New("Inappropriate number of aliases")
+	errTINT        = errors.New("Can't parse the INT from this flag")
+	errUnknownFlag = errors.New("Unknow type flag")
+	errFlagDec     = errors.New("The app has no flag named this way")
+	errNFlags      = errors.New("The numebr of flags dosen't correspond")
 )
 
 // C style exit flgs

@@ -3,14 +3,15 @@ package Skapt
 // Handler is the type of action
 type Handler func()
 
+// All flag types of App
 const (
-	BOOL = iota
-	STRING
-	INT
-	UNKNOWN
+	BOOL    = iota // BOOL flag type
+	STRING         // STRING flag type
+	INT            // INT flag type
+	UNKNOWN        // UNKNOWN flag type
 )
 
-// Options is the struct that will hold a flag
+// Option is the struct that will hold a flag
 // and the handler that will execute when
 // our app will parse that flag.
 type Option struct {
@@ -21,7 +22,7 @@ type Option struct {
 	action       Handler
 }
 
-// Run run the handler
+// Exec run the handler
 func (o Option) Exec() {
 	o.action()
 }

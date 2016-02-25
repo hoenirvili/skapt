@@ -17,14 +17,15 @@ func (a App) Description() string {
 
 // Version return the versioning number
 func (a App) Version() string {
-	return a.version.Version()
+	return a.version.Full()
 }
 
-// Return slice of authors
+// Authors returns a  slice of authors
 func (a App) Authors() []string {
 	return a.authors
 }
 
+// Options returns all flag options
 func (a App) Options() []Option {
 	return a.options
 }

@@ -30,6 +30,8 @@ func (a *App) initArgs() {
 	a.args = os.Args[1:]
 }
 
+// Bool returns true if the flag is present
+// on os.Args/app.Args
 func (a App) Bool(name string) bool {
 	// flag based app
 	if a.commands == nil {
@@ -88,6 +90,7 @@ func (a App) String(name string) string {
 	return target
 }
 
+// Int returns the target INT type flag
 func (a App) Int(name string) int {
 	var (
 		target int // 0 default value
@@ -128,7 +131,7 @@ func (a App) Int(name string) int {
 	return target
 }
 
-// New returns a new App instance
+// NewApp returns a new App instance
 // true => sub-command type
 // false => flag type
 func NewApp() *App {
@@ -155,6 +158,7 @@ func (a *App) AppendNewCommand(name, desc, usg string, flags [][]string, actions
 	}
 }
 
+// AppenNewOption appends a new option to our cli App
 func (a *App) AppenNewOption(name, alias string, reqflg []string, typeFlag uint8, action Handler) {
 	// sub command pattern not intended
 	if a.commands == nil {

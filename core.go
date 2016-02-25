@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-//TODO: we must make the parssing function
+// Run TODO: we must make the parssing function
 // to execute every command flag / flags
 // Run the App
 func (a App) Run() {

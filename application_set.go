@@ -1,23 +1,24 @@
 package Skapt
 
-// SetName func set's the name of the app
+// SetName func sets the name of the app
 import "strings"
 
+// SetName sets the app name
 func (a *App) SetName(appName string) {
 	a.name = appName
 }
 
-// SetUsage func set's the usage description of the app
+// SetUsage func sets the usage description of the app
 func (a *App) SetUsage(usgDesc string) {
 	a.usage = usgDesc
 }
 
-// SetDescription func set's the description of the app
+// SetDescription func sets the description of the app
 func (a *App) SetDescription(desc string) {
 	a.description = desc
 }
 
-// SetOptionf func set's the all app option/flags and their handlers
+// SetOptions func sets the all app option/flags and their handlers
 func (a *App) SetOptions(flags [][]string, actions []Handler) {
 	// return the number of lines
 	nFlags := len(flags)
@@ -32,12 +33,12 @@ func (a *App) SetOptions(flags [][]string, actions []Handler) {
 	}
 }
 
-// Set's the authors of the app
+// SetAuthors sets the authors of the app
 func (a *App) SetAuthors(auth []string) {
 	a.authors = auth
 }
 
-// SetVersion func set's the current version
+// SetVersion func sets the current version
 // from the main VERSION file or hardcoded one
 func (a *App) SetVersion(fromFile bool, versNum string) {
 	// Set version automated from VERSION file
