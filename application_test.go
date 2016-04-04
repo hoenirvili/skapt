@@ -20,7 +20,7 @@ var h = []Handler{
 		fmt.Println("func 3")
 	}}
 
-func TestApplicatin(t *testing.T) {
+func TestApplication(t *testing.T) {
 	os.Args = []string{"", "-k", "-C", "-f", "--path", "file/to/file/peer", "-G", "-lll"}
 	app := NewApp()
 	app.SetName("Golang\n")
@@ -72,6 +72,7 @@ func TestApplicatin(t *testing.T) {
 			fmt.Println()
 		}
 	}
+
 	// Print Commands
 	if app.commands != nil {
 		for _, cmd := range app.commands {
@@ -193,5 +194,4 @@ func TestFlagCommand(t *testing.T) {
 	fmt.Println()
 	fmt.Println()
 
-}
-*/
+} */

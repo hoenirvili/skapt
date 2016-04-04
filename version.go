@@ -27,5 +27,4 @@ func (v *Version) loadVersion() {
 	v.majorRevision = s[1]
 	v.minorRevision = s[2]
 	v.fixRevisionDet = s[3]
-
 }
