@@ -78,15 +78,13 @@ func (a App) String(name string) string {
 				for _, opt := range cmd.options {
 					if (opt.name == name || opt.alias == name) && opt.typeFlag == STRING {
 						target, _ = getTarget(opt, a.args)
-						break
+						goto end
 					}
-				}
-				if len(target) > 0 {
-					break
 				}
 			}
 		} //if
 	}
+end:
 	return target
 }
 
@@ -94,7 +92,6 @@ func (a App) String(name string) string {
 func (a App) Int(name string) int {
 	var (
 		target int // 0 default value
-		found  = false
 	)
 
 	// flag based app
@@ -118,16 +115,13 @@ func (a App) Int(name string) int {
 				for _, opt := range cmd.options {
 					if (opt.name == name || opt.alias == name) && opt.typeFlag == INT {
 						_, target = getTarget(opt, a.args)
-						found = true
-						break
+						goto end
 					}
-				}
-				if found {
-					break
 				}
 			}
 		} //if
 	}
+end:
 	return target
 }
 
@@ -159,14 +153,13 @@ func (a *App) AppendNewCommand(name, desc, usg string, flags [][]string, actions
 }
 
 // AppenNewOption appends a new option to our cli App
-func (a *App) AppenNewOption(name, alias string, reqflg []string, typeFlag uint8, action Handler) {
+func (a *App) AppenNewOption(name, alias string, typeFlag uint8, action Handler) {
 	// sub command pattern not intended
 	if a.commands == nil {
 		var opt Option
 		// set the conent of the obj
 		opt.SetName(name)
 		opt.SetAlias(alias)
-		opt.SetRequireFlags(reqflg)
 		if action != nil {
 			opt.SetAction(action)
 		}

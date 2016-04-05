@@ -28,7 +28,6 @@ func (a *App) SetOptions(flags [][]string, actions []Handler) {
 	for i := 0; i < nFlags; i++ {
 		a.options[i].SetName(flags[i][0])
 		a.options[i].SetAlias(flags[i][1])
-		a.options[i].SetRequireFlags(flags[i][2:])
 		a.options[i].SetAction(actions[i])
 	}
 }

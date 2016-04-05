@@ -21,7 +21,7 @@ var h = []Handler{
 	}}
 
 func TestApplication(t *testing.T) {
-	os.Args = []string{"", "-k", "-C", "-f", "--path", "file/to/file/peer", "-G", "-lll"}
+	os.Args = []string{"", "-k", "dasdas", "-C", "dasdasda", "-f", "--path", "file/to/file/peer", "-G", "-lll"}
 	app := NewApp()
 	app.SetName("Golang\n")
 
@@ -30,11 +30,11 @@ func TestApplication(t *testing.T) {
 	app.SetVersion(true, "")
 	// Set OPTIONS
 
-	app.AppenNewOption("-f", "-FUL", nil, BOOL, h[0])
-	app.AppenNewOption("-C", "--create", []string{"--path"}, BOOL, h[1])
-	app.AppenNewOption("--path", "-pth", []string{"-C"}, STRING, nil)
-	app.AppenNewOption("-G", "--mik", nil, BOOL, h[2])
-	app.AppenNewOption("-k", "", nil, BOOL, h[3])
+	app.AppenNewOption("-f", "-FUL", BOOL, h[0])
+	app.AppenNewOption("-C", "--create", BOOL, h[1])
+	app.AppenNewOption("--path", "-pth", STRING, h[1])
+	app.AppenNewOption("-G", "--mik", BOOL, h[2])
+	app.AppenNewOption("-k", "", BOOL, h[3])
 	// Declare new options
 
 	// ====================== RUN ============================
@@ -57,7 +57,6 @@ func TestApplication(t *testing.T) {
 	if app.Options != nil {
 		for _, val := range app.options {
 			fmt.Print(val.Name() + " " + val.Alias() + " ")
-			fmt.Print(val.RequireFlags())
 			if val.TypeFlag() == 0 {
 				fmt.Print(" BOOL")
 			} else {

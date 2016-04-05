@@ -10,11 +10,6 @@ func (o *Option) SetAlias(als string) {
 	o.alias = als
 }
 
-// SetRequireFlags sets other flag that the option requires
-func (o *Option) SetRequireFlags(reqFl []string) {
-	o.requireFlags = reqFl
-}
-
 // SetAction func set's the function that will
 // execute when the flag is lunched
 func (o *Option) SetAction(handlr Handler) {

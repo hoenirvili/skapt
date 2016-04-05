@@ -28,7 +28,6 @@ func (c *Command) SetOptionsOfACommand(flags [][]string, actions []Handler) {
 			c.options[i].SetName(flags[i][0])
 			c.options[i].SetAlias(flags[i][1])
 			c.options[i].SetTypeFlag(flags[i][2])
-			c.options[i].SetRequireFlags(flags[i][3:])
 			c.options[i].SetAction(actions[i])
 		} else {
 			errOnExit(errNFlags)
