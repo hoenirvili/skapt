@@ -1,6 +1,4 @@
-1.application.go TODO
-2.core.go TODO
+1.cmd base parser
+2.flag base parser uint test
 
 
-1. make internal flags to detect also base command line flags
-2. make the parser for flag based app and command based app(refactor, new design)
