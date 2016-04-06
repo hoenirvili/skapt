@@ -2,30 +2,6 @@ package Skapt
 
 import "fmt"
 
-// Run the App
-func (a App) Run() {
-
-	// we have args
-	if len(a.args) > 0 {
-		// we have defined our app to be flag based
-		if a.commands == nil {
-			// parse all our args and execute the handlers
-			a.echoHelp()
-			flagBaseApp(a.args, a.options)
-		} else {
-			// we have define our app to be sub-command based
-			if a.options == nil {
-				// parse SubCommand and execute the hadlers of the flags
-				commandBaseApp()
-			}
-		}
-	} else {
-		fmt.Println("temaplte system")
-		//TODO: make the template system to generate all the echo content
-		//help_tempalte()
-	}
-}
-
 type parser struct {
 	// slice of checked flags
 	checkedOpts []Option
@@ -37,9 +13,7 @@ type parser struct {
 	reqList []int
 }
 
-func flagBaseApp(args []string, opts []Option) {
-	p := parser{}
-
+func (p *parser) flagBaseApp(args []string, opts []Option) {
 	check := false
 	lenOpts := len(opts) // number of options declared
 	lenArgs := len(args) // number of args
@@ -54,7 +28,7 @@ func flagBaseApp(args []string, opts []Option) {
 			// if the flag was not parssed yet
 			// if the flag is not just a target for another flag
 			// and the flag has an action
-			if isStateFullFlag(args, opts, p, i, j) {
+			if p.isStateFullFlag(args, opts, i, j) {
 				// put the flag in the list to parse
 				p.checkedOpts = append(p.checkedOpts, opts[j])
 				// if we have a special flag that requires a target
@@ -73,7 +47,7 @@ func flagBaseApp(args []string, opts []Option) {
 				check = true
 				break
 				// if the flag is stateless that means it's just a dependency flag
-			} else if isStatelessFlag(args, opts, p, i, j) {
+			} else if p.isStatelessFlag(args, opts, i, j) {
 				// we append the flag into our dependency list
 				p.reqList = append(p.reqList, i)
 				// test if the flag is INT,STRING
@@ -96,7 +70,7 @@ func flagBaseApp(args []string, opts []Option) {
 			}
 		} //for
 		// if the flag was not checked and was not in our ignoreList been aded yet.
-		if !check && !existInIgnoreList(i, p.ignoreList) {
+		if !check && !p.existInIgnoreList(i) {
 			// add the unparsed/unknow flag into list
 			p.indexListUnparsed = append(p.indexListUnparsed, i)
 		}
@@ -115,8 +89,8 @@ func flagBaseApp(args []string, opts []Option) {
 // if the flag was not parssed yet
 // if the flag is not just a target for another flag
 // and the flag has an action
-func isStateFullFlag(args []string, opts []Option, p parser, i, j int) bool {
-	if (args[i] == opts[j].name || args[i] == opts[j].alias) && !argsWasParsed(opts[j], p.checkedOpts) && !existInIgnoreList(i, p.ignoreList) && opts[j].action != nil {
+func (p parser) isStateFullFlag(args []string, opts []Option, i, j int) bool {
+	if (args[i] == opts[j].name || args[i] == opts[j].alias) && !p.argsWasParsed(opts[j]) && !p.existInIgnoreList(i) && opts[j].action != nil {
 		return true
 	}
 	return false
@@ -126,18 +100,18 @@ func isStateFullFlag(args []string, opts []Option, p parser, i, j int) bool {
 // if the flag was not parssed yet
 // if the flag is not just a target for another flag
 // and the flag has NO action
-func isStatelessFlag(args []string, opts []Option, p parser, i, j int) bool {
-	if (args[i] == opts[j].name || args[i] == opts[j].alias) && !argsWasParsed(opts[j], p.checkedOpts) && !existInIgnoreList(i, p.ignoreList) && opts[j].action == nil {
+func (p parser) isStatelessFlag(args []string, opts []Option, i, j int) bool {
+	if (args[i] == opts[j].name || args[i] == opts[j].alias) && !p.argsWasParsed(opts[j]) && !p.existInIgnoreList(i) && opts[j].action == nil {
 		return true
 	}
 	return false
 }
 
 // test if the flag was parsed
-func argsWasParsed(opt Option, parsed []Option) bool {
-	lenParsed := len(parsed)
+func (p parser) argsWasParsed(opt Option) bool {
+	lenParsed := len(p.checkedOpts)
 	for i := 0; i < lenParsed; i++ {
-		if opt.name == parsed[i].name {
+		if opt.name == p.checkedOpts[i].name {
 			return true
 		}
 	}
@@ -157,14 +131,38 @@ func isOption(opts []Option, s string) bool {
 }
 
 // test if the flag , targets are on the ignoreList
-func existInIgnoreList(index int, ignoreList []int) bool {
-	lenList := len(ignoreList)
+func (p parser) existInIgnoreList(index int) bool {
+	lenList := len(p.ignoreList)
 	for i := 0; i < lenList; i++ {
-		if ignoreList[i] == index {
+		if p.ignoreList[i] == index {
 			return true
 		}
 	}
 	return false
+}
+
+// Run the App
+func (a App) Run() {
+	// init parser on stack
+	p := parser{}
+	// we have args
+	if len(a.args) > 0 {
+		// we have defined our app to be flag based
+		if a.commands == nil {
+			// parse all our args and execute the handlers
+			p.flagBaseApp(a.args, a.options)
+		} else {
+			// we have define our app to be sub-command based
+			if a.options == nil {
+				// parse SubCommand and execute the hadlers of the flags
+				commandBaseApp()
+			}
+		}
+	} else {
+		fmt.Println("temaplte system")
+		//TODO: make the template system to generate all the echo content
+		//help_tempalte()
+	}
 }
 
 /// Function that parses subcommands
