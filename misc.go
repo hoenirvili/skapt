@@ -1,6 +1,11 @@
 package Skapt
 
-import "strconv"
+import (
+	"fmt"
+	"html/template"
+	"os"
+	"strconv"
+)
 
 func getTarget(opt Option, args []string) (string, int) {
 
@@ -48,4 +53,54 @@ func atoiWrapper(value string) (int, error) {
 	}
 
 	return val, nil
+}
+
+const (
+	appFlagHelpTemplate = `
+
+NAME:	{{ .Name }} 
+
+USAGE:  
+	{{ .Usage }}
+
+DESCRIPTION:
+	{{ .Description }}	
+
+OPTIONS:
+{{range $opt := .Options }}
+	{{ $opt.Name }}, {{$opt.Alias}} 
+		{{ $opt.Description }}
+{{ end }}
+
+AUTHORS : 
+	{{range $auth := .Authors }} {{$auth}} {{ end }}
+VERSION:
+	{{ .Version }}
+`
+	appCommandHelpTemplate = `NAME:
+	{{ .name }} - {{ .usage }}
+`
+)
+
+// Basic simple help generation tempalte
+// filling the template with all the info dynamically when
+// the App struct is filled
+func getHelpTemplate() *template.Template {
+	tmpl, err := template.New("help").Parse(appFlagHelpTemplate)
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil
+	}
+
+	return tmpl
+}
+
+// parsing and echo it to the STDOUT the template
+func (a App) echoHelp() {
+
+	if tmpl := getHelpTemplate(); tmpl != nil {
+		if err := tmpl.Execute(os.Stdout, a); err != nil {
+			fmt.Println(err.Error())
+		}
+	}
 }

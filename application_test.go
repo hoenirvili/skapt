@@ -18,23 +18,28 @@ var h = []Handler{
 	},
 	func() {
 		fmt.Println("func 3")
+	},
+	func() {
+		fmt.Println("func 4")
 	}}
 
 func TestApplication(t *testing.T) {
-	os.Args = []string{"", "-k", "dasdas", "-C", "dasdasda", "-f", "--path", "file/to/file/peer", "-G", "-lll"}
+	os.Args = []string{"", "-k", "-C", "-f", "--path", "file/to/file/peer", "-G"}
+	var auth = []string{"Jim Cook", "Alfred Benedict", "G G.", "Hacker Pacer"}
 	app := NewApp()
-	app.SetName("Golang\n")
+	app.SetName("Golang")
 
-	app.SetUsage("Usage: \n This is just an echo program simple app\n For displaying content and such things\n")
+	app.SetUsage("This is just an echo program simple app  For displaying content and such things\n")
 	app.SetDescription("Description dasjigsafsahgosafushaf")
 	app.SetVersion(true, "")
+	app.SetAuthors(auth)
 	// Set OPTIONS
 
-	app.AppenNewOption("-f", "-FUL", BOOL, h[0])
-	app.AppenNewOption("-C", "--create", BOOL, h[1])
-	app.AppenNewOption("--path", "-pth", STRING, h[1])
-	app.AppenNewOption("-G", "--mik", BOOL, h[2])
-	app.AppenNewOption("-k", "", BOOL, h[3])
+	app.AppenNewOption("-f", "-FUL", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", BOOL, h[0])
+	app.AppenNewOption("-C", "--create", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", BOOL, h[1])
+	app.AppenNewOption("--path", "-pth", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", STRING, nil)
+	app.AppenNewOption("-G", "--mik", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", BOOL, h[2])
+	app.AppenNewOption("-k", "", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", BOOL, h[3])
 	// Declare new options
 
 	// ====================== RUN ============================
@@ -54,22 +59,20 @@ func TestApplication(t *testing.T) {
 	fmt.Println()
 
 	// Options
-	if app.Options != nil {
-		for _, val := range app.options {
-			fmt.Print(val.Name() + " " + val.Alias() + " ")
-			if val.TypeFlag() == 0 {
-				fmt.Print(" BOOL")
+	for _, val := range app.options {
+		fmt.Print(val.Name() + " " + val.Alias() + " ")
+		if val.TypeFlag() == 0 {
+			fmt.Print(" BOOL")
+		} else {
+			if val.TypeFlag() == 1 {
+				fmt.Print(" STRING")
 			} else {
-				if val.TypeFlag() == 1 {
-					fmt.Print(" STRING")
-				} else {
-					if val.TypeFlag() == 2 {
-						fmt.Print(" INT")
-					}
+				if val.TypeFlag() == 2 {
+					fmt.Print(" INT")
 				}
 			}
-			fmt.Println()
 		}
+		fmt.Println()
 	}
 
 	// Print Commands
@@ -83,6 +86,7 @@ func TestApplication(t *testing.T) {
 			}
 		}
 	}
+
 	// Get the description of the program
 	fmt.Println("Version: " + app.Version())
 	// set the command for the application
@@ -94,20 +98,24 @@ func TestApplication(t *testing.T) {
 	fmt.Println()
 }
 
-/*
 func TestFlag(t *testing.T) {
 	os.Args = []string{"", "-k", "-C", "-f", "-pth", "file/to/file/peer", "--number", "522"}
 
 	app := NewApp()
 
-	app.SetVersion(true, "")
+	var auth = []string{"Jim Cook", "Alfred Benedict", "G G.", "Hacker Pacer"}
 
-	app.AppenNewOption("-f", "-FUL", nil, BOOL, h[0])
-	app.AppenNewOption("-C", "--create", []string{"--path"}, BOOL, h[1])
-	app.AppenNewOption("--path", "-pth", nil, STRING, nil)
-	app.AppenNewOption("-G", "--mik", nil, BOOL, h[2])
-	app.AppenNewOption("-k", "", nil, BOOL, h[3])
-	app.AppenNewOption("--number", "-nr", nil, INT, nil)
+	app.SetUsage("This is just an echo program simple app  For displaying content and such things\n")
+	app.SetDescription("Description dasjigsafsahgosafushaf")
+	app.SetVersion(true, "")
+	app.SetAuthors(auth)
+
+	app.AppenNewOption("-f", "-FUL", "Lorem ipsum joke mmomomdoas osaiudfhsi ughisuadh gas", BOOL, h[0])
+	app.AppenNewOption("-C", "--create", "Lorem ipsum ijiojasdofj oasdijfosaidjf", BOOL, h[1])
+	app.AppenNewOption("--path", "-pth", "Lorem ipsum ijiojasdofj oasdijfosaidjf", STRING, nil)
+	app.AppenNewOption("-G", "--mik", "Lorem ipsum ijiojasdofj oasdijfosaidjf", BOOL, h[2])
+	app.AppenNewOption("-k", "", "Lorem ipsum ijiojasdofj oasdijfosaidjf", BOOL, h[3])
+	app.AppenNewOption("--number", "-nr", "Lorem ipsum ijiojasdofj oasdijfosaidjf", INT, nil)
 	// Declare new options
 
 	// ====================== RUN ============================
@@ -119,15 +127,15 @@ func TestFlag(t *testing.T) {
 	fmt.Println()
 	fmt.Print("--path STRING=")
 	fmt.Println(app.String("--path"))
-	fmt.Print("-k BOOL= ")
+	fmt.Print("-k BOOL=\t")
 	fmt.Println(app.Bool("-k"))
-	fmt.Print("-G BOOL= ")
+	fmt.Print("-G BOOL=\t")
 	fmt.Println(app.Bool("-G"))
-	fmt.Print("-FUL BOOL= ")
+	fmt.Print("-FUL BOOL=\t")
 	fmt.Println(app.Bool("-FUL"))
-	fmt.Print("mmm BOOL= ")
+	fmt.Print("-mmm BOOL =\t")
 	fmt.Println(app.Bool("mmm"))
-	fmt.Print("--number INT= ")
+	fmt.Print("--number INT=\t")
 	fmt.Println(app.Int("-nr"))
 	fmt.Println()
 
@@ -151,9 +159,9 @@ func TestFlagCommand(t *testing.T) {
 	// Declare new commands
 	var f [][]string
 	//set all things
-	f = append(f, []string{"flag1", "flag2", "INT", ""})
-	f = append(f, []string{"flag3", "flag4", "STRING", ""})
-	f = append(f, []string{"flag5", "flag6", "BOOL", ""})
+	f = append(f, []string{"flag1", "flag2", "Lorem usadiuhdsaiufhsdiuahfisuadhf iusdahf sad", "INT", ""})
+	f = append(f, []string{"flag3", "flag4", "Lomrqiudsaihfiashfiasuhf iash fjashf iuahs f", "STRING", ""})
+	f = append(f, []string{"flag5", "flag6", "oijadsiusad idsjkldsaloiasdh fhsadf hasd fih dsaifh ", "BOOL", ""})
 	//f = append(f, []string{"kkk", "ghsad"})
 
 	app.AppendNewCommand("init", "Init the tests or our application", "Inits all the app", f, h)
@@ -170,7 +178,6 @@ func TestFlagCommand(t *testing.T) {
 		for _, opt := range cmd.options {
 			fmt.Println("Opt n = " + opt.Name())
 			fmt.Println("Alias a= " + opt.Alias())
-			fmt.Println(opt.RequireFlags())
 			fmt.Println(opt.TypeFlag())
 			fmt.Println("=========================")
 			fmt.Println()
@@ -193,4 +200,4 @@ func TestFlagCommand(t *testing.T) {
 	fmt.Println()
 	fmt.Println()
 
-} */
+}

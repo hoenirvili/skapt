@@ -16,6 +16,12 @@ func (o *Option) SetAction(handlr Handler) {
 	o.action = handlr
 }
 
+// SetDescription set's the descript of the flag
+// what the flag does
+func (o *Option) SetDescription(desc string) {
+	o.description = desc
+}
+
 // SetTypeFlag sets the type of flag
 // INT
 // STRING

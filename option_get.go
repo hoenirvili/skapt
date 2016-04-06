@@ -14,3 +14,8 @@ func (o Option) Alias() string {
 func (o Option) TypeFlag() uint8 {
 	return o.typeFlag
 }
+
+//Description gets description of option
+func (o Option) Description() string {
+	return o.description
+}
