@@ -50,16 +50,12 @@ func (a *App) SetVersion(fromFile bool, versNum string) {
 			switch i {
 			case 0:
 				a.version.version = val
-				break
 			case 1:
 				a.version.majorRevision = val
-				break
 			case 2:
 				a.version.minorRevision = val
-				break
 			case 3:
 				a.version.fixRevisionDet = val
-				break
 			}
 		}
 	}

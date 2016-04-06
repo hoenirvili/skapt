@@ -85,8 +85,8 @@ VERSION:
 // Basic simple help generation tempalte
 // filling the template with all the info dynamically when
 // the App struct is filled
-func getHelpTemplate() *template.Template {
-	tmpl, err := template.New("help").Parse(appFlagHelpTemplate)
+func getHelpTemplate(temp string) *template.Template {
+	tmpl, err := template.New("help").Parse(temp)
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil
@@ -97,10 +97,20 @@ func getHelpTemplate() *template.Template {
 
 // parsing and echo it to the STDOUT the template
 func (a App) echoHelp() {
-
-	if tmpl := getHelpTemplate(); tmpl != nil {
-		if err := tmpl.Execute(os.Stdout, a); err != nil {
-			fmt.Println(err.Error())
+	// flag base app
+	if a.commands == nil {
+		if tmpl := getHelpTemplate(appFlagHelpTemplate); tmpl != nil {
+			if err := tmpl.Execute(os.Stdout, a); err != nil {
+				fmt.Println(err.Error())
+			}
+		}
+		// command base app
+	} else if a.options == nil {
+		if tmpl := getHelpTemplate(appCommandHelpTemplate); tmpl != nil {
+			if err := tmpl.Execute(os.Stdout, a); err != nil {
+				fmt.Println(err.Error())
+			}
 		}
 	}
+
 }

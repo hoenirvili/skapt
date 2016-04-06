@@ -159,9 +159,7 @@ func (a App) Run() {
 			}
 		}
 	} else {
-		fmt.Println("temaplte system")
-		//TODO: make the template system to generate all the echo content
-		//help_tempalte()
+		a.echoHelp()
 	}
 }
 

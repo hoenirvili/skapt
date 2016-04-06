@@ -154,7 +154,7 @@ func TestFlagCommand(t *testing.T) {
 	os.Args = []string{"", "init", "flag1"}
 	app := NewApp()
 	app.SetName("Golang\n")
-	app.SetVersion(false, "1.0.0.0")
+	app.SetVersion(false, "1.0.0")
 
 	// Declare new commands
 	var f [][]string
