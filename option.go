@@ -15,11 +15,17 @@ const (
 // and the handler that will execute when
 // our app will parse that flag.
 type Option struct {
-	name        string
-	alias       string
+	// primary name of flag
+	name string
+	// alias name of the flag
+	alias string
+	// description of the flag
 	description string
-	typeFlag    uint8
-	action      Handler
+	// type of the flag
+	typeFlag uint8
+	// the handler when that will be executed
+	// when the flag is parsed
+	action Handler
 }
 
 // Exec run the handler

@@ -147,7 +147,7 @@ func (a *App) AppendNewCommand(name, desc, usg string, flags [][]string, actions
 		cmd.SetDescription(desc)
 		cmd.SetUsage(usg)
 		cmd.SetOptionsOfACommand(flags, actions)
-		// addthe new command to the slice of commands
+		// add new command to the slice of commands
 		a.commands = append(a.commands, cmd)
 	}
 }

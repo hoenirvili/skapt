@@ -42,7 +42,7 @@ func getTarget(opt Option, args []string) (string, int) {
 	return targetS, targetI
 }
 
-// Basic simple wrapper for strConv
+// simple wrapper for strConv
 // providing custom error output
 func atoiWrapper(value string) (int, error) {
 	val, err := strconv.Atoi(value)
@@ -53,6 +53,20 @@ func atoiWrapper(value string) (int, error) {
 	}
 
 	return val, nil
+}
+
+// transfrom string to Flag INT, STRING, BOOL
+func stringToFlag(value string) uint8 {
+	switch value {
+	case "STRING":
+		return STRING
+	case "BOOL":
+		return BOOL
+	case "INT":
+		return INT
+	}
+
+	return UNKNOWN
 }
 
 const (
@@ -68,17 +82,40 @@ DESCRIPTION:
 
 OPTIONS:
 {{range $opt := .Options }}
-	{{ $opt.Name }}, {{$opt.Alias}} 
+	{{ $opt.Name }}, {{ $opt.Alias }} 
 		{{ $opt.Description }}
 {{ end }}
 
 AUTHORS : 
-	{{range $auth := .Authors }} {{$auth}} {{ end }}
+	{{ range $auth := .Authors }} {{ $auth }} {{ end }}
 VERSION:
 	{{ .Version }}
 `
 	appCommandHelpTemplate = `NAME:
-	{{ .name }} - {{ .usage }}
+NAME :	{{ .Name }}
+
+USAGE: 
+	{{ .Usage }}
+
+DESCRIPTION:
+	{{ .Description }}
+
+
+COMMANDS:
+{{ range $cmd := .Commands }}
+	{{ $cmd.Name }} - {{ $cmd.Usage }}
+		{{ $cmd.Description }}
+		{{ range $opt := $cmd.Options }}
+		{{ $opt.Name }}, {{ $opt.Alias }} 
+		{{ $opt.Description }}
+		{{ end }}
+{{ end }}
+
+VERSION:
+	{{ .Version }}
+
+AUTHORS:
+	{{ range $auth := .Authors }} {{ $auth }} {{ end }}
 `
 )
 

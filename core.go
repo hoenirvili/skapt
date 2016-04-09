@@ -13,6 +13,7 @@ type parser struct {
 	reqList []int
 }
 
+// flag base main logic parser
 func (p *parser) flagBaseApp(args []string, opts []Option) {
 	check := false
 	lenOpts := len(opts) // number of options declared
@@ -141,6 +142,11 @@ func (p parser) existInIgnoreList(index int) bool {
 	return false
 }
 
+// commandBaseApp
+func (p *parser) commandBaseApp(args []string, a App) {
+	a.echoHelp()
+}
+
 // Run the App
 func (a App) Run() {
 	// init parser on stack
@@ -155,16 +161,10 @@ func (a App) Run() {
 			// we have define our app to be sub-command based
 			if a.options == nil {
 				// parse SubCommand and execute the hadlers of the flags
-				commandBaseApp()
+				p.commandBaseApp(a.args, a)
 			}
 		}
 	} else {
 		a.echoHelp()
 	}
-}
-
-/// Function that parses subcommands
-//TODO: make the func to parse all the commands
-func commandBaseApp() {
-	fmt.Println("command base app")
 }

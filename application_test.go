@@ -23,6 +23,7 @@ var h = []Handler{
 		fmt.Println("func 4")
 	}}
 
+/*
 func TestApplication(t *testing.T) {
 	os.Args = []string{"", "-k", "-C", "-f", "--path", "file/to/file/peer", "-G"}
 	var auth = []string{"Jim Cook", "Alfred Benedict", "G G.", "Hacker Pacer"}
@@ -149,7 +150,7 @@ func TestFlag(t *testing.T) {
 	fmt.Println()
 	fmt.Println()
 }
-
+*/
 func TestFlagCommand(t *testing.T) {
 	os.Args = []string{"", "init", "flag1"}
 	app := NewApp()
@@ -162,7 +163,6 @@ func TestFlagCommand(t *testing.T) {
 	f = append(f, []string{"flag1", "flag2", "Lorem usadiuhdsaiufhsdiuahfisuadhf iusdahf sad", "INT", ""})
 	f = append(f, []string{"flag3", "flag4", "Lomrqiudsaihfiashfiasuhf iash fjashf iuahs f", "STRING", ""})
 	f = append(f, []string{"flag5", "flag6", "oijadsiusad idsjkldsaloiasdh fhsadf hasd fih dsaifh ", "BOOL", ""})
-	//f = append(f, []string{"kkk", "ghsad"})
 
 	app.AppendNewCommand("init", "Init the tests or our application", "Inits all the app", f, h)
 	app.AppendNewCommand("save", "Saves all logs.", "Unwanted usage", f, h)

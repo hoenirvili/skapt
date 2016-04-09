@@ -15,8 +15,13 @@ func (c Command) Description() string {
 	return c.description
 }
 
+// Retruns options from the specific command
+func (c Command) Options() []Option {
+	return c.options
+}
+
 // NameOptions func returns all flags
-// or if the is not a single flag set it will
+// or if is not a single flag set it will
 // return nil
 func (c Command) NameOptions() []string {
 	if len(c.options) > 0 {

@@ -30,6 +30,10 @@ func (a App) Options() []Option {
 	return a.options
 }
 
+func (a App) Commands() []Command {
+	return a.commands
+}
+
 // Args returns the arguments passed on the command line
 // This uses os.args but without the first element of the slice[0]
 func (a App) Args() []string {

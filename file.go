@@ -15,10 +15,12 @@ func getPathVersion() string {
 	if err != nil {
 		fmt.Println("Can't optain the root path of the project")
 	}
+
 	//host our root/base path and our fileName(VERSION)
 	holder := []string{
 		rootPath,
-		name}
+		name,
+	}
 
 	path := strings.Join(holder, "/")
 
