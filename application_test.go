@@ -156,7 +156,7 @@ func TestFlagCommand(t *testing.T) {
 	app := NewApp()
 	app.SetName("Golang\n")
 	app.SetVersion(false, "1.0.0")
-
+	app.SetAuthors([]string{"Hoenirvili"})
 	// Declare new commands
 	var f [][]string
 	//set all things

@@ -86,6 +86,8 @@ OPTIONS:
 		{{ $opt.Description }}
 {{ end }}
 
+	--help, -h  print out the help message
+
 AUTHORS : 
 	{{ range $auth := .Authors }} {{ $auth }} {{ end }}
 VERSION:
@@ -110,6 +112,8 @@ COMMANDS:
 		{{ $opt.Description }}
 		{{ end }}
 {{ end }}
+
+	--help, -h  print out the help message
 
 VERSION:
 	{{ .Version }}

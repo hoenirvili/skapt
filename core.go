@@ -14,8 +14,11 @@ type parser struct {
 }
 
 // flag base main logic parser
-func (p *parser) flagBaseApp(args []string, opts []Option) {
+func (p *parser) flagBaseApp(a *App) {
 	check := false
+	args := a.args
+	opts := a.options
+
 	lenOpts := len(opts) // number of options declared
 	lenArgs := len(args) // number of args
 
@@ -41,7 +44,8 @@ func (p *parser) flagBaseApp(args []string, opts []Option) {
 					} else {
 						// else error message, bound check failed and that means we require a target and target was not passed
 						// TODO template
-						fmt.Println("bound check failed or the next arg is option we require a target and the target was not correctly")
+						fmt.Println("Bound check failed or the next arg is option we require a target and the target was not correctly")
+						goto exit_grace
 					}
 				}
 				// after all the process just auth the flag checking it and exit the loop
@@ -63,6 +67,7 @@ func (p *parser) flagBaseApp(args []string, opts []Option) {
 						// else error message, bound check failed and that means we require a target and target was not passed
 						// TODO template
 						fmt.Println("bound check failed or the next arg is option we require a target and the target was not correctly")
+						goto exit_grace
 					}
 				}
 				// after all the proces just auth the flag checking it and exit the loop
@@ -78,12 +83,18 @@ func (p *parser) flagBaseApp(args []string, opts []Option) {
 	} //for
 
 	if len(p.indexListUnparsed) > 0 {
-		fmt.Println("check manual")
+		n := len(p.indexListUnparsed)
+		for i := 0; i < n; i++ {
+			fmt.Printf("Unknown flag %s\n", args[p.indexListUnparsed[i]])
+		}
+		fmt.Println("Check the user manual with -h, --help flags")
 	} else {
 		for _, action := range p.checkedOpts {
 			action.Exec()
 		}
 	}
+
+exit_grace:
 }
 
 // if the flag is declared on our slice of option
@@ -143,7 +154,7 @@ func (p parser) existInIgnoreList(index int) bool {
 }
 
 // commandBaseApp
-func (p *parser) commandBaseApp(args []string, a App) {
+func (p *parser) commandBaseApp(a *App) {
 	a.echoHelp()
 }
 
@@ -155,13 +166,17 @@ func (a App) Run() {
 	if len(a.args) > 0 {
 		// we have defined our app to be flag based
 		if a.commands == nil {
+			// default flag
+			a.AppenNewOption("-h", "--help", "Print out the help message", BOOL, a.echoHelp)
 			// parse all our args and execute the handlers
-			p.flagBaseApp(a.args, a.options)
+			p.flagBaseApp(&a)
 		} else {
 			// we have define our app to be sub-command based
 			if a.options == nil {
+				// default flag
+				a.AppendNewCommand("help", "", "Print out the help message", nil, []Handler{a.echoHelp})
 				// parse SubCommand and execute the hadlers of the flags
-				p.commandBaseApp(a.args, a)
+				p.commandBaseApp(&a)
 			}
 		}
 	} else {
