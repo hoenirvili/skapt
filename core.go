@@ -13,6 +13,18 @@ type parser struct {
 	reqList []int
 }
 
+// commandBaseApp
+//TODO
+func (p *parser) commandBaseApp(a *App) {
+	// check := false
+	// args := a.args
+	// cmds := a.commands
+	// lenCmds := len(cmds)
+	// //TODO
+	// //lenOpts := len(a.commands.options)
+	// lenArgs := len(args)
+}
+
 // flag base main logic parser
 func (p *parser) flagBaseApp(a *App) {
 	check := false
@@ -38,13 +50,15 @@ func (p *parser) flagBaseApp(a *App) {
 				// if we have a special flag that requires a target
 				switch opts[j].typeFlag {
 				case INT, STRING:
-					if i < lenArgs && !isOption(opts, args[i+1]) { // test the bound array and if the next args is not an option
-						// add the target into ignoreList
-						p.ignoreList = append(p.ignoreList, i+1)
+					if i+1 < lenArgs {
+						if !isOption(opts, args[i+1]) { // test the bound array and if the next args is not an option
+							// add the target into ignoreList
+							p.ignoreList = append(p.ignoreList, i+1)
+						}
 					} else {
 						// else error message, bound check failed and that means we require a target and target was not passed
-						// TODO template
-						fmt.Println("Bound check failed or the next arg is option we require a target and the target was not correctly")
+						fmt.Printf("The arg %s requires a specific target\n Please check the user manual with -h, --help ", args[i])
+						a.echoHelp()
 						goto exit_grace
 					}
 				}
@@ -60,13 +74,15 @@ func (p *parser) flagBaseApp(a *App) {
 				// if we have a special flag that requires a target
 				switch opts[j].typeFlag {
 				case INT, STRING:
-					if i < lenArgs && !isOption(opts, args[i+1]) { // test the bound array and if the next args is not an option
-						// add the target into ignoreList
-						p.ignoreList = append(p.ignoreList, i+1)
+					if i+1 < lenArgs {
+						if !isOption(opts, args[i+1]) { // test the bound array and if the next args is not an option
+							// add the target into ignoreList
+							p.ignoreList = append(p.ignoreList, i+1)
+						}
 					} else {
 						// else error message, bound check failed and that means we require a target and target was not passed
-						// TODO template
-						fmt.Println("bound check failed or the next arg is option we require a target and the target was not correctly")
+						fmt.Printf("The arg %s requires a specific target\n Please check the user manual with -h, --help ", args[i])
+						a.echoHelp()
 						goto exit_grace
 					}
 				}
@@ -151,11 +167,6 @@ func (p parser) existInIgnoreList(index int) bool {
 		}
 	}
 	return false
-}
-
-// commandBaseApp
-func (p *parser) commandBaseApp(a *App) {
-	a.echoHelp()
 }
 
 // Run the App

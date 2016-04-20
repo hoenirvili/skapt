@@ -93,7 +93,7 @@ AUTHORS :
 VERSION:
 	{{ .Version }}
 `
-	appCommandHelpTemplate = `NAME:
+	appCommandHelpTemplate = `
 NAME :	{{ .Name }}
 
 USAGE: 

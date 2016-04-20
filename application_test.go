@@ -168,31 +168,31 @@ func TestFlagCommand(t *testing.T) {
 	app.AppendNewCommand("save", "Saves all logs.", "Unwanted usage", f, h)
 	app.AppendNewCommand("install", "Install the system drivers", "Usage usage", f, h)
 
-	//print all things
-	for _, cmd := range app.commands {
-		fmt.Println("=========================")
-		fmt.Println("Name cmd " + cmd.Name())
-		fmt.Println("Descr cmd " + cmd.Description())
-		fmt.Println("Usg cmd " + cmd.Usage())
-		fmt.Println()
-		for _, opt := range cmd.options {
-			fmt.Println("Opt n = " + opt.Name())
-			fmt.Println("Alias a= " + opt.Alias())
-			fmt.Println(opt.TypeFlag())
-			fmt.Println("=========================")
-			fmt.Println()
-		}
-	}
+	// //print all things
+	// for _, cmd := range app.commands {
+	// 	fmt.Println("=========================")
+	// 	fmt.Println("Name cmd " + cmd.Name())
+	// 	fmt.Println("Descr cmd " + cmd.Description())
+	// 	fmt.Println("Usg cmd " + cmd.Usage())
+	// 	fmt.Println()
+	// 	for _, opt := range cmd.options {
+	// 		fmt.Println("Opt n = " + opt.Name())
+	// 		fmt.Println("Alias a= " + opt.Alias())
+	// 		fmt.Println(opt.TypeFlag())
+	// 		fmt.Println("=========================")
+	// 		fmt.Println()
+	// 	}
+	// }
 
 	// ====================== RUN ============================
 	fmt.Println("================")
 	app.Run()
 	fmt.Println("================")
 	// ====================== PRINT ==========================
-
-	// Get the description of the program
-	fmt.Println("Version: " + app.Version())
-	// set the command for the application
+	//
+	// // Get the description of the program
+	// fmt.Println("Version: " + app.Version())
+	// // set the command for the application
 	fmt.Println()
 	fmt.Println()
 	fmt.Printf("Args off applicaiton provided: %s", app.Args())
