@@ -35,9 +35,8 @@ func (p *parser) commandBaseApp(a *App) {
 	if cmd != nil {
 		lenOpts := len(cmd.options)
 		opts := cmd.options
-		// SSTART startIF
 		// parse every flag of any type
-		for i := 0; i < lenArgs; i++ {
+		for i := 1; i < lenArgs; i++ {
 			// reset check to ensure that every flag is transparent
 			check = false
 			// for every option in our app
@@ -111,8 +110,6 @@ func (p *parser) commandBaseApp(a *App) {
 				action.Exec()
 			}
 		}
-
-		// END IFF
 	} else {
 		a.echoHelp()
 	}
