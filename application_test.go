@@ -35,11 +35,11 @@ func TestApplication(t *testing.T) {
 	app.SetAuthors(auth)
 	// Set OPTIONS
 
-	app.AppenNewOption("-f", "-FUL", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", BOOL, h[0])
-	app.AppenNewOption("-C", "--create", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", BOOL, h[1])
-	app.AppenNewOption("--path", "-pth", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", STRING, nil)
-	app.AppenNewOption("-G", "--mik", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", BOOL, h[2])
-	app.AppenNewOption("-k", "", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", BOOL, h[3])
+	app.AppendNewOption("-f", "-FUL", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", BOOL, h[0])
+	app.AppendNewOption("-C", "--create", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", BOOL, h[1])
+	app.AppendNewOption("--path", "-pth", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", STRING, nil)
+	app.AppendNewOption("-G", "--mik", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", BOOL, h[2])
+	app.AppendNewOption("-k", "", "LOREM ipsum loremipsjduijdsiauhf iausdhf isadhf isudhf aisuf", BOOL, h[3])
 	// Declare new options
 
 	// ====================== RUN ============================
@@ -110,12 +110,12 @@ func TestFlag(t *testing.T) {
 	app.SetVersion(true, "")
 	app.SetAuthors(auth)
 
-	app.AppenNewOption("-f", "-FUL", "Lorem ipsum joke mmomomdoas osaiudfhsi ughisuadh gas", BOOL, h[0])
-	app.AppenNewOption("-C", "--create", "Lorem ipsum ijiojasdofj oasdijfosaidjf", BOOL, h[1])
-	app.AppenNewOption("--path", "-pth", "Lorem ipsum ijiojasdofj oasdijfosaidjf", STRING, nil)
-	app.AppenNewOption("-G", "--mik", "Lorem ipsum ijiojasdofj oasdijfosaidjf", BOOL, h[2])
-	app.AppenNewOption("-k", "", "Lorem ipsum ijiojasdofj oasdijfosaidjf", BOOL, h[3])
-	app.AppenNewOption("--number", "-nr", "Lorem ipsum ijiojasdofj oasdijfosaidjf", INT, nil)
+	app.AppendNewOption("-f", "-FUL", "Lorem ipsum joke mmomomdoas osaiudfhsi ughisuadh gas", BOOL, h[0])
+	app.AppendNewOption("-C", "--create", "Lorem ipsum ijiojasdofj oasdijfosaidjf", BOOL, h[1])
+	app.AppendNewOption("--path", "-pth", "Lorem ipsum ijiojasdofj oasdijfosaidjf", STRING, nil)
+	app.AppendNewOption("-G", "--mik", "Lorem ipsum ijiojasdofj oasdijfosaidjf", BOOL, h[2])
+	app.AppendNewOption("-k", "", "Lorem ipsum ijiojasdofj oasdijfosaidjf", BOOL, h[3])
+	app.AppendNewOption("--number", "-nr", "Lorem ipsum ijiojasdofj oasdijfosaidjf", INT, nil)
 	// Declare new options
 
 	// ====================== RUN ============================

@@ -270,7 +270,7 @@ func (a App) Run() {
 		// we have defined our app to be flag based
 		if a.commands == nil {
 			// default flag
-			a.AppenNewOption("-h", "--help", "Print out the help message", BOOL, a.echoHelp)
+			a.AppendNewOption("-h", "--help", "Print out the help message", BOOL, a.echoHelp)
 			// parse all our args and execute the handlers
 			p.flagBaseApp(&a)
 		} else {

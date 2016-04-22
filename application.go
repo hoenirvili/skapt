@@ -152,8 +152,8 @@ func (a *App) AppendNewCommand(name, desc, usg string, flags [][]string, actions
 	}
 }
 
-// AppenNewOption appends a new option to our cli App
-func (a *App) AppenNewOption(name, alias, desc string, typeFlag uint8, action Handler) {
+// AppendNewOption appends a new option to our cli App
+func (a *App) AppendNewOption(name, alias, desc string, typeFlag uint8, action Handler) {
 	// sub command pattern not intended
 	if a.commands == nil {
 		var opt Option
