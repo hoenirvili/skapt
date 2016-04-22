@@ -18,11 +18,11 @@ var (
 
 // C style exit flgs
 const (
-	EXIT_SUCCESS = iota
-	EXIT_FAILURE
+	SUCCESS = iota
+	FAILURE
 )
 
 func errOnExit(err error) {
 	fmt.Fprintf(os.Stderr, "%s\n", err)
-	os.Exit(EXIT_FAILURE)
+	os.Exit(FAILURE)
 }

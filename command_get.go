@@ -15,7 +15,7 @@ func (c Command) Description() string {
 	return c.description
 }
 
-// Retruns options from the specific command
+// Options returns slice of declared options/flags
 func (c Command) Options() []Option {
 	return c.options
 }

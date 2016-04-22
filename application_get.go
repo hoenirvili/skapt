@@ -30,6 +30,7 @@ func (a App) Options() []Option {
 	return a.options
 }
 
+// Commands returns the slice of declared commands
 func (a App) Commands() []Command {
 	return a.commands
 }

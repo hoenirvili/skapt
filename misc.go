@@ -72,23 +72,23 @@ func stringToFlag(value string) uint8 {
 const (
 	appFlagHelpTemplate = `
 
-NAME:	{{ .Name }} 
+NAME:	{{ .Name }}
 
-USAGE:  
+USAGE:
 	{{ .Usage }}
 
 DESCRIPTION:
-	{{ .Description }}	
+	{{ .Description }}
 
 OPTIONS:
 {{range $opt := .Options }}
-	{{ $opt.Name }}, {{ $opt.Alias }} 
+	{{ $opt.Name }}, {{ $opt.Alias }}
 		{{ $opt.Description }}
 {{ end }}
 
 	--help, -h  print out the help message
 
-AUTHORS : 
+AUTHORS :
 	{{ range $auth := .Authors }} {{ $auth }} {{ end }}
 VERSION:
 	{{ .Version }}
@@ -96,7 +96,7 @@ VERSION:
 	appCommandHelpTemplate = `
 NAME :	{{ .Name }}
 
-USAGE: 
+USAGE:
 	{{ .Usage }}
 
 DESCRIPTION:
@@ -108,7 +108,7 @@ COMMANDS:
 	{{ $cmd.Name }} - {{ $cmd.Usage }}
 		{{ $cmd.Description }}
 		{{ range $opt := $cmd.Options }}
-		{{ $opt.Name }}, {{ $opt.Alias }} 
+		{{ $opt.Name }}, {{ $opt.Alias }}
 		{{ $opt.Description }}
 		{{ end }}
 {{ end }}
