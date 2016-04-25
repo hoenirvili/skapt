@@ -21,7 +21,8 @@ var h = []Handler{
 	},
 	func() {
 		fmt.Println("func 4")
-	}}
+	},
+}
 
 func TestApplication(t *testing.T) {
 	os.Args = []string{"", "-k", "-C", "-f", "--path", "file/to/file/peer", "-G"}
