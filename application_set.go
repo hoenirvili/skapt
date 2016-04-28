@@ -18,19 +18,20 @@ func (a *App) SetDescription(desc string) {
 	a.description = desc
 }
 
-// SetOptions func sets the all app option/flags and their handlers
-func (a *App) SetOptions(flags [][]string, actions []Handler) {
-	// return the number of lines
-	nFlags := len(flags)
-	// create a slice of options
-	a.options = make([]Option, nFlags)
-	// fil the slice
-	for i := 0; i < nFlags; i++ {
-		a.options[i].SetName(flags[i][0])
-		a.options[i].SetAlias(flags[i][1])
-		a.options[i].SetAction(actions[i])
-	}
-}
+//
+// // SetOptions func sets the all app option/flags and their handlers
+// func (a *App) SetOptions(flags [][]string, actions []Handler) {
+// 	// return the number of lines
+// 	nFlags := len(flags)
+// 	// create a slice of options
+// 	a.options = make([]Option, nFlags)
+// 	// fil the slice
+// 	for i := 0; i < nFlags; i++ {
+// 		a.options[i].SetName(flags[i][0])
+// 		a.options[i].SetAlias(flags[i][1])
+// 		a.options[i].SetAction(actions[i])
+// 	}
+// }
 
 // SetAuthors sets the authors of the app
 func (a *App) SetAuthors(auth []string) {

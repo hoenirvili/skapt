@@ -160,11 +160,11 @@ func (a *App) AppendNewOption(name, alias, desc string, typeFlag uint8, action H
 		// set the conent of the obj
 		opt.SetName(name)
 		opt.SetAlias(alias)
+		opt.SetDescription(desc)
+		opt.SetTypeFlag(typeFlag)
 		if action != nil {
 			opt.SetAction(action)
 		}
-		opt.SetTypeFlag(typeFlag)
-		opt.SetDescription(desc)
 		a.options = append(a.options, opt)
 	}
 }

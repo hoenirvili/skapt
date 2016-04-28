@@ -5,10 +5,10 @@ type Handler func()
 
 // All flag types of App
 const (
-	BOOL    = iota // BOOL flag type
-	STRING         // STRING flag type
-	INT            // INT flag type
-	UNKNOWN        // UNKNOWN flag type
+	BOOL    uint8 = iota // BOOL flag type
+	STRING               // STRING flag type
+	INT                  // INT flag type
+	UNKNOWN              // UNKNOWN flag type
 )
 
 // Option is the struct that will hold a flag
