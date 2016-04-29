@@ -10,42 +10,6 @@
 ## This package is still in development
 
 **Note** : This package will support the two main command line patterns.
-### Sub-Command
-**Sub-Command** pattern is the pattern that executable takes sub-command for change its behavior. Git command is one example for this pattern or node package manager(npm).Git takes push, pull subcommands and as for npm init, start, stop, update, upgrade etc.
-
-```go
-package main
-
-import (
-	"fmt"
-
-	"github.com/hoenirvili/Skapt"
-)
-
-func main() {
-	app := Skapt.NewApp()
-	app.SetName("Skapt")
-	app.SetUsage("Command pattern base app")
-	app.SetDescription("Example of command pattern base app")
-	app.SetVersion(false, "1.0.0")
-	app.SetAuthors([]string{"Hoenir"})
-
-	handlers := []Skapt.Handler{
-		func() {
-			fmt.Println("Init")
-		},
-	}
-
-	f := [][]string{
-		[]string{"-c", "--check", "Lorem ipsum modicus", "BOOL", ""},
-	}
-
-	app.AppendNewCommand("Init", "Init the project with a working dir", "Full usage description", f, handlers)
-
-	app.Run()
-}
-
-```
 
 
 
@@ -78,6 +42,47 @@ func main() {
 }
 ```
 
+### Sub-Command
+**Sub-Command** pattern is the pattern that executable takes sub-command for change its behavior. Git command is one example for this pattern or node package manager(npm).Git takes push, pull subcommands and as for npm init, start, stop, update, upgrade etc.
+
+```go
+
+package main
+
+import (
+		"fmt"
+
+		"github.com/hoenirvili/Skapt"
+	   )
+
+func main() {
+app := Skapt.NewApp()
+		 app.SetName("Skapt")
+		 app.SetUsage("Command pattern base app")
+		 app.SetDescription("Example of command pattern base app")
+		 app.SetVersion(false, "1.0.0")
+		 app.SetAuthors([]string{"Hoenir"})
+
+		 app.AppendNewCommand("Init", "Init the project with a working dir", "Full usage description",
+				 [][]string{
+				 {
+				 "-c",
+				 "--check",
+				 "Lorem ipsum modicus",
+				 "BOOL", "",
+				 },
+				 },
+				 []Skapt.Handler{
+				 func() {
+				 fmt.Println("Init")
+				 },
+				 },
+				 )
+
+		 app.Run()
+}
+
+```
 
 ### Template suppport
 
