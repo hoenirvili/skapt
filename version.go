@@ -28,3 +28,31 @@ func (v *Version) loadVersion() {
 	v.minorRevision = s[2]
 	v.fixRevisionDet = s[3]
 }
+
+//SetVersionFromFile  number of the tool
+func (v *Version) SetVersionFromFile() string {
+	// loading the new version
+	v.loadVersion()
+	// join all the fields into one bulk of data
+	s := []string{
+		v.version,
+		v.majorRevision,
+		v.minorRevision,
+		v.fixRevisionDet}
+
+	return strings.Join(s, ".")
+}
+
+// Full loaded from keyboard not from file.
+func (v Version) Full() string {
+	s := []string{
+		v.version,
+		v.majorRevision,
+		v.minorRevision}
+	if len(v.fixRevisionDet) > 1 {
+		s = append(s, v.fixRevisionDet)
+	}
+	n := strings.Join(s, ".")
+
+	return n
+}

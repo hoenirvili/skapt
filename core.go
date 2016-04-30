@@ -2,6 +2,32 @@ package Skapt
 
 import "fmt"
 
+// Run the App
+func (a App) Run() {
+	// init parser on stack
+	p := parser{}
+	// we have args
+	if len(a.args) > 0 {
+		// we have defined our app to be flag based
+		if a.commands == nil {
+			// default flag
+			a.AppendNewOption("-h", "--help", "Print out the help message", BOOL, a.echoHelp)
+			// parse all our args and execute the handlers
+			p.flagBaseApp(&a)
+		} else {
+			// we have define our app to be sub-command based
+			if a.options == nil {
+				// default flag
+				a.AppendNewCommand("help", "", "Print out the help message", nil, []Handler{a.echoHelp})
+				// parse SubCommand and execute the hadlers of the flags
+				p.commandBaseApp(&a)
+			}
+		}
+	} else {
+		a.echoHelp()
+	}
+}
+
 type parser struct {
 	// slice of checked flags
 	checkedOpts []Option
@@ -259,30 +285,4 @@ func (p parser) existInIgnoreList(index int) bool {
 		}
 	}
 	return false
-}
-
-// Run the App
-func (a App) Run() {
-	// init parser on stack
-	p := parser{}
-	// we have args
-	if len(a.args) > 0 {
-		// we have defined our app to be flag based
-		if a.commands == nil {
-			// default flag
-			a.AppendNewOption("-h", "--help", "Print out the help message", BOOL, a.echoHelp)
-			// parse all our args and execute the handlers
-			p.flagBaseApp(&a)
-		} else {
-			// we have define our app to be sub-command based
-			if a.options == nil {
-				// default flag
-				a.AppendNewCommand("help", "", "Print out the help message", nil, []Handler{a.echoHelp})
-				// parse SubCommand and execute the hadlers of the flags
-				p.commandBaseApp(&a)
-			}
-		}
-	} else {
-		a.echoHelp()
-	}
 }

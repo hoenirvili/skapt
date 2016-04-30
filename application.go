@@ -1,6 +1,9 @@
 package Skapt
 
-import "os"
+import (
+	"os"
+	"strings"
+)
 
 // App struct is the block of dataype that will store
 // all of the semantic and accessories in order to
@@ -23,6 +26,91 @@ type App struct {
 	version Version
 	// Application command line arguments
 	args []string
+}
+
+// SetName sets the name of the app
+func (a *App) SetName(appName string) {
+	a.name = appName
+}
+
+// SetUsage func sets the usage description of the app
+func (a *App) SetUsage(usgDesc string) {
+	a.usage = usgDesc
+}
+
+// SetDescription func sets the description of the app
+func (a *App) SetDescription(desc string) {
+	a.description = desc
+}
+
+// SetAuthors sets the authors of the app
+func (a *App) SetAuthors(auth []string) {
+	a.authors = auth
+}
+
+// SetVersion func sets the current version
+// from the main VERSION file or hardcoded one
+func (a *App) SetVersion(fromFile bool, versNum string) {
+	// Set version automated from VERSION file
+	if fromFile {
+		a.version.loadVersion()
+	} else {
+		// Or wrie it manually
+		s := strings.Split(versNum, ".")
+		for i, val := range s {
+			switch i {
+			case 0:
+				a.version.version = val
+			case 1:
+				a.version.majorRevision = val
+			case 2:
+				a.version.minorRevision = val
+			case 3:
+				a.version.fixRevisionDet = val
+			}
+		}
+	}
+}
+
+// Name returns the name of the app
+func (a App) Name() string {
+	return a.name
+}
+
+// Usage return the text usage of the app
+func (a App) Usage() string {
+	return a.usage
+}
+
+// Description return the description of the app
+func (a App) Description() string {
+	return a.description
+}
+
+// Version return the versioning number
+func (a App) Version() string {
+	return a.version.Full()
+}
+
+// Authors returns a  slice of authors
+func (a App) Authors() []string {
+	return a.authors
+}
+
+// Options returns all flag options
+func (a App) Options() []Option {
+	return a.options
+}
+
+// Commands returns the slice of declared commands
+func (a App) Commands() []Command {
+	return a.commands
+}
+
+// Args returns the arguments passed on the command line
+// This uses os.args but without the first element of the slice[0]
+func (a App) Args() []string {
+	return a.args
 }
 
 // Cache all flags in the args attribute of App
