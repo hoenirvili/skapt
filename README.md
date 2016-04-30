@@ -65,19 +65,18 @@ app := Skapt.NewApp()
 
 		 app.AppendNewCommand("Init", "Init the project with a working dir", "Full usage description",
 				 [][]string{
-				 {
-				 "-c",
-				 "--check",
-				 "Lorem ipsum modicus",
-				 "BOOL", "",
-				 },
-				 },
-				 []Skapt.Handler{
-				 func() {
-				 fmt.Println("Init")
-				 },
-				 },
-				 )
+					{
+						"-c",
+						"--check",
+						"Lorem ipsum modicus",
+						"BOOL", "",
+					},
+				},
+				[]Skapt.Handler{
+					func() {
+						fmt.Println("Init")
+					},
+				})
 
 		 app.Run()
 }
