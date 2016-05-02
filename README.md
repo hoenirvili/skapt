@@ -12,6 +12,8 @@
 **Note** : This package will support the two main command line patterns.
 
 
+### Documentation 
+https://godoc.org/github.com/hoenirvili/Skapt
 
 ### Flag
 **Flag** pattern is the pattern that executable has flag options for changing its behavior. For example, grep command inherits this pattern.
@@ -140,5 +142,4 @@ VERSION:
 
 AUTHORS:
          Hoenir 
-
 ```
