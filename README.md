@@ -58,7 +58,7 @@ import (
 	   )
 
 func main() {
-app := Skapt.NewApp()
+		 app := Skapt.NewApp()
 		 app.SetName("Skapt")
 		 app.SetUsage("Command pattern base app")
 		 app.SetDescription("Example of command pattern base app")
