@@ -66,7 +66,6 @@ func (c *Command) SetDescription(desc string) {
 
 // SetOptionsOfACommand sets the options of a command
 func (c *Command) SetOptionsOfACommand(flags [][]string, actions []Handler) {
-	//TODO verify length of options
 	// return the number of lines
 	nFlags := len(flags)
 	// create a slice of options

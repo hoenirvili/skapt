@@ -159,8 +159,6 @@ func (a App) String(name string) string {
 		}
 	} else {
 		// command base app
-		// TODO make it also for
-		// command line oriented mode app
 		if a.options == nil {
 			for _, cmd := range a.commands {
 				for _, opt := range cmd.options {
@@ -196,8 +194,6 @@ func (a App) Int(name string) int {
 		}
 	} else {
 		// command base app
-		// TODO make it also for
-		// command line oriented mode app
 		if a.options == nil {
 			for _, cmd := range a.commands {
 				for _, opt := range cmd.options {
