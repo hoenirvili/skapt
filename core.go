@@ -12,6 +12,9 @@ func (a App) Run() {
 		if a.commands == nil {
 			// default flag
 			a.AppendNewOption("-h", "--help", "Print out the help message", BOOL, a.echoHelp)
+			a.AppendNewOption("-v", "--version", "Print out the version of the app", BOOL, func() {
+				fmt.Println(a.version.Full())
+			})
 			// parse all our args and execute the handlers
 			p.flagBaseApp(&a)
 		} else {
@@ -19,6 +22,12 @@ func (a App) Run() {
 			if a.options == nil {
 				// default flag
 				a.AppendNewCommand("help", "", "Print out the help message", nil, []Handler{a.echoHelp})
+				a.AppendNewCommand("version", "", "Print out the version of the app", nil,
+					[]Handler{
+						func() {
+							fmt.Println(a.version.Full())
+						},
+					})
 				// parse SubCommand and execute the hadlers of the flags
 				p.commandBaseApp(&a)
 			}

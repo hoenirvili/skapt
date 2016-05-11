@@ -43,7 +43,7 @@ func (v *Version) SetVersionFromFile() string {
 	return strings.Join(s, ".")
 }
 
-// Full loaded from keyboard not from file.
+// Full loaded from struct not from file.
 func (v Version) Full() string {
 	s := []string{
 		v.version,
