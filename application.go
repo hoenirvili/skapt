@@ -118,8 +118,8 @@ func (a *App) initArgs() {
 	a.args = os.Args[1:]
 }
 
-// Bool returns true if the flag is present
-// on os.Args/app.Args
+// Bool returns true or false if that flag with that name
+// was passed on os.Args
 func (a App) Bool(name string) bool {
 	// flag based app
 	if a.commands == nil {
@@ -143,6 +143,9 @@ func (a App) Bool(name string) bool {
 	return false
 }
 
+// String returns the target string of the name flag
+// example String("-f") will return "file.txt" if you
+// passed a correct argument for the flag you declared
 func (a App) String(name string) string {
 	var target string // empty defaul value
 	// flag based app
@@ -174,7 +177,9 @@ end:
 	return target
 }
 
-// Int returns the target INT type flag
+// Int returns the target int of the name flag
+// example INT("-nr") will return "6"(as type int) if you
+// passed a correct argument for the flag you declared
 func (a App) Int(name string) int {
 	var (
 		target int // 0 default value
