@@ -7,8 +7,6 @@
 
 > I was inspired from other cli frameworks in goLang and for the fun/learning purpose I'm trying to do my own little framework.
 
-## This package is still in development
-
 **Note** : This package will support the two main command line patterns.
 
 
