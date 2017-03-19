@@ -50,35 +50,35 @@ func main() {
 package main
 
 import (
-		"fmt"
+	"fmt"
 
-		"github.com/hoenirvili/Skapt"
-	   )
+	"github.com/hoenirvili/Skapt"
+)
 
 func main() {
-		 app := Skapt.NewApp()
-		 app.SetName("Skapt")
-		 app.SetUsage("Command pattern base app")
-		 app.SetDescription("Example of command pattern base app")
-		 app.SetVersion(false, "1.0.0")
-		 app.SetAuthors([]string{"Hoenir"})
+	app := Skapt.NewApp()
+	app.SetName("Skapt")
+	app.SetUsage("Command pattern base app")
+	app.SetDescription("Example of command pattern base app")
+	app.SetVersion(false, "1.0.0")
+	app.SetAuthors([]string{"Hoenir"})
 
-		 app.AppendNewCommand("Init", "Init the project with a working dir", "Full usage description",
-				 [][]string{
-					{
-						"-c",
-						"--check",
-						"Lorem ipsum modicus",
-						"BOOL", "",
-					},
-				},
-				[]Skapt.Handler{
-					func() {
-						fmt.Println("Init")
-					},
-				})
+	app.AppendNewCommand("Init", "Init the project with a working dir", "Full usage description",
+		 [][]string{
+			{
+				"-c",
+				"--check",
+				"Lorem ipsum modicus",
+				"BOOL", "",
+			},
+		},
+		[]Skapt.Handler{
+			func() {
+				fmt.Println("Init")
+			},
+		})
 
-		 app.Run()
+	app.Run()
 }
 
 ```
