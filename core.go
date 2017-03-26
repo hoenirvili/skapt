@@ -13,7 +13,7 @@ func (a App) Run() {
 			// default flag
 			a.AppendNewOption("-h", "--help", "Print out the help message", BOOL, a.echoHelp)
 			a.AppendNewOption("-v", "--version", "Print out the version of the app", BOOL, func() {
-				fmt.Println(a.version.Full())
+				fmt.Println(a.version)
 			})
 			// parse all our args and execute the handlers
 			p.flagBaseApp(&a)
@@ -25,7 +25,7 @@ func (a App) Run() {
 				a.AppendNewCommand("version", "", "Print out the version of the app", nil,
 					[]Handler{
 						func() {
-							fmt.Println(a.version.Full())
+							fmt.Println(a.version)
 						},
 					})
 				// parse SubCommand and execute the hadlers of the flags
@@ -37,18 +37,24 @@ func (a App) Run() {
 	}
 }
 
+// parser type used for parsing the command line arguments
+// we can deal with a command base app or a flag simple one
 type parser struct {
-	// slice of checked flags
+	// checkoOpts slice of checked flags
 	checkedOpts []Option
-	//the specific index for every flag that was been parsed
+	// indexListUnparsed the specific
+	// index for every flag that was been parsed
 	indexListUnparsed []int
-	// holder for target for flag type (int, string)
+	// ignoreList holder for target
+	// for flag type (int, string)
 	ignoreList []int
-	// request flags
+	// reqList request flags
 	reqList []int
 }
 
-// commandBaseApp
+// commandBaseApp starts parsing the arguments as
+// if we are dealing with a command base app rathar
+// than a simple flag one
 func (p *parser) commandBaseApp(a *App) {
 	var cmd *Command
 	check := false
@@ -152,7 +158,8 @@ func (p *parser) commandBaseApp(a *App) {
 exit_grace:
 }
 
-// flag base main logic parser
+// flagBaseApp start the parses of the flag base
+// app for normal flgas
 func (p *parser) flagBaseApp(a *App) {
 	check := false
 	args := a.args
@@ -240,6 +247,7 @@ func (p *parser) flagBaseApp(a *App) {
 exit_grace:
 }
 
+// isStateFullFlag tests :
 // if the flag is declared on our slice of option
 // if the flag was not parssed yet
 // if the flag is not just a target for another flag
@@ -251,6 +259,7 @@ func (p parser) isStateFullFlag(args []string, opts []Option, i, j int) bool {
 	return false
 }
 
+// isStatelessFlag tests :
 // if the flag is declared on our slice of option
 // if the flag was not parssed yet
 // if the flag is not just a target for another flag
@@ -262,7 +271,7 @@ func (p parser) isStatelessFlag(args []string, opts []Option, i, j int) bool {
 	return false
 }
 
-// test if the flag was parsed
+// argsWasParsed test if the flag was parsed
 func (p parser) argsWasParsed(opt Option) bool {
 	lenParsed := len(p.checkedOpts)
 	for i := 0; i < lenParsed; i++ {
@@ -273,7 +282,7 @@ func (p parser) argsWasParsed(opt Option) bool {
 	return false
 }
 
-// test if a arg is matching a predeclared option
+// isOption test if a arg is matching  a predeclared option
 func isOption(opts []Option, s string) bool {
 	lopt := len(opts)
 	for i := 0; i < lopt; i++ {
@@ -285,7 +294,8 @@ func isOption(opts []Option, s string) bool {
 	return false
 }
 
-// test if the flag , targets are on the ignoreList
+// existInIngnoreList test if the flag ,
+// targets are on the ignoreList
 func (p parser) existInIgnoreList(index int) bool {
 	lenList := len(p.ignoreList)
 	for i := 0; i < lenList; i++ {

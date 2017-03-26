@@ -8,6 +8,10 @@ import (
 	"strings"
 )
 
+// getPathVersion searches the current directory
+// for the VERSION file if it's included return the
+// exact path of it. If the VERSION file is not included
+// this will return empty string
 func getPathVersion() string {
 	// our file name
 	name := "VERSION"
@@ -16,9 +20,10 @@ func getPathVersion() string {
 
 	if err != nil {
 		fmt.Println("Can't optain the root path of the project")
+		return ""
 	}
 
-	//host our root/base path and our fileName(VERSION)
+	// host our root/base path and our fileName(VERSION)
 	holder := []string{
 		rootPath,
 		name,
@@ -29,10 +34,11 @@ func getPathVersion() string {
 	return path
 }
 
+// getContentVersion this will extract the content Version
+// from the VERSION file and parse it
 func getContentVersion() string {
 	// local var that stores the content
 	cnt := make([]byte, 10)
-	//var path string
 
 	file := openFileVersion(filePath)
 

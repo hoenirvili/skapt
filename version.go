@@ -38,13 +38,14 @@ func (v *Version) SetVersionFromFile() string {
 		v.version,
 		v.majorRevision,
 		v.minorRevision,
-		v.fixRevisionDet}
+		v.fixRevisionDet,
+	}
 
 	return strings.Join(s, ".")
 }
 
-// Full loaded from struct not from file.
-func (v Version) Full() string {
+// String return out the version in a standard format
+func (v Version) String() string {
 	s := []string{
 		v.version,
 		v.majorRevision,

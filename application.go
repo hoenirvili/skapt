@@ -89,7 +89,7 @@ func (a App) Description() string {
 
 // Version return the versioning number
 func (a App) Version() string {
-	return a.version.Full()
+	return a.version.String()
 }
 
 // Authors returns a  slice of authors
