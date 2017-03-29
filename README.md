@@ -34,8 +34,14 @@ func main() {
 	app.SetVersion(false, "1.0.0")
 	app.SetAuthors([]string{"Hoenir"})
 
-	app.AppendNewOption("-f", "--full", "fill up the file with spaces", Skapt.BOOL, func() {
-		fmt.Println("Fill up with spaces")
+	app.AppendNewOption(Skapt.OptionParams{
+		Name:"-f", 
+		Alias:"--full", 
+		Description:"fill up the file with spaces", 
+		Type: Skapt.BOOL, 
+		Action: func() {
+			fmt.Println("Fill up with spaces")
+		},
 	})
 
 	app.Run()
@@ -63,8 +69,11 @@ func main() {
 	app.SetVersion(false, "1.0.0")
 	app.SetAuthors([]string{"Hoenir"})
 
-	app.AppendNewCommand("Init", "Init the project with a working dir", "Full usage description",
-		 [][]string{
+	app.AppendNewCommand(Skapt.CommandParams{
+		Name:"Init", 
+		Description: "Init the project with a working dir", 
+		Usage: "Full usage description",
+		Flags:[][]string{
 			{
 				"-c",
 				"--check",
@@ -72,11 +81,11 @@ func main() {
 				"BOOL", "",
 			},
 		},
-		[]Skapt.Handler{
+		Actions: []Skapt.Handler{
 			func() {
 				fmt.Println("Init")
 			},
-		})
+		}})
 
 	app.Run()
 }

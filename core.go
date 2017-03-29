@@ -11,9 +11,19 @@ func (a App) Run() {
 		// we have defined our app to be flag based
 		if a.commands == nil {
 			// default flag
-			a.AppendNewOption("-h", "--help", "Print out the help message", BOOL, a.echoHelp)
-			a.AppendNewOption("-v", "--version", "Print out the version of the app", BOOL, func() {
-				fmt.Println(a.version)
+			a.AppendNewOption(OptionParams{
+				Name:        "-h",
+				Alias:       "--help",
+				Description: "Print out the help message",
+				Type:        BOOL,
+				Action:      a.echoHelp,
+			})
+			a.AppendNewOption(OptionParams{
+				Name:        "-v",
+				Alias:       "--version",
+				Description: "Print out the version of the app",
+				Type:        BOOL,
+				Action:      func() { fmt.Println(a.version) },
 			})
 			// parse all our args and execute the handlers
 			p.flagBaseApp(&a)
@@ -21,13 +31,20 @@ func (a App) Run() {
 			// we have define our app to be sub-command based
 			if a.options == nil {
 				// default flag
-				a.AppendNewCommand("help", "", "Print out the help message", nil, []Handler{a.echoHelp})
-				a.AppendNewCommand("version", "", "Print out the version of the app", nil,
-					[]Handler{
-						func() {
-							fmt.Println(a.version)
-						},
-					})
+				a.AppendNewCommand(CommandParams{
+					Name:        "help",
+					Description: "",
+					Usage:       "Print out the help message",
+					Flags:       nil,
+					Actions:     []Handler{a.echoHelp},
+				})
+				a.AppendNewCommand(CommandParams{
+					Name:        "version",
+					Description: "",
+					Usage:       "Print out the version of the app",
+					Flags:       nil,
+					Actions:     []Handler{func() { fmt.Println(a.version) }},
+				})
 				// parse SubCommand and execute the hadlers of the flags
 				p.commandBaseApp(&a)
 			}

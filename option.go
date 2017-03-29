@@ -40,8 +40,8 @@ func (o *Option) SetAlias(als string) {
 
 // SetAction func set's the function that will
 // execute when the flag is lunched
-func (o *Option) SetAction(handlr Handler) {
-	o.action = handlr
+func (o *Option) SetAction(handler Handler) {
+	o.action = handler
 }
 
 // SetDescription set's the descript of the flag

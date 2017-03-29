@@ -23,18 +23,34 @@ func (s *SkaptSuite) TestAppFlag(c *C) {
 	app.SetDescription("Example of flag pattern base app")
 	app.SetVersion(false, "1.0.0")
 	app.SetAuthors([]string{"Hoenir", "Vili", "Skapt"})
-	app.AppendNewOption("-f", "--force", "Force message", BOOL, func() {
-		fmt.Println("Force flag parsed!")
+	app.AppendNewOption(OptionParams{
+		Name:        "-f",
+		Alias:       "--force",
+		Description: "Force message",
+		Type:        BOOL,
+		Action:      func() { fmt.Println("Force flag parsed!") },
 	})
-	app.AppendNewOption("-m", "--move", "Move command instruction", INT, func() {
-		fmt.Println("Move command instruction parsed ", app.Int("--move"))
+	app.AppendNewOption(OptionParams{
+		Name:        "-m",
+		Alias:       "--move",
+		Description: "Move command instruction",
+		Type:        INT,
+		Action: func() {
+			fmt.Println("Move command instruction parsed ", app.Int("--move"))
+		},
 	})
-	app.AppendNewOption("-s", "--stringy", "Stringy this msg", STRING, func() {
-		if len(app.String("-s")) > 0 {
-			fmt.Println("stringy")
-		} else {
-			fmt.Println("not Stringy")
-		}
+	app.AppendNewOption(OptionParams{
+		Name:        "-s",
+		Alias:       "--stringy",
+		Description: "Stringy this msg",
+		Type:        STRING,
+		Action: func() {
+			if len(app.String("-s")) > 0 {
+				fmt.Println("stringy")
+			} else {
+				fmt.Println("not Stringy")
+			}
+		},
 	})
 
 	c.Assert(app.Name(), Equals, "Skapt")
@@ -75,31 +91,27 @@ func (s *SkaptSuite) TestAppCommands(c *C) {
 	app.SetDescription("Example of command pattern base app")
 	app.SetVersion(false, "1.0.0")
 	app.SetAuthors([]string{"Hoenir", "Vili", "Skapt"})
-	app.AppendNewCommand(
-		"init",
-		"init the app with the .conf filed",
-		"in order to start coding you need to init it first",
-		[][]string{
-			{
-				"-f",
-				"--force",
-				"Force message",
-				"BOOL",
-			},
-			{
-				"-m",
-				"--move",
-				"Move Command instruction",
-				"INT",
-			},
-			{
-				"-s",
-				"--stringy",
-				"Stringy this msg",
-				"STRING",
-			},
-		},
-		[]Handler{
+	app.AppendNewCommand(CommandParams{
+		Name:        "init",
+		Description: "init the app with the .conf filed",
+		Usage:       "in order to start coding you need to init it first",
+		Flags: [][]string{{
+			"-f",
+			"--force",
+			"Force message",
+			"BOOL",
+		}, {
+			"-m",
+			"--move",
+			"Move Command instruction",
+			"INT",
+		}, {
+			"-s",
+			"--stringy",
+			"Stringy this msg",
+			"STRING",
+		}},
+		Actions: []Handler{
 			func() {
 				fmt.Println("Force message parsed!")
 			},
@@ -113,7 +125,8 @@ func (s *SkaptSuite) TestAppCommands(c *C) {
 					fmt.Println("not Stringy")
 				}
 			},
-		})
+		},
+	})
 
 	c.Assert(app.Bool("--help"), Equals, false)
 	c.Assert(app.Bool("-f"), Equals, true)

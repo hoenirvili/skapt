@@ -153,8 +153,7 @@ func (a App) String(name string) string {
 		// for every option in app
 		for _, opt := range a.options {
 			// if we find the flag that means that
-			// is declared in our app
-			// standard-name
+			// is declared in our app standard-name
 			if (opt.name == name || opt.alias == name) && opt.typeFlag == STRING {
 				target, _ = getTarget(opt, a.args)
 				break
@@ -171,7 +170,7 @@ func (a App) String(name string) string {
 					}
 				}
 			}
-		} //if
+		}
 	}
 end:
 	return target
@@ -208,51 +207,59 @@ func (a App) Int(name string) int {
 					}
 				}
 			}
-		} //if
+		}
 	}
 end:
 	return target
 }
 
 // NewApp returns a new App instance
-// true => sub-command type
-// false => flag type
 func NewApp() *App {
 	var app App
-	// init
 	app.initArgs()
-	//return
 	return &app
 }
 
+type CommandParams struct {
+	Name        string
+	Description string
+	Usage       string
+	Flags       [][]string
+	Actions     []Handler
+}
+
 // AppendNewCommand appends a new command to our cli App
-func (a *App) AppendNewCommand(name, desc, usg string, flags [][]string, actions []Handler) {
+func (a *App) AppendNewCommand(params CommandParams) {
 	// flag pattern not intended
 	if a.options == nil {
-		//new object
 		var cmd Command
-		// set the  content of obj
-		cmd.SetName(name)
-		cmd.SetDescription(desc)
-		cmd.SetUsage(usg)
-		cmd.SetOptionsOfACommand(flags, actions)
-		// add new command to the slice of commands
+		cmd.SetName(params.Name)
+		cmd.SetDescription(params.Description)
+		cmd.SetUsage(params.Usage)
+		cmd.SetOptionsOfACommand(params.Flags, params.Actions)
 		a.commands = append(a.commands, cmd)
 	}
 }
 
+type OptionParams struct {
+	Name        string
+	Alias       string
+	Description string
+	Type        uint8
+	Action      Handler
+}
+
 // AppendNewOption appends a new option to our cli App
-func (a *App) AppendNewOption(name, alias, desc string, typeFlag uint8, action Handler) {
+func (a *App) AppendNewOption(params OptionParams) {
 	// sub command pattern not intended
 	if a.commands == nil {
 		var opt Option
-		// set the conent of the obj
-		opt.SetName(name)
-		opt.SetAlias(alias)
-		opt.SetDescription(desc)
-		opt.SetTypeFlag(typeFlag)
-		if action != nil {
-			opt.SetAction(action)
+		opt.SetName(params.Name)
+		opt.SetAlias(params.Alias)
+		opt.SetDescription(params.Description)
+		opt.SetTypeFlag(params.Type)
+		if params.Action != nil {
+			opt.SetAction(params.Action)
 		}
 		a.options = append(a.options, opt)
 	}
