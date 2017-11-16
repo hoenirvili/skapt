@@ -16,7 +16,6 @@ var (
 	errDeclFlag    = errors.New("The flag entered dosen't match any flag declared")
 )
 
-// C style exit flgs
 const (
 	SUCCESS = iota
 	FAILURE

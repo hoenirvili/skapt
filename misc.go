@@ -184,7 +184,7 @@ AUTHORS:
 `
 )
 
-// Basic simple help generation tempalte
+// Basic simple help generation template
 // filling the template with all the info dynamically when
 // the App struct is filled
 func getHelpTemplate(temp string) *template.Template {

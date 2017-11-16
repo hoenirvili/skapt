@@ -1,6 +1,6 @@
 package Skapt
 
-// Command struct is the struct that wil store
+// Command is the struct that wil store
 // a subcommand of the application.
 type Command struct {
 	// Command name
@@ -9,7 +9,7 @@ type Command struct {
 	description string
 	// usage
 	usage string
-	// Slice of prefefined options aka flags for the command to parse
+	// Slice of predefined options aka flags for the command to parse
 	options []Option
 }
 
@@ -70,7 +70,7 @@ func (c *Command) SetOptionsOfACommand(flags [][]string, actions []Handler) {
 	nFlags := len(flags)
 	// create a slice of options
 	c.options = make([]Option, nFlags)
-	// fil the slice
+	// fill the slice
 	for i := 0; i < nFlags; i++ {
 		if len(flags[i][:]) > 3 {
 			c.options[i].SetName(flags[i][0])

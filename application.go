@@ -7,8 +7,7 @@ import (
 
 // App struct is the block of dataype that will store
 // all of the semantic and accessories in order to
-// handle the application in a better way incapsulating
-// filds of interest
+// handle the application
 type App struct {
 	// App name
 	name string
@@ -16,7 +15,7 @@ type App struct {
 	usage string
 	// Descibes the app usage
 	description string
-	// Slice of prefefined options aka flags for the command to parse
+	// Slice of predefined options aka flags for the command to parse
 	options []Option
 	// A slice of predefined commands for the app to exec
 	commands []Command
@@ -38,7 +37,7 @@ func (a *App) SetUsage(usgDesc string) {
 	a.usage = usgDesc
 }
 
-// SetDescription func sets the description of the app
+// SetDescription function sets the description of the app
 func (a *App) SetDescription(desc string) {
 	a.description = desc
 }
@@ -49,13 +48,13 @@ func (a *App) SetAuthors(auth []string) {
 }
 
 // SetVersion func sets the current version
-// from the main VERSION file or hardcoded one
+// from the main VERSION file or hard-coded one
 func (a *App) SetVersion(fromFile bool, versNum string) {
 	// Set version automated from VERSION file
 	if fromFile {
 		a.version.loadVersion()
 	} else {
-		// Or wrie it manually
+		// Or write it manually
 		s := strings.Split(versNum, ".")
 		for i, val := range s {
 			switch i {
@@ -87,7 +86,7 @@ func (a App) Description() string {
 	return a.description
 }
 
-// Version return the versioning number
+// Version return the version number
 func (a App) Version() string {
 	return a.version.String()
 }
@@ -147,7 +146,7 @@ func (a App) Bool(name string) bool {
 // example String("-f") will return "file.txt" if you
 // passed a correct argument for the flag you declared
 func (a App) String(name string) string {
-	var target string // empty defaul value
+	var target string // empty default value
 	// flag based app
 	if a.commands == nil {
 		// for every option in app

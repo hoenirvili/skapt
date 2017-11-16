@@ -29,7 +29,7 @@ func (v *Version) loadVersion() {
 	v.fixRevisionDet = s[3]
 }
 
-//SetVersionFromFile  number of the tool
+// SetVersionFromFile  number of the tool
 func (v *Version) SetVersionFromFile() string {
 	// loading the new version
 	v.loadVersion()

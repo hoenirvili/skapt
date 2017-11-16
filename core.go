@@ -4,13 +4,9 @@ import "fmt"
 
 // Run the App
 func (a App) Run() {
-	// init parser on stack
 	p := parser{}
-	// we have args
 	if len(a.args) > 0 {
-		// we have defined our app to be flag based
 		if a.commands == nil {
-			// default flag
 			a.AppendNewOption(OptionParams{
 				Name:        "-h",
 				Alias:       "--help",
@@ -25,7 +21,6 @@ func (a App) Run() {
 				Type:        BOOL,
 				Action:      func() { fmt.Println(a.version) },
 			})
-			// parse all our args and execute the handlers
 			p.flagBaseApp(&a)
 		} else {
 			// we have define our app to be sub-command based
@@ -45,7 +40,7 @@ func (a App) Run() {
 					Flags:       nil,
 					Actions:     []Handler{func() { fmt.Println(a.version) }},
 				})
-				// parse SubCommand and execute the hadlers of the flags
+				// parse SubCommand and execute the handler of the flags
 				p.commandBaseApp(&a)
 			}
 		}
@@ -70,7 +65,7 @@ type parser struct {
 }
 
 // commandBaseApp starts parsing the arguments as
-// if we are dealing with a command base app rathar
+// if we are dealing with a command base app rather
 // than a simple flag one
 func (p *parser) commandBaseApp(a *App) {
 	var cmd *Command
@@ -100,7 +95,7 @@ func (p *parser) commandBaseApp(a *App) {
 			// for every option in our app
 			for j := 0; j < lenOpts; j++ {
 				// if the flag is declared on our slice of option
-				// if the flag was not parssed yet
+				// if the flag was not parsed yet
 				// if the flag is not just a target for another flag
 				// and the flag has an action
 				if p.isStateFullFlag(args, opts, i, j) {
@@ -121,7 +116,7 @@ func (p *parser) commandBaseApp(a *App) {
 							goto exit_grace
 						}
 					}
-					// after all the process just auth the flag checking it and exit the loop
+					// after all the process just authentication the flag checking it and exit the loop
 					check = true
 					break
 					// if the flag is stateless that means it's just a dependency flag
@@ -129,7 +124,7 @@ func (p *parser) commandBaseApp(a *App) {
 					// we append the flag into our dependency list
 					p.reqList = append(p.reqList, i)
 					// test if the flag is INT,STRING
-					// we must make sure it's passed a valid coresponding target
+					// we make sure it's passed a valid corresponding target
 					// if we have a special flag that requires a target
 					switch opts[j].typeFlag {
 					case INT, STRING:
@@ -145,14 +140,14 @@ func (p *parser) commandBaseApp(a *App) {
 							goto exit_grace
 						}
 					}
-					// after all the proces just auth the flag checking it and exit the loop
+					// after all the process just authentication the flag checking it and exit the loop
 					check = true
 					break
 				}
 			} //for
-			// if the flag was not checked and was not in our ignoreList been aded yet.
+			// if the flag was not checked and was not in our ignoreList been added yet.
 			if !check && !p.existInIgnoreList(i) {
-				// add the unparsed/unknow flag into list
+				// add the unknown flag into list
 				p.indexListUnparsed = append(p.indexListUnparsed, i)
 			}
 		} //for
@@ -176,7 +171,7 @@ exit_grace:
 }
 
 // flagBaseApp start the parses of the flag base
-// app for normal flgas
+// app for normal flags
 func (p *parser) flagBaseApp(a *App) {
 	check := false
 	args := a.args
@@ -192,7 +187,7 @@ func (p *parser) flagBaseApp(a *App) {
 		// for every option in our app
 		for j := 0; j < lenOpts; j++ {
 			// if the flag is declared on our slice of option
-			// if the flag was not parssed yet
+			// if the flag was not parsed yet
 			// if the flag is not just a target for another flag
 			// and the flag has an action
 			if p.isStateFullFlag(args, opts, i, j) {
@@ -244,7 +239,7 @@ func (p *parser) flagBaseApp(a *App) {
 		} //for
 		// if the flag was not checked and was not in our ignoreList been aded yet.
 		if !check && !p.existInIgnoreList(i) {
-			// add the unparsed/unknow flag into list
+			// add the unknow flag into list
 			p.indexListUnparsed = append(p.indexListUnparsed, i)
 		}
 	} //for
@@ -266,7 +261,7 @@ exit_grace:
 
 // isStateFullFlag tests :
 // if the flag is declared on our slice of option
-// if the flag was not parssed yet
+// if the flag was not parsed yet
 // if the flag is not just a target for another flag
 // and the flag has an action
 func (p parser) isStateFullFlag(args []string, opts []Option, i, j int) bool {
@@ -278,7 +273,7 @@ func (p parser) isStateFullFlag(args []string, opts []Option, i, j int) bool {
 
 // isStatelessFlag tests :
 // if the flag is declared on our slice of option
-// if the flag was not parssed yet
+// if the flag was not parsed yet
 // if the flag is not just a target for another flag
 // and the flag has NO action
 func (p parser) isStatelessFlag(args []string, opts []Option, i, j int) bool {
@@ -299,7 +294,7 @@ func (p parser) argsWasParsed(opt Option) bool {
 	return false
 }
 
-// isOption test if a arg is matching  a predeclared option
+// isOption test if a arg is matching option
 func isOption(opts []Option, s string) bool {
 	lopt := len(opts)
 	for i := 0; i < lopt; i++ {
