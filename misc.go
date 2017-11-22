@@ -163,7 +163,6 @@ USAGE:
 DESCRIPTION:
 	{{ .Description }}
 
-
 COMMANDS:
 {{ range $cmd := .Commands }}
 	{{ $cmd.Name }} - {{ $cmd.Usage }}
@@ -199,20 +198,16 @@ func getHelpTemplate(temp string) *template.Template {
 
 // parsing and echo it to the STDOUT the template
 func (a App) echoHelp() {
-	// flag base app
-	if a.commands == nil {
-		if tmpl := getHelpTemplate(appFlagHelpTemplate); tmpl != nil {
-			if err := tmpl.Execute(os.Stdout, a); err != nil {
-				fmt.Println(err.Error())
-			}
-		}
-		// command base app
-	} else if a.options == nil {
-		if tmpl := getHelpTemplate(appCommandHelpTemplate); tmpl != nil {
-			if err := tmpl.Execute(os.Stdout, a); err != nil {
-				fmt.Println(err.Error())
-			}
-		}
+	tmp := appFlagHelpTemplate
+
+	// command base app
+	if a.options == nil {
+		tmp = appCommandHelpTemplate
 	}
 
+	if tmpl := getHelpTemplate(tmp); tmpl != nil {
+		if err := tmpl.Execute(os.Stdout, a); err != nil {
+			fmt.Println(err.Error())
+		}
+	}
 }

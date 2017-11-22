@@ -265,7 +265,8 @@ exit_grace:
 // if the flag is not just a target for another flag
 // and the flag has an action
 func (p parser) isStateFullFlag(args []string, opts []Option, i, j int) bool {
-	if (args[i] == opts[j].name || args[i] == opts[j].alias) && !p.argsWasParsed(opts[j]) && !p.existInIgnoreList(i) && opts[j].action != nil {
+	if (args[i] == opts[j].name || args[i] == opts[j].alias) &&
+		!p.argsWasParsed(opts[j]) && !p.existInIgnoreList(i) && opts[j].action != nil {
 		return true
 	}
 	return false
@@ -277,7 +278,8 @@ func (p parser) isStateFullFlag(args []string, opts []Option, i, j int) bool {
 // if the flag is not just a target for another flag
 // and the flag has NO action
 func (p parser) isStatelessFlag(args []string, opts []Option, i, j int) bool {
-	if (args[i] == opts[j].name || args[i] == opts[j].alias) && !p.argsWasParsed(opts[j]) && !p.existInIgnoreList(i) && opts[j].action == nil {
+	if (args[i] == opts[j].name || args[i] == opts[j].alias) &&
+		!p.argsWasParsed(opts[j]) && !p.existInIgnoreList(i) && opts[j].action == nil {
 		return true
 	}
 	return false
