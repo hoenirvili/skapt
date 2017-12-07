@@ -1,265 +1,114 @@
-package Skapt
+// Package skapt provides a tiny interface
+// to create and manage your command line aplications
+package skapt
 
 import (
-	"os"
-	"strings"
+	"fmt"
+
+	"github.com/hoenirvili/skapt/argument"
+	"github.com/hoenirvili/skapt/command"
+	"github.com/hoenirvili/skapt/context"
+	"github.com/hoenirvili/skapt/flag"
+	"github.com/hoenirvili/skapt/parser"
 )
 
-// App struct is the block of dataype that will store
-// all of the semantic and accessories in order to
-// handle the application
-type App struct {
-	// App name
-	name string
-	// Describes the app
-	usage string
-	// Descibes the app usage
-	description string
-	// Slice of predefined options aka flags for the command to parse
-	options []Option
-	// A slice of predefined commands for the app to exec
-	commands []Command
-	// Authors of the app
-	authors []string
-	// Version number of the app
-	version Version
-	// Application command line arguments
-	args []string
-}
-
-// SetName sets the name of the app
-func (a *App) SetName(appName string) {
-	a.name = appName
-}
-
-// SetUsage func sets the usage description of the app
-func (a *App) SetUsage(usgDesc string) {
-	a.usage = usgDesc
-}
-
-// SetDescription function sets the description of the app
-func (a *App) SetDescription(desc string) {
-	a.description = desc
-}
-
-// SetAuthors sets the authors of the app
-func (a *App) SetAuthors(auth []string) {
-	a.authors = auth
-}
-
-// SetVersion func sets the current version
-// from the main VERSION file or hard-coded one
-func (a *App) SetVersion(fromFile bool, versNum string) {
-	// Set version automated from VERSION file
-	if fromFile {
-		a.version.loadVersion()
-	} else {
-		// Or write it manually
-		s := strings.Split(versNum, ".")
-		for i, val := range s {
-			switch i {
-			case 0:
-				a.version.version = val
-			case 1:
-				a.version.majorRevision = val
-			case 2:
-				a.version.minorRevision = val
-			case 3:
-				a.version.fixRevisionDet = val
-			}
-		}
-	}
-}
-
-// Name returns the name of the app
-func (a App) Name() string {
-	return a.name
-}
-
-// Usage return the text usage of the app
-func (a App) Usage() string {
-	return a.usage
-}
-
-// Description return the description of the app
-func (a App) Description() string {
-	return a.description
-}
-
-// Version return the version number
-func (a App) Version() string {
-	return a.version.String()
-}
-
-// Authors returns a  slice of authors
-func (a App) Authors() []string {
-	return a.authors
-}
-
-// Options returns all flag options
-func (a App) Options() []Option {
-	return a.options
-}
-
-// Commands returns the slice of declared commands
-func (a App) Commands() []Command {
-	return a.commands
-}
-
-// Args returns the arguments passed on the command line
-// This uses os.args but without the first element of the slice[0]
-func (a App) Args() []string {
-	return a.args
-}
-
-// Cache all flags in the args attribute of App
-func (a *App) initArgs() {
-	a.args = os.Args[1:]
-}
-
-// Bool returns true or false if that flag with that name
-// was passed on os.Args
-func (a App) Bool(name string) bool {
-	// flag based app
-	if a.commands == nil {
-		for _, opt := range a.options {
-			if (opt.name == name || opt.alias == name) && opt.typeFlag == BOOL {
-				return true
-			}
-		}
-	} else {
-		//command base app
-		if a.options == nil {
-			for _, cmd := range a.commands {
-				for _, opt := range cmd.options {
-					if (opt.name == name || opt.alias == name) && opt.typeFlag == BOOL {
-						return true
-					}
-				}
-			}
-		}
-	}
-	return false
-}
-
-// String returns the target string of the name flag
-// example String("-f") will return "file.txt" if you
-// passed a correct argument for the flag you declared
-func (a App) String(name string) string {
-	var target string // empty default value
-	// flag based app
-	if a.commands == nil {
-		// for every option in app
-		for _, opt := range a.options {
-			// if we find the flag that means that
-			// is declared in our app standard-name
-			if (opt.name == name || opt.alias == name) && opt.typeFlag == STRING {
-				target, _ = getTarget(opt, a.args)
-				break
-			}
-		}
-	} else {
-		// command base app
-		if a.options == nil {
-			for _, cmd := range a.commands {
-				for _, opt := range cmd.options {
-					if (opt.name == name || opt.alias == name) && opt.typeFlag == STRING {
-						target, _ = getTarget(opt, a.args)
-						goto end
-					}
-				}
-			}
-		}
-	}
-end:
-	return target
-}
-
-// Int returns the target int of the name flag
-// example INT("-nr") will return "6"(as type int) if you
-// passed a correct argument for the flag you declared
-func (a App) Int(name string) int {
-	var (
-		target int // 0 default value
-	)
-
-	// flag based app
-	if a.commands == nil {
-		// for every option in app
-		for _, opt := range a.options {
-			// if we find the flag that means that
-			// is declared in our app
-			// standard-name
-			if (opt.name == name || opt.alias == name) && opt.typeFlag == INT {
-				_, target = getTarget(opt, a.args)
-				break
-			}
-		}
-	} else {
-		// command base app
-		if a.options == nil {
-			for _, cmd := range a.commands {
-				for _, opt := range cmd.options {
-					if (opt.name == name || opt.alias == name) && opt.typeFlag == INT {
-						_, target = getTarget(opt, a.args)
-						goto end
-					}
-				}
-			}
-		}
-	}
-end:
-	return target
-}
-
-// NewApp returns a new App instance
-func NewApp() *App {
-	var app App
-	app.initArgs()
-	return &app
-}
-
-type CommandParams struct {
-	Name        string
+// Application will hold all the information for creating
+// and parsing the command line
+type Application struct {
+	// Name of the Command line application
+	Name string
+	// Usage is the usage of the command line
+	Usage string
+	// Description holds the description of the command line
 	Description string
-	Usage       string
-	Flags       [][]string
-	Actions     []Handler
+	// Author holds the author name
+	Author string
+	// Version is the version of the application
+	Version string
+	// Flags holds list of the root command
+	Flags flag.Flags
+	// Commands holds list of subcommands
+	Commands command.Commands
+	// Type holds the type of the root command value
+	Type argument.Type
+	// Handler is the root main handler
+	Handler context.Handler
+	// Required is set to true when we want to
+	// specify that a value should be entered after the
+	// main root command is executed
+	Required bool
 }
 
-// AppendNewCommand appends a new command to our cli App
-func (a *App) AppendNewCommand(params CommandParams) {
-	// flag pattern not intended
-	if a.options == nil {
-		var cmd Command
-		cmd.SetName(params.Name)
-		cmd.SetDescription(params.Description)
-		cmd.SetUsage(params.Usage)
-		cmd.SetOptionsOfACommand(params.Flags, params.Actions)
-		a.commands = append(a.commands, cmd)
+// validate if the holds valid information
+// in order to be executed by Exec
+func (a Application) validate() error {
+	if a.Name == "" {
+		return fmt.Errorf("skapt: Empty application name")
 	}
-}
+	if a.Handler == nil {
+		return fmt.Errorf("skapt: Empty application handler")
+	}
+	if a.Type == argument.Bool && a.Required {
+		return fmt.Errorf("skapt: Cannot have type Bool and requried true")
+	}
 
-type OptionParams struct {
-	Name        string
-	Alias       string
-	Description string
-	Type        uint8
-	Action      Handler
-}
-
-// AppendNewOption appends a new option to our cli App
-func (a *App) AppendNewOption(params OptionParams) {
-	// sub command pattern not intended
-	if a.commands == nil {
-		var opt Option
-		opt.SetName(params.Name)
-		opt.SetAlias(params.Alias)
-		opt.SetDescription(params.Description)
-		opt.SetTypeFlag(params.Type)
-		if params.Action != nil {
-			opt.SetAction(params.Action)
+	if a.Flags != nil {
+		if err := a.Flags.Validate(); err != nil {
+			return err
 		}
-		a.options = append(a.options, opt)
 	}
+
+	if a.Commands != nil {
+		if err := a.Commands.Validate(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// Exec executes the command line based on the args provided
+func (a Application) Exec(args []string) error {
+	if err := a.validate(); err != nil {
+		return err
+	}
+
+	switch len(args) {
+	case 0:
+		return fmt.Errorf("skapt: No arguments to execute")
+	case 1:
+		if a.Required {
+			return fmt.Errorf("skapt: Command %s requires a value", args[0])
+		}
+
+		ctx := context.New(a.Flags, nil)
+		return a.Handler(ctx)
+	}
+
+	root := command.Command{
+		Name:     args[0],
+		Type:     a.Type,
+		Flags:    a.Flags,
+		Handler:  a.Handler,
+		Required: a.Required,
+	}
+
+	// if default flags are not set, set them
+	root.Flags.AppendDefault()
+	a.Commands.AppendDefault()
+
+	parser := parser.New(root, a.Commands)
+	handlers, contexts, err := parser.Parse(args)
+	if err != nil {
+		return err
+	}
+
+	for key, handler := range handlers {
+		context := contexts[key]
+		if err := handler(context); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
