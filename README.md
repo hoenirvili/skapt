@@ -5,7 +5,7 @@
 
 ![experimental](doc/ref.png)
 
-> I was inspired from other cli frameworks in goLang and for the fun/learning purpose I'm trying to do my own little framework.
+> I was inspired from other cli frameworks in Go and for the fun/learning purpose I'm trying to do my own little framework.
 
 **Note** : This package will support the two main command line patterns.
 
