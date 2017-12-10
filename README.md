@@ -1,5 +1,5 @@
 # Skapt                                                                                                                                                                                                                                     
-[![Build Status](https://travis-ci.org/hoenirvili/Skapt.svg)](https://travis-ci.org/hoenirvili/Skapt)
+[![Build Status](https://travis-ci.org/hoenirvili/skapt.svg)](https://travis-ci.org/hoenirvili/skapt)
 
 ### Package for building command line apps in Go
 
