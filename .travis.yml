@@ -1,7 +1,12 @@
 language: go
 go:
-    - 1.8
-    - 1.9
-    - tip
+- 1.9
+- tip
 before_install:
-    - go get gopkg.in/check.v1
+- go get gopkg.in/check.v1
+- go get github.com/mattn/goveralls
+script:
+- "$GOPATH/bin/goveralls -service=travis-ci"
+env:
+  global:
+    secure: jmgxQkCWEsy1lEOVu8SzmDFUyUGx02w0pymoSCbEE0nWBE2sn121+Tk6wUmJ/7vk2+qFcdd8Ldrvv5IZhcl3YV+QpYKxpmD0m/8VJNdDAtm8nqzPvfMgqvJaEe6yu8dnfrNOdZW6IcfAyiUlvUQ73WOiunOQt5RhsnekSofpVLluVjMxSDyjgmd8VEhn7LfyP514ji9UCFa85jr8NeAKb1kHO2F/B8xiDAjeSkkiw+IeigG0LF8CieRlphkwbnJ9kNczQpvAkHeDclxXQrUpvw+XGpb+qSoo3liQf58L6o1/IjFUtJaO9JEoQ0bKEbyhxz1m7C0okMye+rErRENTJTPK0TH6bSaQgNK8GQGGUuROD9B+r0wwGoSLWJFgExNfCQ47Ji2wEov+bG/fD3Mz8E55JOEUno9j2kYQAkmdMPRcXgtgliXKf5c4tsMeGOeKp4X9tgVCLq7jCaUOPmaouCykaIS1ZduHTq7E0goLQslGpI7V1/knNAWhiX13Ws+JFdQVl+W5O7URPuUxPfvjdUDeHQpjVCgPcfwP9m8Fi76d6w7bqCmN/1Tv+RDXMAW/JzUaUIONQ3nvyTPi6J+5veejSDUdWgJDmLI1ZqdEmtmM0m5431Hvh65/PY2u8gX3GL+CptwDAYlqp8ECxp05Z4APwqA+cZ+sV/jOkW7I9l0=

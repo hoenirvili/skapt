@@ -1,5 +1,7 @@
 # Skapt                                                                                                                                                                                                                                     
-[![Build Status](https://travis-ci.org/hoenirvili/skapt.svg)](https://travis-ci.org/hoenirvili/skapt)
+[![Build Status](https://travis-ci.org/hoenirvili/skapt.svg)](https://travis-ci.org/hoenirvili/skapt) [![Coverage Status]
+[![GoDoc](https://godoc.org/github.com/hoenirvili/skapt?status.svg)](https://godoc.org/github.com/hoenirvili/skapt) [![Go Report Card](https://goreportcard.com/badge/github.com/hoenirvili/skapt)](https://goreportcard.com/report/github.com/hoenirvili/skapt)(https://coveralls.io/repos/github/hoenirvili/skapt/badge.svg?branch=master)](https://coveralls.io/github/hoenirvili/skapt?branch=master)
+
 
 ### Package for building command line apps in Go
 
@@ -9,9 +11,6 @@
 
 **Note** : This package will support the two main command line patterns.
 
-
-### Documentation 
-https://godoc.org/github.com/hoenirvili/Skapt
 
 ### Flag
 **Flag** pattern is the pattern that executable has flag options for changing its behavior. For example, grep command inherits this pattern.
