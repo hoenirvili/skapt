@@ -1,166 +1,301 @@
-package Skapt
+package skapt_test
 
 import (
+	"errors"
 	"fmt"
-	"os"
-	"testing"
 
-	. "gopkg.in/check.v1"
+	"github.com/hoenirvili/skapt"
+	"github.com/hoenirvili/skapt/argument"
+	"github.com/hoenirvili/skapt/command"
+	"github.com/hoenirvili/skapt/context"
+	"github.com/hoenirvili/skapt/flag"
+
+	gc "gopkg.in/check.v1"
 )
 
-func Test(t *testing.T) { TestingT(t) }
+type appSuite struct{}
 
-type SkaptSuite struct{}
+var _ = gc.Suite(&appSuite{})
 
-var _ = Suite(&SkaptSuite{})
+func handler(ctx context.Context) error { return nil }
 
-func (s *SkaptSuite) TestAppFlag(c *C) {
-	os.Args = []string{"", "-f", "--move", "10", "-s", "this is cool"}
-
-	app := NewApp()
-	app.SetName("Skapt")
-	app.SetUsage("App flag base")
-	app.SetDescription("Example of flag pattern base app")
-	app.SetVersion(false, "1.0.0")
-	app.SetAuthors([]string{"Hoenir", "Vili", "Skapt"})
-	app.AppendNewOption(OptionParams{
-		Name:        "-f",
-		Alias:       "--force",
-		Description: "Force message",
-		Type:        BOOL,
-		Action:      func() { fmt.Println("Force flag parsed!") },
-	})
-	app.AppendNewOption(OptionParams{
-		Name:        "-m",
-		Alias:       "--move",
-		Description: "Move command instruction",
-		Type:        INT,
-		Action: func() {
-			fmt.Println("Move command instruction parsed ", app.Int("--move"))
+func (a appSuite) TestExecWithErrors(c *gc.C) {
+	apps := []skapt.Application{
+		{},
+		{
+			Name: "test",
 		},
-	})
-	app.AppendNewOption(OptionParams{
-		Name:        "-s",
-		Alias:       "--stringy",
-		Description: "Stringy this msg",
-		Type:        STRING,
-		Action: func() {
-			if len(app.String("-s")) > 0 {
-				fmt.Println("stringy")
-			} else {
-				fmt.Println("not Stringy")
-			}
+		{
+			Name:    "test",
+			Handler: handler,
+			Flags:   flag.Flags{{}},
 		},
-	})
+		{
+			Name:     "test",
+			Handler:  handler,
+			Commands: command.Commands{{Name: ""}},
+		},
+		{
+			Name:     "test",
+			Handler:  handler,
+			Commands: command.Commands{{Name: "test"}},
+		},
+		{
+			Name:    "test",
+			Handler: handler,
+			Commands: command.Commands{{
+				Name:    "test",
+				Handler: handler,
+				Flags:   flag.Flags{{}},
+			}},
+		},
+	}
 
-	c.Assert(app.Name(), Equals, "Skapt")
-	c.Assert(app.Usage(), Equals, "App flag base")
-	c.Assert(app.Description(), Equals, "Example of flag pattern base app")
-	c.Assert(app.Version(), Equals, "1.0.0")
-	c.Assert(app.Authors(), DeepEquals, []string{"Hoenir", "Vili", "Skapt"})
-	c.Assert(app.Args(), DeepEquals, []string{"-f", "--move", "10", "-s", "this is cool"})
-	c.Assert(app.Bool("--help"), Equals, false)
-	c.Assert(app.Bool("-f"), Equals, true)
-	c.Assert(app.String("-s"), Not(Equals), "")
-	opts := app.Options()
+	errs := []error{
+		errors.New("skapt: Empty application name"),
+		errors.New("skapt: Empty application handler"),
+		errors.New("skapt: Empty flag name"),
+		errors.New("skapt: Empty command name"),
+		errors.New("skapt: Command has no handler attached"),
+		errors.New("skapt: Empty flag name"),
+	}
 
-	c.Assert(opts, Not(IsNil))
-	c.Assert(opts[0].Name(), Equals, "-f")
-	c.Assert(opts[0].Alias(), Equals, "--force")
-	c.Assert(opts[0].Description(), Equals, "Force message")
-	c.Assert(opts[0].TypeFlag(), Equals, BOOL)
-	c.Assert(opts[0].action, Not(IsNil))
-	c.Assert(opts[1].Name(), Equals, "-m")
-	c.Assert(opts[1].Alias(), Equals, "--move")
-	c.Assert(opts[1].Description(), Equals, "Move command instruction")
-	c.Assert(opts[1].TypeFlag(), Equals, INT)
-	c.Assert(opts[1].action, Not(IsNil))
-	c.Assert(opts[2].Name(), Equals, "-s")
-	c.Assert(opts[2].Alias(), Equals, "--stringy")
-	c.Assert(opts[2].Description(), Equals, "Stringy this msg")
-	c.Assert(opts[2].TypeFlag(), Equals, STRING)
-	c.Assert(opts[2].action, Not(IsNil))
-	app.Run()
+	for key, app := range apps {
+		got := app.Exec(nil)
+		c.Assert(got, gc.DeepEquals, errs[key])
+	}
+
+	expected := errors.New("skapt: No arguments to execute")
+	app := skapt.Application{
+		Name:    "test",
+		Handler: handler,
+		Flags: flag.Flags{
+			{
+				Short: "test",
+			},
+		},
+	}
+	got := app.Exec(nil)
+	c.Assert(got, gc.DeepEquals, expected)
+
+	expected = errors.New("skapt: Cannot have type Bool and requried true")
+	app.Required = true
+	got = app.Exec([]string{"./test"})
+	c.Assert(got, gc.DeepEquals, expected)
+
+	expected = errors.New("skapt: Command ./test requires a value")
+	app.Required = true
+	app.Type = argument.String
+	got = app.Exec([]string{"./test"})
+	c.Assert(got, gc.DeepEquals, expected)
 }
 
-func (s *SkaptSuite) TestAppCommands(c *C) {
-	os.Args = []string{"", "init", "-f", "-m", "100"}
-	app := NewApp()
-	app.SetName("Skapt")
-	app.SetUsage("App command base")
-	app.SetDescription("Example of command pattern base app")
-	app.SetVersion(false, "1.0.0")
-	app.SetAuthors([]string{"Hoenir", "Vili", "Skapt"})
-	app.AppendNewCommand(CommandParams{
-		Name:        "init",
-		Description: "init the app with the .conf filed",
-		Usage:       "in order to start coding you need to init it first",
-		Flags: [][]string{{
-			"-f",
-			"--force",
-			"Force message",
-			"BOOL",
+func (a appSuite) TestExecWithEmtyArgs(c *gc.C) {
+	apps := []skapt.Application{
+		{
+			Name:    "test",
+			Handler: handler,
+			Flags:   flag.Flags{{Short: "test"}},
 		}, {
-			"-m",
-			"--move",
-			"Move Command instruction",
-			"INT",
+			Name:    "test",
+			Handler: handler,
+			Flags:   flag.Flags{{Long: "test"}},
 		}, {
-			"-s",
-			"--stringy",
-			"Stringy this msg",
-			"STRING",
-		}},
-		Actions: []Handler{
-			func() {
-				fmt.Println("Force message parsed!")
-			},
-			func() {
-				fmt.Println("Move command instruction", app.Int("--move"))
-			},
-			func() {
-				if len(app.String("-s")) > 0 {
-					fmt.Println("stringy")
-				} else {
-					fmt.Println("not Stringy")
-				}
-			},
+			Name:    "test",
+			Handler: handler,
+			Flags: flag.Flags{{
+				Short: "test",
+				Long:  "test",
+			}},
+		}, {
+			Name:    "test",
+			Handler: handler,
+			Commands: command.Commands{{
+				Name:    "test",
+				Handler: handler,
+			}},
+		}, {
+			Name:    "test",
+			Handler: handler,
+			Flags:   flag.Flags{{Short: "test"}},
+			Commands: command.Commands{{
+				Name:    "test",
+				Handler: handler,
+			}},
+		}, {
+			Name:    "test",
+			Handler: handler,
+			Flags:   flag.Flags{{Long: "test"}},
+			Commands: command.Commands{{
+				Name:    "test",
+				Handler: handler,
+			}},
+		}, {
+			Name:    "test",
+			Handler: handler,
+			Flags: flag.Flags{{
+				Short: "test",
+				Long:  "test",
+			}},
+			Commands: command.Commands{{
+				Name:    "test",
+				Handler: handler,
+			}},
+		}, {
+			Name:    "test",
+			Handler: handler,
+			Flags: flag.Flags{{
+				Short: "test",
+				Long:  "test",
+			}},
+			Commands: command.Commands{{
+				Name:    "test",
+				Handler: handler,
+				Flags: flag.Flags{{
+					Short: "test",
+				}},
+			}},
+		}, {
+			Name:    "test",
+			Handler: handler,
+			Flags: flag.Flags{{
+				Short: "test",
+				Long:  "test",
+			}},
+			Commands: command.Commands{{
+				Name:    "test",
+				Handler: handler,
+				Flags:   flag.Flags{{Long: "test"}},
+			}},
+		}, {
+			Name:    "test",
+			Handler: handler,
+			Flags: flag.Flags{{
+				Short: "test",
+				Long:  "test",
+			}},
+			Commands: command.Commands{{
+				Name:    "test",
+				Handler: handler,
+				Flags: flag.Flags{
+					{Short: "test", Long: "test"}},
+			}},
 		},
-	})
+	}
 
-	c.Assert(app.Bool("--help"), Equals, false)
-	c.Assert(app.Bool("-f"), Equals, true)
-	c.Assert(app.Name(), Equals, "Skapt")
-	c.Assert(app.Usage(), Equals, "App command base")
-	c.Assert(app.Description(), Equals, "Example of command pattern base app")
-	c.Assert(app.Version(), Equals, "1.0.0")
-	c.Assert(app.Authors(), DeepEquals, []string{"Hoenir", "Vili", "Skapt"})
+	for _, app := range apps {
+		got := app.Exec(nil)
+		c.Assert(got, gc.NotNil)
+		c.Assert(got, gc.DeepEquals,
+			errors.New("skapt: No arguments to execute"))
+	}
+}
 
-	cmds := app.Commands()
+func (a appSuite) TestExecHandlerError(c *gc.C) {
+	testError := fmt.Errorf("test error")
+	app := skapt.Application{
+		Name: "test",
+		Handler: func(ctx context.Context) error {
+			c.Assert(ctx, gc.DeepEquals,
+				context.New(nil, nil))
+			return testError
+		},
+	}
 
-	c.Assert(cmds, Not(IsNil))
-	c.Assert(cmds[0].Name(), Equals, "init")
-	c.Assert(cmds[0].Description(), Equals, "init the app with the .conf filed")
-	c.Assert(cmds[0].Usage(), Equals, "in order to start coding you need to init it first")
+	args := []string{"./test"}
+	err := app.Exec(args)
+	c.Assert(err, gc.DeepEquals, testError)
+}
 
-	opts := cmds[0].Options()
+func (a appSuite) TestExecWithFlags(c *gc.C) {
+	app := skapt.Application{
+		Name: "test",
+		Handler: func(ctx context.Context) error {
+			value := ctx.String("url")
+			c.Assert(value, gc.DeepEquals, "test.com")
+			return nil
+		},
+		Flags: flag.Flags{
+			{Short: "u", Long: "url", Type: argument.String},
+		},
+		Type: argument.Bool,
+	}
 
-	c.Assert(opts, Not(IsNil))
-	c.Assert(opts[0].Name(), Equals, "-f")
-	c.Assert(opts[0].Alias(), Equals, "--force")
-	c.Assert(opts[0].Description(), Equals, "Force message")
-	c.Assert(opts[0].TypeFlag(), Equals, BOOL)
-	c.Assert(opts[0].action, Not(IsNil))
-	c.Assert(opts[1].Name(), Equals, "-m")
-	c.Assert(opts[1].Alias(), Equals, "--move")
-	c.Assert(opts[1].Description(), Equals, "Move Command instruction")
-	c.Assert(opts[1].TypeFlag(), Equals, INT)
-	c.Assert(opts[1].action, Not(IsNil))
-	c.Assert(opts[2].Name(), Equals, "-s")
-	c.Assert(opts[2].Alias(), Equals, "--stringy")
-	c.Assert(opts[2].Description(), Equals, "Stringy this msg")
-	c.Assert(opts[2].TypeFlag(), Equals, STRING)
-	c.Assert(opts[2].action, Not(IsNil))
+	err := app.Exec([]string{"test", "-u", "test.com"})
+	c.Assert(err, gc.IsNil)
 
-	app.Run()
+	err = app.Exec([]string{"test", "--url=test.com"})
+	c.Assert(err, gc.IsNil)
+
+	app.Type = argument.String
+	err = app.Exec([]string{"test", "-u", "test.com", "somevalue"})
+	c.Assert(err, gc.IsNil)
+
+	app.Type = argument.Int
+	err = app.Exec([]string{"test", "-u", "test.com", "1"})
+	c.Assert(err, gc.IsNil)
+}
+
+func (a appSuite) TestExecWithCommands(c *gc.C) {
+	app := skapt.Application{
+		Name: "test",
+		Handler: func(ctx context.Context) error {
+			value := ctx.String("url")
+			c.Assert(value, gc.DeepEquals, "test.com")
+			return nil
+		},
+		Flags: flag.Flags{
+			{Short: "u", Long: "url", Type: argument.String},
+		},
+		Type: argument.Bool,
+		Commands: command.Commands{{
+			Name: "subtest",
+			Type: argument.String,
+			Handler: func(ctx context.Context) error {
+				value := ctx.String("nik")
+				c.Assert(value, gc.DeepEquals, "testvalue")
+				return nil
+			},
+			Flags: flag.Flags{{Long: "nik", Type: argument.String}},
+		}},
+	}
+
+	args := []string{"./test", "-u", "test.com", "subtest", "--nik=testvalue"}
+	err := app.Exec(args)
+	c.Assert(err, gc.IsNil)
+
+	args = []string{"./test", "-u", "test.com", "subtest", "--nik=testvalue", "somevalue"}
+	err = app.Exec(args)
+	c.Assert(err, gc.IsNil)
+
+	args = []string{"./test", "-u", "test.com", "subtest", "--nik=testvalue", "1"}
+	app.Commands[0].Type = argument.Int
+	err = app.Exec(args)
+	c.Assert(err, gc.IsNil)
+}
+
+func (a appSuite) TestExecDefaultFlags(c *gc.C) {
+	app := skapt.Application{
+		Name: "test",
+		Handler: func(ctx context.Context) error {
+			return nil
+		},
+		Type: argument.Bool,
+	}
+
+	args := []string{"./test -v"}
+	err := app.Exec(args)
+	c.Assert(err, gc.IsNil)
+
+	args = []string{"./test -h"}
+	err = app.Exec(args)
+	c.Assert(err, gc.IsNil)
+
+	args = []string{"./test --version"}
+	err = app.Exec(args)
+	c.Assert(err, gc.IsNil)
+
+	args = []string{"./test --help"}
+	err = app.Exec(args)
+	c.Assert(err, gc.IsNil)
 }

@@ -1,7 +1,7 @@
 language: go
 go:
-- 1.9
-- tip
+    - 1.9
+    - tip
 before_install:
 - go get gopkg.in/check.v1
 - go get github.com/mattn/goveralls
