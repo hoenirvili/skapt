@@ -117,6 +117,9 @@ func (p Parser) Parse(args []string) ([]context.Handler, []context.Context, erro
 
 // Strip stripes all -, and -- from flags and splits their values
 func (p Parser) Strip(args []string) []string {
+	if len(args) == 0 {
+		return args
+	}
 	strip := make([]string, 0, len(args))
 	for _, arg := range args {
 		if !flag.Valid(arg) {

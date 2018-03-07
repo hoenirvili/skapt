@@ -1,11 +1,10 @@
 // Package skapt provides a tiny interface
-// to create and manage your command line aplications
+// to create and manage your command line applications
 package skapt
 
 import (
 	"fmt"
 
-	"github.com/hoenirvili/skapt/argument"
 	"github.com/hoenirvili/skapt/command"
 	"github.com/hoenirvili/skapt/context"
 	"github.com/hoenirvili/skapt/flag"
@@ -29,14 +28,8 @@ type Application struct {
 	Flags flag.Flags
 	// Commands holds list of subcommands
 	Commands command.Commands
-	// Type holds the type of the root command value
-	Type argument.Type
 	// Handler is the root main handler
 	Handler context.Handler
-	// Required is set to true when we want to
-	// specify that a value should be entered after the
-	// main root command is executed
-	Required bool
 }
 
 // validate if the holds valid information
@@ -47,9 +40,6 @@ func (a Application) validate() error {
 	}
 	if a.Handler == nil {
 		return fmt.Errorf("skapt: Empty application handler")
-	}
-	if a.Type == argument.Bool && a.Required {
-		return fmt.Errorf("skapt: Cannot have type Bool and requried true")
 	}
 
 	if a.Flags != nil {
@@ -76,21 +66,12 @@ func (a Application) Exec(args []string) error {
 	switch len(args) {
 	case 0:
 		return fmt.Errorf("skapt: No arguments to execute")
-	case 1:
-		if a.Required {
-			return fmt.Errorf("skapt: Command %s requires a value", args[0])
-		}
-
-		ctx := context.New(a.Flags, nil)
-		return a.Handler(ctx)
 	}
 
 	root := command.Command{
-		Name:     args[0],
-		Type:     a.Type,
-		Flags:    a.Flags,
-		Handler:  a.Handler,
-		Required: a.Required,
+		Name:    args[0],
+		Flags:   a.Flags,
+		Handler: a.Handler,
 	}
 
 	// if default flags are not set, set them
