@@ -1,5 +1,5 @@
-// Package skapt provides a tiny interface
-// to create and manage your command line aplications
+// Package flag provides a tiny interface
+// to create and manage your command line applications
 package flag
 
 import (
@@ -8,56 +8,24 @@ import (
 	"github.com/hoenirvili/skapt/argument"
 )
 
-// Flag type holds all information
-// for a flag to be parsed
+// Flag type holds all information for a flag
+// to be parsed on the command line
 type Flag struct {
 	// Short is the short name of the flag
 	Short string
 	// Long is the long name of the flag
 	Long string
-	// Description holds the description of the flag
+	// Description holds information describing the
+	// behaviour of the flag can have
 	Description string
-	// Type is the flag type
+	// Type is the value type of the flag
 	Type argument.Type
-	// Required is true when the flag need to be passed
+	// Required is true when the user is required to
+	// pass this flag in the command line
 	Required bool
-
-	value interface{}
-	// parsed is set to true when the argument has been parsed
-	parsed bool
-}
-
-func (f Flag) Parsed() bool {
-	return f.parsed
-}
-
-func (f *Flag) ParseValue(value string) error {
-	var err error
-	f.value, err = argument.ParseValue(f.Type, value)
-	if err != nil {
-		return err
-	}
-
-	f.parsed = true
-	return nil
-}
-
-func (f Flag) StringValue() string {
-	value, _ := f.value.(string)
-	return value
-}
-
-func (f Flag) IntValue() int {
-	value, _ := f.value.(int)
-	return value
-}
-
-func (f Flag) BoolValue() bool {
-	if f.parsed {
-		return true
-	}
-
-	return false
+	// value holds the underlying value of the flag
+	// if the flag is parsed this will  be != nil
+	value *argument.Value
 }
 
 // String returns the flag as string format
@@ -81,23 +49,20 @@ var _ fmt.Stringer = (*Flag)(nil)
 // Validate validates if the flag definitions are valid
 func (f Flag) Validate() error {
 	if f.Short == "" && f.Long == "" {
-		return fmt.Errorf("skapt: Empty flag name")
+		return fmt.Errorf("flag: Empty flag name")
 	}
+
 	return nil
 }
 
-func (f Flag) Eq(name string) bool {
-	if name == "" {
-		return false
-	}
-	if f.Short == name || f.Long == name {
-		return true
-	}
-	return false
+// Is returns true if the argument name is present
+// in the short or long name of the flag
+func (f Flag) Is(arg string) bool {
+	return (f.Short == arg || f.Long == arg)
 }
 
-// Valid retrun true if the arg is a valid
-// short or long format flag
+// Valid returns true if the command line argument
+// contains is a short or long flag
 func Valid(arg string) bool {
 	return argument.Short(arg) || argument.Long(arg)
 }
