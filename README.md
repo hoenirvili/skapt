@@ -6,6 +6,3 @@
 > I was inspired from other command line libraries to do my own implementation in Go.
 
 ![experimental](doc/ref.png)
-
-
-**Note** : This package will support the two main command line patterns.
