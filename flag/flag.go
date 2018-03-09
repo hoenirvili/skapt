@@ -52,6 +52,10 @@ func (f Flag) Validate() error {
 		return fmt.Errorf("flag: Empty flag name")
 	}
 
+	if f.Short == f.Long {
+		return fmt.Errorf("flag: Short and Long names are the same")
+	}
+
 	return nil
 }
 

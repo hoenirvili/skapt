@@ -9,13 +9,10 @@ type flagSuite struct{}
 
 var _ = gc.Suite(&flagSuite{})
 
-func (f flagSuite) TestValidateErrors(c *gc.C) {
-	flag := flag.Flag{}
-	err := flag.Validate()
-	c.Assert(err, gc.NotNil)
-}
-
 func (f flagSuite) TestValidate(c *gc.C) {
+	err := flag.Flag{}.Validate()
+	c.Assert(err, gc.NotNil)
+
 	flags := []flag.Flag{
 		{Short: "u"},
 		{Long: "url"},
@@ -32,15 +29,15 @@ func (f flagSuite) TestString(c *gc.C) {
 	flags := []flag.Flag{
 		{},
 		{Short: "u"},
-		{Long: "url"},
-		{Short: "u", Long: "url"},
+		{Long: "kill"},
+		{Short: "f", Long: "full"},
 	}
 
 	strs := []string{
 		"",
 		"-u",
-		"--url",
-		"-u --url",
+		"--kill",
+		"-f --full",
 	}
 	for key, flag := range flags {
 		str := flag.String()

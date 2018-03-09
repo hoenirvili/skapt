@@ -1,6 +1,7 @@
 package flag_test
 
 import (
+	"github.com/hoenirvili/skapt/argument"
 	"github.com/hoenirvili/skapt/flag"
 	gc "gopkg.in/check.v1"
 )
@@ -43,10 +44,61 @@ func (f flagsSuite) TestFlag(c *gc.C) {
 
 func (f flagsSuite) TestParse(c *gc.C) {
 	flags := f.newFlags()[1:]
-	args := []string{"-u", "k", "full", "somevalue", "someothervalue"}
+
+	test := struct {
+		argss [][]string
+		ups   [][]string
+	}{
+		argss: [][]string{
+			{"-u", "", "--full", "somevalue", "someothervalue"},
+			{"noflag", "", ""},
+			{"--unknown"},
+			{},
+		},
+		ups: [][]string{
+			{"somevalue", "someothervalue"},
+			{"noflag"},
+			{"unknown"},
+			{},
+		},
+	}
+
+	for key, args := range test.argss {
+		unparsed, err := flags.Parse(args)
+		c.Assert(unparsed, gc.DeepEquals, test.ups[key])
+		c.Assert(err, gc.IsNil)
+	}
+}
+
+func (f flagsSuite) TestParseRequired(c *gc.C) {
+	flags := f.newFlags()[1:]
+	flags[2].Required = true
+	args := []string{"-u", "--full", "somevlaue"}
+	unparsed, err := flags.Parse(args)
+	c.Assert(err, gc.NotNil)
+	c.Assert(unparsed, gc.IsNil)
+
+	args = []string{"-l"}
+	unparsed, err = flags.Parse(args)
+	c.Assert(err, gc.IsNil)
+	c.Assert(unparsed, gc.IsNil)
+}
+
+func (f flagsSuite) TestValueParse(c *gc.C) {
+	flags := flag.Flags{
+		{Short: "u", Long: "url", Type: argument.String},
+		{Short: "d", Long: "debug", Type: argument.Bool},
+		{Short: "t", Long: "times", Type: argument.Int},
+	}
+
+	args := []string{"-u", "www.google.com", "-t", "3", "--debug"}
 	unparsed, err := flags.Parse(args)
 	c.Assert(err, gc.IsNil)
-	c.Assert(unparsed, gc.NotNil)
-	c.Assert(unparsed, gc.DeepEquals,
-		[]string{"somevalue", "someothervalue"})
+	c.Assert(unparsed, gc.IsNil)
+	link := flags.String("u")
+	n := flags.Int("t")
+	debug := flags.Bool("debug")
+	c.Assert(link, gc.Equals, "www.google.com")
+	c.Assert(n, gc.Equals, "3")
+	c.Assert(debug, gc.Equals, true)
 }

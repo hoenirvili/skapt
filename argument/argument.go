@@ -32,6 +32,10 @@ func ShortTrim(arg string) string {
 // his target value if he has one
 func LongTrim(arg string) (string, string) {
 	if Long(arg) {
+		if !strings.Contains(arg, "=") {
+			return arg[2:], ""
+		}
+
 		args := strings.SplitN(arg[2:], "=", 2)
 		return args[0], args[1]
 	}
@@ -60,7 +64,8 @@ func (v Value) Int() int {
 
 // Bool returns the value as type bool
 func (v Value) Bool() bool {
-	return v.v != nil
+	value, _ := v.v.(bool)
+	return value
 }
 
 // NewValue takes a command line string argument and his desired type
@@ -78,6 +83,7 @@ func (v *Value) Parse() error {
 	var err error
 	switch v.t {
 	case Bool:
+		v.v = true
 	case String:
 		v.v = v.sv
 	case Int:
@@ -98,6 +104,10 @@ func Strip(args []string) []string {
 	}
 	strip := make([]string, 0, len(args))
 	for _, arg := range args {
+		if arg == "" {
+			continue
+		}
+
 		if !(Short(arg) || Long(arg)) {
 			strip = append(strip, arg)
 		}
@@ -109,7 +119,11 @@ func Strip(args []string) []string {
 
 		if Long(arg) {
 			flag, value := LongTrim(arg)
-			strip = append(strip, flag, value)
+			if value != "" {
+				strip = append(strip, flag, value)
+			} else {
+				strip = append(strip, flag)
+			}
 		}
 	}
 
