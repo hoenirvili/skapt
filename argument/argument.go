@@ -39,15 +39,32 @@ func LongTrim(arg string) (string, string) {
 	return arg, ""
 }
 
-// Value can hold an argument value
+// Value can hold any argument of type argument.Type
 type Value struct {
 	sv string
 	t  Type
 	v  interface{}
 }
 
-// NewValue based on the string arg and his type returns new Value
-// tha can be easly be parsed
+// String returns the value as type string
+func (v Value) String() string {
+	value, _ := v.v.(string)
+	return value
+}
+
+// Int returns the value as type int
+func (v Value) Int() int {
+	value, _ := v.v.(int)
+	return value
+}
+
+// Bool returns the value as type bool
+func (v Value) Bool() bool {
+	return v.v != nil
+}
+
+// NewValue takes a command line string argument and his desired type
+// and returns a new Value that can convert to t Type
 func NewValue(arg string, t Type) *Value {
 	return &Value{
 		sv: arg,
@@ -55,23 +72,46 @@ func NewValue(arg string, t Type) *Value {
 	}
 }
 
-// ParseValue parses the value as a given t Type given
+// Parse parses the value as a given t Type given
 // if the value is not a valid t Type it will return an error
-func ParseValue(t Type, value string) (interface{}, error) {
-	var (
-		v   interface{}
-		err error
-	)
-	switch t {
+func (v *Value) Parse() error {
+	var err error
+	switch v.t {
 	case Bool:
 	case String:
-		v = value
+		v.v = v.sv
 	case Int:
-		v, err = strconv.ParseInt(value, 10, 32)
+		vint, err := strconv.ParseInt(v.sv, 10, 32)
 		if err != nil {
-			return nil, err
+			return err
+		}
+		v.v = int(vint)
+	}
+
+	return err
+}
+
+// Strip returns all arguments striped without their flag prefixes
+func Strip(args []string) []string {
+	if len(args) == 0 {
+		return args
+	}
+	strip := make([]string, 0, len(args))
+	for _, arg := range args {
+		if !(Short(arg) || Long(arg)) {
+			strip = append(strip, arg)
+		}
+
+		if Short(arg) {
+			strip = append(strip, ShortTrim(arg))
+			continue
+		}
+
+		if Long(arg) {
+			flag, value := LongTrim(arg)
+			strip = append(strip, flag, value)
 		}
 	}
 
-	return v, err
+	return strip
 }

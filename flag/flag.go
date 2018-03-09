@@ -58,11 +58,6 @@ func (f Flag) Validate() error {
 // Is returns true if the argument name is present
 // in the short or long name of the flag
 func (f Flag) Is(arg string) bool {
-	return (f.Short == arg || f.Long == arg)
-}
-
-// Valid returns true if the command line argument
-// contains is a short or long flag
-func Valid(arg string) bool {
-	return argument.Short(arg) || argument.Long(arg)
+	return (arg != "" &&
+		(f.Short == arg || f.Long == arg))
 }

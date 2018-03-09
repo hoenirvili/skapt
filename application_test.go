@@ -1,16 +1,12 @@
 package skapt_test
 
 import (
-	"github.com/hoenirvili/skapt/context"
-
 	gc "gopkg.in/check.v1"
 )
 
 type appSuite struct{}
 
 var _ = gc.Suite(&appSuite{})
-
-func handler(ctx context.Context) error { return nil }
 
 // func (a appSuite) TestExecWithErrors(c *gc.C) {
 // 	apps := []skapt.Application{

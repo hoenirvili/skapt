@@ -5,10 +5,7 @@ package skapt
 import (
 	"fmt"
 
-	"github.com/hoenirvili/skapt/command"
-	"github.com/hoenirvili/skapt/context"
 	"github.com/hoenirvili/skapt/flag"
-	"github.com/hoenirvili/skapt/parser"
 )
 
 // Application will hold all the information for creating
@@ -26,10 +23,10 @@ type Application struct {
 	Version string
 	// Flags holds list of the root command
 	Flags flag.Flags
-	// Commands holds list of subcommands
-	Commands command.Commands
+	// NArgs minim required value args
+	NArgs int
 	// Handler is the root main handler
-	Handler context.Handler
+	Handler func(flags flag.Flags, args []string) error
 }
 
 // validate if the holds valid information
@@ -48,12 +45,6 @@ func (a Application) validate() error {
 		}
 	}
 
-	if a.Commands != nil {
-		if err := a.Commands.Validate(); err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -63,33 +54,18 @@ func (a Application) Exec(args []string) error {
 		return err
 	}
 
-	switch len(args) {
-	case 0:
+	if len(args) == 0 {
 		return fmt.Errorf("skapt: No arguments to execute")
 	}
 
-	root := command.Command{
-		Name:    args[0],
-		Flags:   a.Flags,
-		Handler: a.Handler,
-	}
-
-	// if default flags are not set, set them
-	root.Flags.AppendDefault()
-	a.Commands.AppendDefault()
-
-	parser := parser.New(root, a.Commands)
-	handlers, contexts, err := parser.Parse(args)
+	args, err := a.Flags.Parse(args)
 	if err != nil {
 		return err
 	}
 
-	for key, handler := range handlers {
-		context := contexts[key]
-		if err := handler(context); err != nil {
-			return err
-		}
+	if len(args) < a.NArgs {
+		return fmt.Errorf("skapt: Need at least %d value args", a.NArgs)
 	}
 
-	return nil
+	return a.Handler(a.Flags, args)
 }
