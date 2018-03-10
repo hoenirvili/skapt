@@ -20,6 +20,36 @@ func (f flagsSuite) newFlags() flag.Flags {
 	}
 }
 
+func (f flagsSuite) TestBool(c *gc.C) {
+	flags := flag.Flags{}
+	got := flags.Bool("")
+	c.Assert(got, gc.Equals, false)
+
+	flags = flag.Flags{{Short: "u", Long: "l"}}
+	got = flags.Bool("u")
+	c.Assert(got, gc.Equals, false)
+}
+
+func (f flagsSuite) TestInt(c *gc.C) {
+	flags := flag.Flags{}
+	got := flags.Int("")
+	c.Assert(got, gc.Equals, 0)
+
+	flags = flag.Flags{{Short: "u", Long: "l"}}
+	got = flags.Int("u")
+	c.Assert(got, gc.Equals, 0)
+}
+
+func (f flagsSuite) TestString(c *gc.C) {
+	flags := flag.Flags{}
+	got := flags.String("")
+	c.Assert(got, gc.Equals, "")
+
+	flags = flag.Flags{{Short: "u", Long: "l"}}
+	got = flags.String("u")
+	c.Assert(got, gc.Equals, "")
+}
+
 func (f flagsSuite) TestValidate(c *gc.C) {
 	flags := f.newFlags()
 	err := flags.Validate()
@@ -28,6 +58,20 @@ func (f flagsSuite) TestValidate(c *gc.C) {
 	flags = flags[1:]
 	err = flags.Validate()
 	c.Assert(err, gc.IsNil)
+
+	flags = flag.Flags{}
+	err = flags.Validate()
+	c.Assert(err, gc.IsNil)
+}
+
+func (f flagsSuite) TestValidateWithError(c *gc.C) {
+	flags := flag.Flags{
+		{Short: "u", Long: "ul"},
+		{Short: "u", Long: "ul"},
+		{Short: "ul", Long: "u"},
+	}
+	err := flags.Validate()
+	c.Assert(err, gc.NotNil)
 }
 
 var empty flag.Flag
@@ -35,10 +79,10 @@ var empty flag.Flag
 func (f flagsSuite) TestFlag(c *gc.C) {
 	flags := f.newFlags()
 	fl := flags.Flag("")
-	c.Assert(fl, gc.DeepEquals, empty)
+	c.Assert(fl, gc.IsNil)
 
 	fl = flags.Flag("u")
-	c.Assert(fl, gc.DeepEquals, flag.Flag{
+	c.Assert(fl, gc.DeepEquals, &flag.Flag{
 		Short: "u", Long: "url"})
 }
 
@@ -99,6 +143,19 @@ func (f flagsSuite) TestValueParse(c *gc.C) {
 	n := flags.Int("t")
 	debug := flags.Bool("debug")
 	c.Assert(link, gc.Equals, "www.google.com")
-	c.Assert(n, gc.Equals, "3")
+	c.Assert(n, gc.Equals, 3)
 	c.Assert(debug, gc.Equals, true)
+}
+
+func (f flagsSuite) TestParseWithErrors(c *gc.C) {
+	flags := f.newFlags()
+	flags[0] = flag.Flag{
+		Short: "t",
+		Long:  "ticks",
+		Type:  argument.Int,
+	}
+	args := []string{"--ticks=llldsl1iudhaf", "-l"}
+	unparsed, err := flags.Parse(args)
+	c.Assert(unparsed, gc.IsNil)
+	c.Assert(err, gc.NotNil)
 }

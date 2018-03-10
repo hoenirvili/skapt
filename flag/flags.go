@@ -23,6 +23,10 @@ func (f Flags) RequiredAreParsed() error {
 // Validate checks all flags to be validated
 func (f Flags) Validate() error {
 	m := len(f)
+	if m == 0 {
+		return nil
+	}
+
 	n := m - 1
 	for i := 0; i < n; i++ {
 		if err := f[i].Validate(); err != nil {
@@ -40,41 +44,55 @@ func (f Flags) Validate() error {
 }
 
 // Flag returns the flag that mathes the name provided
-func (f Flags) Flag(name string) Flag {
-	var empty Flag
-	for _, flag := range f {
+func (f Flags) Flag(name string) *Flag {
+	for key, flag := range f {
 		if flag.Is(name) {
-			return flag
+			return &f[key]
 		}
 	}
-
-	return empty
-
+	return nil
 }
 
-// Bool return the bool value of the arg
+//Bool return the bool value of the arg
 func (f Flags) Bool(arg string) bool {
-	if value := f.Flag(arg).value; value != nil {
-		return value.Bool()
+	flag := f.Flag(arg)
+	if flag == nil {
+		return false
 	}
 
-	return false
+	if flag.value == nil {
+		return false
+	}
+
+	return flag.value.Bool()
 }
 
 // Int return the int value of the flag
 func (f Flags) Int(arg string) int {
-	if value := f.Flag(arg).value; value != nil {
-		return value.Int()
+	flag := f.Flag(arg)
+	if flag == nil {
+		return 0
 	}
-	return 0
+
+	if flag.value == nil {
+		return 0
+	}
+
+	return flag.value.Int()
 }
 
 // String return the string value of the arg
 func (f Flags) String(arg string) string {
-	if value := f.Flag(arg).value; value != nil {
-		return value.String()
+	flag := f.Flag(arg)
+	if flag == nil {
+		return ""
 	}
-	return ""
+
+	if flag.value == nil {
+		return ""
+	}
+
+	return flag.value.String()
 }
 
 // Parse parses the command line arguments and returns
@@ -97,7 +115,7 @@ func (f Flags) Parse(args []string) ([]string, error) {
 				value = args[i+1]
 				i++
 			}
-			v := argument.NewValue(value, f[i].Type)
+			v := argument.NewValue(value, f[j].Type)
 			if err := v.Parse(); err != nil {
 				return nil, err
 			}
