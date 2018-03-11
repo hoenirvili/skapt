@@ -137,6 +137,7 @@ func (f flagsSuite) TestValueParse(c *gc.C) {
 
 	args := []string{"-u", "www.google.com", "-t", "3", "--debug"}
 	unparsed, err := flags.Parse(args)
+	// TODO(hoenir): fix this up
 	c.Assert(err, gc.IsNil)
 	c.Assert(unparsed, gc.IsNil)
 	link := flags.String("u")
@@ -158,4 +159,36 @@ func (f flagsSuite) TestParseWithErrors(c *gc.C) {
 	unparsed, err := flags.Parse(args)
 	c.Assert(unparsed, gc.IsNil)
 	c.Assert(err, gc.NotNil)
+
+	flags[0].Type = argument.Bool
+	args = []string{"--ticks=llldsl1iudhaf", "-l"}
+	unparsed, err = flags.Parse(args)
+	c.Assert(unparsed, gc.IsNil)
+	c.Assert(err, gc.NotNil)
+
+	flags[0].Type = argument.String
+	args = []string{"--ticks", "other", "-l"}
+	unparsed, err = flags.Parse(args)
+	c.Assert(unparsed, gc.IsNil)
+	c.Assert(err, gc.NotNil)
+
+	flags[0].Type = argument.Int
+	args = []string{"--ticks=", "-l"}
+	unparsed, err = flags.Parse(args)
+	c.Assert(unparsed, gc.IsNil)
+	c.Assert(err, gc.NotNil)
+
+	args = []string{"-t", "-l"}
+	unparsed, err = flags.Parse(args)
+	c.Assert(unparsed, gc.IsNil)
+	c.Assert(err, gc.NotNil)
+
+	//TODO(hoenir): fix this, improve coverage
+	var unknown argument.Type
+	flags[0].Type = unknown
+	args = []string{"--ticks=", "-l"}
+	unparsed, err = flags.Parse(args)
+	c.Assert(unparsed, gc.IsNil)
+	c.Assert(err, gc.NotNil)
+
 }

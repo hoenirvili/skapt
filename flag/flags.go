@@ -102,31 +102,68 @@ func (f Flags) Parse(args []string) ([]string, error) {
 		return args, nil
 	}
 
-	args = argument.Strip(args)
 	var unparsed []string
 	n := len(args)
 	for i := 0; i < n; i++ {
-		value, parsed := "", false
-		for j := range f {
-			if !f[j].Is(args[i]) {
-				continue
+		// skip empty flags
+		if args[i] == "" {
+			continue
+		}
+
+		value, arg := "", ""
+
+		// decide which type of argument we are dealing
+		// and trim their prefixes
+		switch {
+		case argument.Short(args[i]):
+			arg = argument.ShortTrim(args[i])
+		case argument.Long(args[i]):
+			arg, value = argument.LongTrim(args[i])
+		default:
+			arg = args[i]
+		}
+
+		flag := f.Flag(arg)
+		if flag == nil {
+			unparsed = append(unparsed, arg)
+			continue
+		}
+
+		switch flag.Type {
+		case argument.Bool:
+			if value != "" {
+				return nil, fmt.Errorf("flag: Flag %s does not require a value", arg)
 			}
-			if f[j].Type != argument.Bool && i+1 < n {
+		case argument.String, argument.Int:
+			if value == "" {
+				if i+1 > n || argument.Long(args[i]) {
+					return nil, fmt.Errorf("flag: Flag %s requires a value", arg)
+				}
+			}
+
+			if i+1 < n {
 				value = args[i+1]
+				if argument.Short(value) || argument.Long(value) {
+					return nil, fmt.Errorf(
+						"flag: Invalid value for %s, need value of type %s ",
+						arg, flag.Type,
+					)
+				}
 				i++
 			}
-			v := argument.NewValue(value, f[j].Type)
-			if err := v.Parse(); err != nil {
-				return nil, err
-			}
-			f[j].value = v
-			parsed = true
-			break
+		default:
+			return nil, fmt.Errorf("flag: Can't parse flag of type %s", flag.Type)
 		}
-		if !parsed {
-			unparsed = append(unparsed, args[i])
+
+		v := argument.NewValue(value, flag.Type)
+		if err := v.Parse(); err != nil {
+			return nil, err
 		}
+
+		flag.value = v
 	}
+
+	// if we have any required flags and their were not parsed
 	if err := f.RequiredAreParsed(); err != nil {
 		return nil, err
 	}

@@ -7,7 +7,7 @@ import (
 
 // Short return true given the arg is a short one
 func Short(arg string) bool {
-	return (len(arg) > 1 &&
+	return (len(arg) == 2 &&
 		arg[0] == byte('-') && arg[1] != byte('-') &&
 		!strings.Contains(arg, " "))
 }
