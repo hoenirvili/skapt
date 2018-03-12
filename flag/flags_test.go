@@ -183,8 +183,7 @@ func (f flagsSuite) TestParseWithErrors(c *gc.C) {
 	c.Assert(unparsed, gc.IsNil)
 	c.Assert(err, gc.NotNil)
 
-	//TODO(hoenir): fix this, improve coverage
-	var unknown argument.Type
+	unknown := argument.Type(3)
 	flags[0].Type = unknown
 	args = []string{"--ticks=", "-l"}
 	unparsed, err = flags.Parse(args)

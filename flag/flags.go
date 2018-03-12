@@ -113,7 +113,7 @@ func (f Flags) Parse(args []string) ([]string, error) {
 		value, arg := "", ""
 
 		// decide which type of argument we are dealing
-		// and trim their prefixes
+		// and trim their prefixes extracting only their names
 		switch {
 		case argument.Short(args[i]):
 			arg = argument.ShortTrim(args[i])
@@ -140,7 +140,6 @@ func (f Flags) Parse(args []string) ([]string, error) {
 					return nil, fmt.Errorf("flag: Flag %s requires a value", arg)
 				}
 			}
-
 			if i+1 < n {
 				value = args[i+1]
 				if argument.Short(value) || argument.Long(value) {

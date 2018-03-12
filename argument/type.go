@@ -2,7 +2,7 @@ package argument
 
 import "fmt"
 
-// Type defines the type that a argument can be
+// Type defivnes the type that a argument can be
 type Type uint8
 
 const (
@@ -28,6 +28,6 @@ func (t Type) String() string {
 	case Int:
 		return "int"
 	default:
-		return "undefined type"
+		return "unknown type"
 	}
 }

@@ -96,36 +96,3 @@ func (v *Value) Parse() error {
 
 	return err
 }
-
-// Strip returns all arguments striped without their flag prefixes
-func Strip(args []string) []string {
-	if len(args) == 0 {
-		return args
-	}
-	strip := make([]string, 0, len(args))
-	for _, arg := range args {
-		if arg == "" {
-			continue
-		}
-
-		if !(Short(arg) || Long(arg)) {
-			strip = append(strip, arg)
-		}
-
-		if Short(arg) {
-			strip = append(strip, ShortTrim(arg))
-			continue
-		}
-
-		if Long(arg) {
-			flag, value := LongTrim(arg)
-			if value != "" {
-				strip = append(strip, flag, value)
-			} else {
-				strip = append(strip, flag)
-			}
-		}
-	}
-
-	return strip
-}
