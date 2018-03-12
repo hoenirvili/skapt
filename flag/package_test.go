@@ -7,7 +7,3 @@ import (
 )
 
 func Test(t *testing.T) { TestingT(t) }
-
-type FlagSuite struct{}
-
-var _ = Suite(&FlagSuite{})
