@@ -20,7 +20,6 @@ func (f flagSuite) TestValidate(c *gc.C) {
 		err := flag.Validate()
 		c.Assert(err, gc.IsNil)
 	}
-
 }
 
 func (f flagSuite) TestValidateWithErrors(c *gc.C) {

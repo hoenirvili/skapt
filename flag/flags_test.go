@@ -137,7 +137,6 @@ func (f flagsSuite) TestValueParse(c *gc.C) {
 
 	args := []string{"-u", "www.google.com", "-t", "3", "--debug"}
 	unparsed, err := flags.Parse(args)
-	// TODO(hoenir): fix this up
 	c.Assert(err, gc.IsNil)
 	c.Assert(unparsed, gc.IsNil)
 	link := flags.String("u")
@@ -153,41 +152,23 @@ func (f flagsSuite) TestParseWithErrors(c *gc.C) {
 	flags[0] = flag.Flag{
 		Short: "t",
 		Long:  "ticks",
-		Type:  argument.Int,
 	}
-	args := []string{"--ticks=llldsl1iudhaf", "-l"}
-	unparsed, err := flags.Parse(args)
-	c.Assert(unparsed, gc.IsNil)
-	c.Assert(err, gc.NotNil)
 
-	flags[0].Type = argument.Bool
-	args = []string{"--ticks=llldsl1iudhaf", "-l"}
-	unparsed, err = flags.Parse(args)
-	c.Assert(unparsed, gc.IsNil)
-	c.Assert(err, gc.NotNil)
+	tests := []struct {
+		args []string
+		t    argument.Type
+	}{{[]string{"--ticks=llldsl1iudhaf", "-l"}, argument.Int},
+		{[]string{"--ticks=llldsl1iudhaf", "-l"}, argument.Bool},
+		{[]string{"--ticks", "other", "-l"}, argument.String},
+		{[]string{"--ticks=", "-l"}, argument.Int},
+		{[]string{"-t", "-l"}, argument.Int},
+		{[]string{"--ticks=", "-l"}, argument.Type(3)},
+	}
 
-	flags[0].Type = argument.String
-	args = []string{"--ticks", "other", "-l"}
-	unparsed, err = flags.Parse(args)
-	c.Assert(unparsed, gc.IsNil)
-	c.Assert(err, gc.NotNil)
-
-	flags[0].Type = argument.Int
-	args = []string{"--ticks=", "-l"}
-	unparsed, err = flags.Parse(args)
-	c.Assert(unparsed, gc.IsNil)
-	c.Assert(err, gc.NotNil)
-
-	args = []string{"-t", "-l"}
-	unparsed, err = flags.Parse(args)
-	c.Assert(unparsed, gc.IsNil)
-	c.Assert(err, gc.NotNil)
-
-	unknown := argument.Type(3)
-	flags[0].Type = unknown
-	args = []string{"--ticks=", "-l"}
-	unparsed, err = flags.Parse(args)
-	c.Assert(unparsed, gc.IsNil)
-	c.Assert(err, gc.NotNil)
-
+	for _, test := range tests {
+		flags[0].Type = test.t
+		unparsed, err := flags.Parse(test.args)
+		c.Assert(unparsed, gc.IsNil)
+		c.Assert(err, gc.NotNil)
+	}
 }
