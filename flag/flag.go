@@ -28,6 +28,8 @@ type Flag struct {
 	value *argument.Value
 }
 
+var _ fmt.Stringer = (*Flag)(nil)
+
 // String returns the flag as string format
 func (f Flag) String() string {
 	str := ""
@@ -43,8 +45,6 @@ func (f Flag) String() string {
 
 	return str
 }
-
-var _ fmt.Stringer = (*Flag)(nil)
 
 // Validate validates if the flag definitions are valid
 func (f Flag) Validate() error {

@@ -11,7 +11,7 @@ import (
 // Application will hold all the information for creating
 // and parsing the command line
 type Application struct {
-	// Name of the Command line application
+	// Name of the command line application
 	Name string
 	// Usage is the usage of the command line
 	Usage string
