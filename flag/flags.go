@@ -129,6 +129,10 @@ func (f Flags) Parse(args []string) ([]string, error) {
 			continue
 		}
 
+		if flag.Parsed() {
+			return nil, fmt.Errorf("flag: Flag %s is already parsed", arg)
+		}
+
 		switch flag.Type {
 		case argument.Bool:
 			if value != "" {
@@ -140,7 +144,7 @@ func (f Flags) Parse(args []string) ([]string, error) {
 					return nil, fmt.Errorf("flag: Flag %s requires a value", arg)
 				}
 			}
-			if i+1 < n {
+			if i+1 < n && value == "" {
 				value = args[i+1]
 				if argument.Short(value) || argument.Long(value) {
 					return nil, fmt.Errorf(

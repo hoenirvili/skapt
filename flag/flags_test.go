@@ -163,6 +163,7 @@ func (f flagsSuite) TestParseWithErrors(c *gc.C) {
 		{[]string{"--ticks=", "-l"}, argument.Int},
 		{[]string{"-t", "-l"}, argument.Int},
 		{[]string{"--ticks=", "-l"}, argument.Type(3)},
+		{[]string{"--ticks=100", "-t", "3"}, argument.Int},
 	}
 
 	for _, test := range tests {

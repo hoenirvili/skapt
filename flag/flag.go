@@ -28,6 +28,11 @@ type Flag struct {
 	value *argument.Value
 }
 
+// Parsed return true if the flag is parsed
+func (f Flag) Parsed() bool {
+	return f.value != nil
+}
+
 var _ fmt.Stringer = (*Flag)(nil)
 
 // String returns the flag as string format

@@ -74,3 +74,12 @@ func (f flagSuite) TestIs(c *gc.C) {
 		c.Assert(got, gc.Equals, expected[key])
 	}
 }
+
+func (f flagSuite) TestParsed(c *gc.C) {
+	flag := flag.Flag{
+		Short: "d",
+		Long:  "debug",
+	}
+	parsed := flag.Parsed()
+	c.Assert(parsed, gc.Equals, false)
+}

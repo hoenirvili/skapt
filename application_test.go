@@ -13,7 +13,6 @@ var _ = gc.Suite(&appSuite{})
 
 func handler(flags flag.Flags, args []string) error {
 	return nil
-
 }
 
 func (a appSuite) TestExecValidateWithErrors(c *gc.C) {
@@ -52,6 +51,41 @@ func (a appSuite) TestExec(c *gc.C) {
 	c.Assert(err, gc.IsNil)
 }
 
+func (a appSuite) TestExecHandler(c *gc.C) {
+	args := []string{
+		"./downloader", "-u", "https://someexternalink.com",
+		"--times=3",
+		"--debug", "--hint=10", "merge-link",
+	}
+
+	app := skapt.Application{
+		Name: "test",
+		Flags: flag.Flags{
+			{Short: "u", Type: argument.String},
+			{Long: "times", Type: argument.Int},
+			{Long: "debug", Type: argument.Bool},
+			{Long: "hint", Type: argument.Int},
+		},
+		NArgs: 2,
+		Handler: func(flags flag.Flags, args []string) error {
+			u := flags.String("u")
+			t := flags.Int("times")
+			d := flags.Bool("debug")
+			h := flags.Int("hint")
+			c.Assert(u, gc.DeepEquals, "https://someexternalink.com")
+			c.Assert(t, gc.DeepEquals, 3)
+			c.Assert(d, gc.Equals, true)
+			c.Assert(h, gc.DeepEquals, 10)
+			c.Assert(args, gc.DeepEquals, []string{"./downloader", "merge-link"})
+			return nil
+		},
+	}
+
+	err := app.Exec(args)
+	c.Assert(err, gc.IsNil)
+
+}
+
 func (a appSuite) TestExecWithErrors(c *gc.C) {
 	args := []string{"./test"}
 	app := skapt.Application{
@@ -80,8 +114,7 @@ func (a appSuite) TestExecWithErrors(c *gc.C) {
 		c.Assert(args, gc.DeepEquals, []string{"./test"})
 		return nil
 	}
-	
+
 	err = app.Exec([]string{"./test", "-u", "huifsdh1"})
 	c.Assert(err, gc.NotNil)
-
 }
