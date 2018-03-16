@@ -4,6 +4,8 @@ package skapt
 
 import (
 	"fmt"
+	"os"
+	"text/template"
 
 	"github.com/hoenirvili/skapt/flag"
 )
@@ -17,8 +19,6 @@ type Application struct {
 	Usage string
 	// Description holds the description of the command line
 	Description string
-	// Author holds the author name
-	Author string
 	// Version is the version of the application
 	Version string
 	// Flags holds list of the root command
@@ -58,9 +58,19 @@ func (a Application) Exec(args []string) error {
 		return fmt.Errorf("skapt: No arguments to execute")
 	}
 
+	a.Flags.AppendHelpIfNotPresent()
+	a.Flags.AppendVersionIfNotPreset()
+
 	args, err := a.Flags.Parse(args)
 	if err != nil {
 		return err
+	}
+
+	if a.Flags.Bool("help") {
+		return a.help()
+	}
+	if a.Flags.Bool("version") {
+		return a.version()
 	}
 
 	if len(args) < a.NArgs {
@@ -68,4 +78,36 @@ func (a Application) Exec(args []string) error {
 	}
 
 	return a.Handler(a.Flags, args)
+}
+
+var help = `
+{{if .Usage}}{{.Usage}}{{else}}Usage: {{.Name}} [OPTIONS] [ARG...]{{end}}
+       {{.Name}} [ --help | -h | -v | --version ]
+
+{{.Description}}
+
+Options:
+{{range .Flags}}
+  -{{.Short}} --{{.Long}} 	{{.Description}}{{end}}
+
+`
+
+var version = `Version {{.}}`
+
+func (a *Application) help() error {
+	t, err := template.New("help").Parse(help[1:])
+	if err != nil {
+		return err
+	}
+
+	return t.Execute(os.Stdout, a)
+}
+
+func (a *Application) version() error {
+	t, err := template.New("version").Parse(version)
+	if err != nil {
+		return err
+	}
+
+	return t.Execute(os.Stdout, a.Version)
 }

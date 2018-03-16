@@ -20,6 +20,30 @@ func (f Flags) RequiredAreParsed() error {
 	return nil
 }
 
+func (f *Flags) AppendHelpIfNotPresent() {
+	if h, hl := f.Flag("h"), f.Flag("help"); h != nil || hl != nil {
+		return
+	}
+
+	*f = append(*f, Flag{
+		Short:       "h",
+		Long:        "help",
+		Description: "Print out the help menu",
+	})
+}
+
+func (f *Flags) AppendVersionIfNotPreset() {
+	if h, hl := f.Flag("v"), f.Flag("version"); h != nil || hl != nil {
+		return
+	}
+
+	*f = append(*f, Flag{
+		Short:       "v",
+		Long:        "version",
+		Description: "Print out the version of the program",
+	})
+}
+
 // Validate checks all flags to be validated
 func (f Flags) Validate() error {
 	m := len(f)
