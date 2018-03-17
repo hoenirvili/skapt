@@ -5,6 +5,7 @@ package skapt
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"text/template"
 
 	"github.com/hoenirvili/skapt/flag"
@@ -66,11 +67,11 @@ func (a Application) Exec(args []string) error {
 		return err
 	}
 
-	if a.Flags.Bool("help") {
-		return a.help()
-	}
-	if a.Flags.Bool("version") {
-		return a.version()
+	switch {
+	case a.Flags.Bool("help"):
+		return a.render(help)
+	case a.Flags.Bool("version"):
+		return a.render(version)
 	}
 
 	if len(args) < a.NArgs {
@@ -84,30 +85,42 @@ var help = `
 {{if .Usage}}{{.Usage}}{{else}}Usage: {{.Name}} [OPTIONS] [ARG...]{{end}}
        {{.Name}} [ --help | -h | -v | --version ]
 
-{{.Description}}
+{{wrap .Description false}}
 
 Options:
 {{range .Flags}}
-  -{{.Short}} --{{.Long}} 	{{.Description}}{{end}}
-
-`
+  {{if.Short}}-{{.Short}}{{end}}{{if .Long}} --{{.Long}}{{end}} 	{{wrap .Description true}}{{end}}
+`[1:]
 
 var version = `Version {{.}}`
 
-func (a *Application) help() error {
-	t, err := template.New("help").Parse(help[1:])
+func (a *Application) render(templ string) error {
+	funcMap := template.FuncMap{
+		"wrap": func(description string, tab bool) string {
+			re := regexp.MustCompile(`(?mi)\S+`)
+			if len(description) < 90 {
+				return description
+			}
+			str := ""
+			words := re.FindAllString(description, -1)
+			for key, word := range words {
+				if key != 0 && key%12 == 0 {
+					if !tab {
+						str += "\n"
+						continue
+					}
+					str += "\n\t\t"
+				}
+				str += word + " "
+			}
+			return str
+		},
+	}
+
+	t, err := template.New("t").Funcs(funcMap).Parse(templ)
 	if err != nil {
 		return err
 	}
 
 	return t.Execute(os.Stdout, a)
-}
-
-func (a *Application) version() error {
-	t, err := template.New("version").Parse(version)
-	if err != nil {
-		return err
-	}
-
-	return t.Execute(os.Stdout, a.Version)
 }
