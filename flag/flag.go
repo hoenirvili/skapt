@@ -1,4 +1,4 @@
-// Package flag provides a tiny interface
+// Package flag provides types and functions
 // to create and manage your command line applications
 package flag
 
@@ -54,13 +54,11 @@ func (f Flag) String() string {
 // Validate validates if the flag definitions are valid
 func (f Flag) Validate() error {
 	if f.Short == "" && f.Long == "" {
-		return fmt.Errorf("flag: Empty flag name")
+		return fmt.Errorf("empty flag name")
 	}
-
 	if f.Short == f.Long {
-		return fmt.Errorf("flag: Short and Long names are the same")
+		return fmt.Errorf("short and long names are the same")
 	}
-
 	return nil
 }
 

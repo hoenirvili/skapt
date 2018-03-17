@@ -1,3 +1,5 @@
+// Package argument provides small set of types
+// to parse and interpret command line arguments
 package argument
 
 import "fmt"
@@ -19,6 +21,7 @@ const (
 
 var _ fmt.Stringer = (*Type)(nil)
 
+// String returns the type in an outputble format
 func (t Type) String() string {
 	switch t {
 	case String:

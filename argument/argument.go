@@ -1,3 +1,5 @@
+// Package argument provides small set of types
+// to parse and interpret command line arguments
 package argument
 
 import (

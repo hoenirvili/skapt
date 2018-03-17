@@ -56,7 +56,7 @@ func (a Application) Exec(args []string) error {
 	}
 
 	if len(args) == 0 {
-		return fmt.Errorf("skapt: No arguments to execute")
+		return fmt.Errorf("No arguments given")
 	}
 
 	a.Flags.AppendHelpIfNotPresent()
@@ -75,7 +75,7 @@ func (a Application) Exec(args []string) error {
 	}
 
 	if len(args) < a.NArgs {
-		return fmt.Errorf("skapt: Need at least %d value args", a.NArgs)
+		return fmt.Errorf("Need at least %d aditional arguments", a.NArgs)
 	}
 
 	return a.Handler(a.Flags, args)
@@ -94,6 +94,7 @@ Options:
 
 var version = `Version {{.}}`
 
+// render renders the specified template to stdout
 func (a *Application) render(templ string) error {
 	funcMap := template.FuncMap{
 		"wrap": func(description string, tab bool) string {

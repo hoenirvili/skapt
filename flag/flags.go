@@ -1,3 +1,5 @@
+// Package flag provides types and functions
+// to create and manage your command line applications
 package flag
 
 import (
@@ -13,13 +15,15 @@ type Flags []Flag
 func (f Flags) RequiredAreParsed() error {
 	for _, flag := range f {
 		if flag.Required && flag.value == nil {
-			return fmt.Errorf("flag: Flag %s is not parsed", flag)
+			return fmt.Errorf("flag %s is not parsed", flag)
 		}
 	}
 
 	return nil
 }
 
+// AppendHelpIfNotPresent if the help flag is not present
+// in the underlying slice append the default one
 func (f *Flags) AppendHelpIfNotPresent() {
 	if h, hl := f.Flag("h"), f.Flag("help"); h != nil || hl != nil {
 		return
@@ -32,6 +36,8 @@ func (f *Flags) AppendHelpIfNotPresent() {
 	})
 }
 
+// AppendVersionIfNotPreset if the version flag is not present
+// in the underlying slice append the default one
 func (f *Flags) AppendVersionIfNotPreset() {
 	if h, hl := f.Flag("v"), f.Flag("version"); h != nil || hl != nil {
 		return
@@ -59,7 +65,7 @@ func (f Flags) Validate() error {
 		for j := i + 1; j < m; j++ {
 			if f[i].Is(f[j].Short) ||
 				f[i].Is(f[j].Long) {
-				return fmt.Errorf("flag: Every flag should be unique")
+				return fmt.Errorf("every flag should be unique")
 			}
 		}
 	}
@@ -154,32 +160,32 @@ func (f Flags) Parse(args []string) ([]string, error) {
 		}
 
 		if flag.Parsed() {
-			return nil, fmt.Errorf("flag: Flag %s is already parsed", arg)
+			return nil, fmt.Errorf("flag %s is already parsed", arg)
 		}
 
 		switch flag.Type {
 		case argument.Bool:
 			if value != "" {
-				return nil, fmt.Errorf("flag: Flag %s does not require a value", arg)
+				return nil, fmt.Errorf("flag %s does not require a value", arg)
 			}
 		case argument.String, argument.Int:
 			if value == "" {
 				if i+1 > n || argument.Long(args[i]) {
-					return nil, fmt.Errorf("flag: Flag %s requires a value", arg)
+					return nil, fmt.Errorf("flag %s requires a value", arg)
 				}
 			}
 			if i+1 < n && value == "" {
 				value = args[i+1]
 				if argument.Short(value) || argument.Long(value) {
 					return nil, fmt.Errorf(
-						"flag: Invalid value for %s, need value of type %s ",
+						"invalid value for %s, need value of type %s ",
 						arg, flag.Type,
 					)
 				}
 				i++
 			}
 		default:
-			return nil, fmt.Errorf("flag: Can't parse flag of type %s", flag.Type)
+			return nil, fmt.Errorf("cannot parse flag of type %s", flag.Type)
 		}
 
 		v := argument.NewValue(value, flag.Type)
