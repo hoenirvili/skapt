@@ -34,10 +34,10 @@ type Application struct {
 // in order to be executed by Exec
 func (a Application) validate() error {
 	if a.Name == "" {
-		return fmt.Errorf("skapt: Empty application name")
+		return fmt.Errorf("empty application name")
 	}
 	if a.Handler == nil {
-		return fmt.Errorf("skapt: Empty application handler")
+		return fmt.Errorf("empty application handler")
 	}
 
 	if a.Flags != nil {
@@ -75,7 +75,7 @@ func (a Application) Exec(args []string) error {
 	}
 
 	if len(args) < a.NArgs {
-		return fmt.Errorf("Need at least %d aditional arguments", a.NArgs)
+		return fmt.Errorf("Need at least %d additional arguments", a.NArgs)
 	}
 
 	return a.Handler(a.Flags, args)
@@ -92,7 +92,9 @@ Options:
   {{if.Short}}-{{.Short}}{{end}}{{if .Long}} --{{.Long}}{{end}} 	{{wrap .Description true}}{{end}}
 `[1:]
 
-var version = `Version {{.}}`
+var version = `
+Version {{.Version}}
+`[1:]
 
 // render renders the specified template to stdout
 func (a *Application) render(templ string) error {

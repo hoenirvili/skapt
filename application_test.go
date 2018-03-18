@@ -118,3 +118,39 @@ func (a appSuite) TestExecWithErrors(c *gc.C) {
 	err = app.Exec([]string{"./test", "-u", "huifsdh1"})
 	c.Assert(err, gc.NotNil)
 }
+
+var (
+	expectedHelp = `
+Usage: test [OPTIONS] [ARG...]
+       test [ --help | -h | -v | --version ]
+
+test description
+
+Options:
+
+  -h --help     Print out the help menu
+  -v --version  Print out the version of the program
+
+`
+	expectedVersion = "Version 1.0.0"
+)
+
+func (a appSuite) TestExecRender(c *gc.C) {
+
+	args := []string{"./test", "--help"}
+	app := skapt.Application{
+		Name:        "test",
+		Description: "test description",
+		Handler: func(flags flag.Flags, args []string) error {
+			return nil
+		},
+	}
+
+	err := app.Exec(args)
+	c.Assert(err, gc.IsNil)
+	// TODO(hoenir): make this testable
+	args = []string{"./test", "--version"}
+	app.Version = "1.0.0"
+	err = app.Exec(args)
+	c.Assert(err, gc.IsNil)
+}

@@ -4,7 +4,7 @@ package argument
 
 import "fmt"
 
-// Type defivnes the type that a argument can be
+// Type defines the type of an argument
 type Type uint8
 
 const (
@@ -21,7 +21,7 @@ const (
 
 var _ fmt.Stringer = (*Type)(nil)
 
-// String returns the type in an outputble format
+// String returns the type in an outputted format
 func (t Type) String() string {
 	switch t {
 	case String:

@@ -16,7 +16,7 @@ type Flag struct {
 	// Long is the long name of the flag
 	Long string
 	// Description holds information describing the
-	// behaviour of the flag can have
+	// behavior of the flag can have
 	Description string
 	// Type is the value type of the flag
 	Type argument.Type
