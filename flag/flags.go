@@ -15,7 +15,7 @@ type Flags []Flag
 func (f Flags) RequiredAreParsed() error {
 	for _, flag := range f {
 		if flag.Required && flag.value == nil {
-			return fmt.Errorf("flag %s is not parsed", flag)
+			return fmt.Errorf("flag %s is required", flag)
 		}
 	}
 
@@ -73,7 +73,7 @@ func (f Flags) Validate() error {
 	return f[n].Validate()
 }
 
-// Flag returns the flag that mathes the name provided
+// Flag returns the flag that matches the name provided
 func (f Flags) Flag(name string) *Flag {
 	for key, flag := range f {
 		if flag.Is(name) {
@@ -170,7 +170,7 @@ func (f Flags) Parse(args []string) ([]string, error) {
 			}
 		case argument.String, argument.Int:
 			if value == "" {
-				if i+1 > n || argument.Long(args[i]) {
+				if i+1 >= n || argument.Long(args[i]) {
 					return nil, fmt.Errorf("flag %s requires a value", arg)
 				}
 			}
@@ -194,11 +194,6 @@ func (f Flags) Parse(args []string) ([]string, error) {
 		}
 
 		flag.value = v
-	}
-
-	// if we have any required flags and their were not parsed
-	if err := f.RequiredAreParsed(); err != nil {
-		return nil, err
 	}
 
 	return unparsed, nil

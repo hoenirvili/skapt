@@ -118,6 +118,10 @@ func (a Application) Exec(args []string) (err error) {
 		return fmt.Errorf("need at least %d additional arguments", a.NArgs)
 	}
 
+	if err := a.Flags.RequiredAreParsed(); err != nil {
+		return err
+	}
+
 	return a.Handler(&Context{
 		Flags:  a.Flags,
 		Args:   args,
