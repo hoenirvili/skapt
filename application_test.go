@@ -1,6 +1,9 @@
 package skapt_test
 
 import (
+	"bytes"
+	"errors"
+
 	"github.com/hoenirvili/skapt"
 	"github.com/hoenirvili/skapt/argument"
 	"github.com/hoenirvili/skapt/flag"
@@ -11,44 +14,70 @@ type appSuite struct{}
 
 var _ = gc.Suite(&appSuite{})
 
-func handler(flags flag.Flags, args []string) error {
+func handler(ctx *skapt.Context) error {
 	return nil
 }
 
 func (a appSuite) TestExecValidateWithErrors(c *gc.C) {
+	stdout, stderr := &bytes.Buffer{}, &bytes.Buffer{}
+
 	apps := []skapt.Application{
 		{},
 		{Name: "test"},
-		{Name: "test", Handler: handler},
-		{Name: "test", Handler: handler, Flags: flag.Flags{
-			{},
-		}},
+		{
+			Name:    "test",
+			Handler: handler,
+			Stdout:  stdout,
+			Stderr:  stderr,
+		},
+		{
+			Name:    "test",
+			Handler: handler,
+			Flags:   flag.Flags{{}},
+		},
 	}
 
 	for _, app := range apps {
 		err := app.Exec(nil)
 		c.Assert(err, gc.NotNil)
 	}
+
+	so, se := stdout.String(), stderr.String()
+	c.Assert(so, gc.DeepEquals, "")
+	c.Assert(se, gc.DeepEquals, "no arguments given")
+
 }
 
 func (a appSuite) TestExec(c *gc.C) {
 	args := []string{"./test"}
+	stdout, stderr := &bytes.Buffer{}, &bytes.Buffer{}
 	app := skapt.Application{
 		Name: "test",
-		Handler: func(flags flag.Flags, args []string) error {
-			s, l := flags.Bool("u"), flags.Bool("url")
+		Handler: func(ctx *skapt.Context) error {
+			s, l := ctx.Bool("u"), ctx.Bool("url")
 			c.Assert(s, gc.Equals, false)
 			c.Assert(l, gc.Equals, false)
-			c.Assert(args, gc.DeepEquals, args)
+			c.Assert(ctx.Args, gc.DeepEquals, args)
 			return nil
 		},
 		Flags: flag.Flags{
 			{Short: "u", Long: "url", Type: argument.Bool},
 		},
+		Stdout: stdout,
+		Stderr: stderr,
 	}
 
 	err := app.Exec(args)
 	c.Assert(err, gc.IsNil)
+
+	so, se := stdout.String(), stderr.String()
+	c.Assert(so, gc.DeepEquals, "")
+	c.Assert(se, gc.DeepEquals, "")
+
+	app.Stdout, app.Stderr = nil, nil
+	err = app.Exec(args)
+	c.Assert(err, gc.IsNil)
+
 }
 
 func (a appSuite) TestExecHandler(c *gc.C) {
@@ -58,6 +87,7 @@ func (a appSuite) TestExecHandler(c *gc.C) {
 		"--debug", "--hint=10", "merge-link",
 	}
 
+	stdout, stderr := &bytes.Buffer{}, &bytes.Buffer{}
 	app := skapt.Application{
 		Name: "test",
 		Flags: flag.Flags{
@@ -67,56 +97,73 @@ func (a appSuite) TestExecHandler(c *gc.C) {
 			{Long: "hint", Type: argument.Int},
 		},
 		NArgs: 2,
-		Handler: func(flags flag.Flags, args []string) error {
-			u := flags.String("u")
-			t := flags.Int("times")
-			d := flags.Bool("debug")
-			h := flags.Int("hint")
+		Handler: func(ctx *skapt.Context) error {
+			u := ctx.String("u")
+			t := ctx.Int("times")
+			d := ctx.Bool("debug")
+			h := ctx.Int("hint")
 			c.Assert(u, gc.DeepEquals, "https://someexternalink.com")
 			c.Assert(t, gc.DeepEquals, 3)
 			c.Assert(d, gc.Equals, true)
 			c.Assert(h, gc.DeepEquals, 10)
-			c.Assert(args, gc.DeepEquals, []string{"./downloader", "merge-link"})
+			c.Assert(ctx.Args, gc.DeepEquals, []string{"./downloader", "merge-link"})
 			return nil
 		},
+		Stdout: stdout,
+		Stderr: stderr,
 	}
 
 	err := app.Exec(args)
 	c.Assert(err, gc.IsNil)
+	so, se := stdout.String(), stdout.String()
+	c.Assert(so, gc.Equals, "")
+	c.Assert(se, gc.Equals, "")
 
 }
 
 func (a appSuite) TestExecWithErrors(c *gc.C) {
 	args := []string{"./test"}
+	stdout, stderr := &bytes.Buffer{}, &bytes.Buffer{}
 	app := skapt.Application{
 		Name: "test",
-		Handler: func(flags flag.Flags, args []string) error {
-			s, l := flags.Bool("u"), flags.Bool("url")
+		Handler: func(ctx *skapt.Context) error {
+			s, l := ctx.Bool("u"), ctx.Bool("url")
 			c.Assert(s, gc.Equals, false)
 			c.Assert(l, gc.Equals, false)
-			c.Assert(args, gc.DeepEquals, args)
+			c.Assert(ctx.Args, gc.DeepEquals, args)
 			return nil
 		},
 		NArgs: 2,
 		Flags: flag.Flags{
 			{Short: "u", Long: "url", Type: argument.Bool},
 		},
+		Stdout: stdout,
+		Stderr: stderr,
 	}
 
 	err := app.Exec(args)
 	c.Assert(err, gc.NotNil)
+	so, se := stdout.String(), stderr.String()
+	c.Assert(so, gc.DeepEquals, "")
+	c.Assert(se, gc.DeepEquals, "need at least 2 additional arguments")
+
+	stdout.Reset()
+	stderr.Reset()
 
 	app.Flags[0].Type = argument.Int
-	app.Handler = func(flags flag.Flags, args []string) error {
-		s, l := flags.Int("u"), flags.Int("url")
+	app.Handler = func(ctx *skapt.Context) error {
+		s, l := ctx.Int("u"), ctx.Int("url")
 		c.Assert(s, gc.Equals, 0)
 		c.Assert(l, gc.Equals, 0)
-		c.Assert(args, gc.DeepEquals, []string{"./test"})
+		c.Assert(ctx.Args, gc.DeepEquals, []string{"./test"})
 		return nil
 	}
 
 	err = app.Exec([]string{"./test", "-u", "huifsdh1"})
 	c.Assert(err, gc.NotNil)
+	so, se = stdout.String(), stderr.String()
+	c.Assert(so, gc.DeepEquals, "")
+	c.Assert((len(se) > 0), gc.Equals, true)
 }
 
 var (
@@ -124,33 +171,107 @@ var (
 Usage: test [OPTIONS] [ARG...]
        test [ --help | -h | -v | --version ]
 
-test description
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent consectetur 
+in dolor lobortis, non ultrices nibh condimentum. Fusce suscipit ultrices. 
+Sed a malesuada urna. Lorem ipsum dolor sit consectetur adipiscing 
+elit. Vivamus laoreet tellus vel sem euismod, accumsan odio pulvinar. 
+Donec eget ante venenatis, gravida eros sagittis elit. Nam nec 
+arcu augue. Sed mattis lobortis at malesuada leo bibendum at. 
+Pellentesque et condimentum erat. feugiat id ex non iaculis. Donec 
+efficitur ac lectus hendrerit. Sed feugiat augue nec nibh rutrum, 
+in ornare viverra. 
 
 Options:
 
-  -h --help     Print out the help menu
-  -v --version  Print out the version of the program
+-l --long-description  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent consectetur 
+                       in dolor lobortis, non ultrices nibh condimentum. Fusce suscipit ultrices. 
+                       Sed a malesuada urna. Lorem ipsum dolor sit consectetur adipiscing 
+                       elit. Vivamus laoreet tellus vel sem euismod, accumsan odio pulvinar. 
+                       Donec eget ante venenatis, gravida eros sagittis elit. Nam nec 
+                       arcu augue. Sed mattis lobortis at malesuada leo bibendum at. 
+                       Pellentesque et condimentum erat. feugiat id ex non iaculis. Donec 
+                       efficitur ac lectus hendrerit. Sed feugiat augue nec nibh rutrum, 
+                       in ornare viverra. 
+-h --help              Print out the help menu
+-v --version           Print out the version of the program
+`[1:]
 
-`
-	expectedVersion = "Version 1.0.0"
+	expectedVersion = `
+Version 1.0.0
+`[1:]
 )
 
-func (a appSuite) TestExecRender(c *gc.C) {
+const description = `
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent consectetur 
+in dolor lobortis, non ultrices nibh condimentum. Fusce suscipit 
+ultrices. Sed a malesuada urna. Lorem ipsum dolor sit 
+consectetur adipiscing elit. Vivamus laoreet tellus vel sem euismod, 
+accumsan odio pulvinar. Donec eget ante venenatis, gravida eros 
+sagittis elit. Nam nec arcu augue. Sed mattis lobortis 
+at malesuada leo bibendum at. Pellentesque et condimentum erat. 
+feugiat id ex non iaculis. Donec efficitur ac lectus 
+hendrerit. Sed feugiat augue nec nibh rutrum, in ornare viverra. 
+`
 
-	args := []string{"./test", "--help"}
+func (a appSuite) TestExecRender(c *gc.C) {
+	stdout, stderr := &bytes.Buffer{}, &bytes.Buffer{}
 	app := skapt.Application{
 		Name:        "test",
-		Description: "test description",
-		Handler: func(flags flag.Flags, args []string) error {
+		Description: description,
+		Handler: func(ctx *skapt.Context) error {
 			return nil
 		},
+		Flags: flag.Flags{
+			{
+				Short: "l", Long: "long-description",
+				Description: description,
+			},
+		},
+		Stdout: stdout,
+		Stderr: stderr,
 	}
 
+	args := []string{"./test", "--help"}
 	err := app.Exec(args)
 	c.Assert(err, gc.IsNil)
-	// TODO(hoenir): make this testable
+
+	se := stderr.String()
+	so := stdout.String()
+	c.Assert(so, gc.DeepEquals, expectedHelp)
+	c.Assert(se, gc.DeepEquals, "")
+
+	stdout.Reset()
+	stderr.Reset()
+
 	args = []string{"./test", "--version"}
 	app.Version = "1.0.0"
 	err = app.Exec(args)
 	c.Assert(err, gc.IsNil)
+
+	so = stdout.String()
+	se = stdout.String()
+	c.Assert(so, gc.DeepEquals, expectedVersion)
+
+}
+
+type deferErr struct{}
+
+func (d deferErr) Write([]byte) (int, error) {
+	return 0, deferr
+}
+
+var deferr = errors.New("err")
+
+func (a appSuite) TestExecDeferError(c *gc.C) {
+	app := skapt.Application{
+		Name:        "test",
+		Description: "test description",
+		Handler: func(ctx *skapt.Context) error {
+			return nil
+		},
+		Stderr: &deferErr{},
+	}
+
+	err := app.Exec(nil)
+	c.Assert(err, gc.DeepEquals, deferr)
 }

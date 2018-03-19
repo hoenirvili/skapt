@@ -3,6 +3,7 @@
 package argument
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -91,7 +92,7 @@ func (v *Value) Parse() error {
 	case Int:
 		vint, err := strconv.ParseInt(v.sv, 10, 32)
 		if err != nil {
-			return err
+			return fmt.Errorf("cannot parse %d as integer", v.sv)
 		}
 		v.v = int(vint)
 	}

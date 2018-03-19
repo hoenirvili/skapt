@@ -3,13 +3,30 @@
 package skapt
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
+	"strings"
+	"text/tabwriter"
 	"text/template"
 
 	"github.com/hoenirvili/skapt/flag"
 )
+
+// Context holds context specific information
+// for the current running handler
+type Context struct {
+	// Flags contains the parsed flags
+	flag.Flags
+	// Args additional command line arguments
+	Args []string
+	// Stdout writer to stdout
+	Stdout io.Writer
+	// Stdout writer to stderr
+	Stderr io.Writer
+}
 
 // Application will hold all the information for creating
 // and parsing the command line
@@ -27,7 +44,12 @@ type Application struct {
 	// NArgs minim required value args
 	NArgs int
 	// Handler is the root main handler
-	Handler func(flags flag.Flags, args []string) error
+	Handler func(ctx *Context) error
+	// Stdout place to write information that the user
+	// needs to know
+	Stdout io.Writer
+	// Stderr place where all error messages should be written
+	Stderr io.Writer
 }
 
 // validate if the holds valid information
@@ -50,19 +72,37 @@ func (a Application) validate() error {
 }
 
 // Exec executes the command line based on the args provided
-func (a Application) Exec(args []string) error {
+func (a Application) Exec(args []string) (err error) {
 	if err := a.validate(); err != nil {
 		return err
 	}
 
+	if a.Stdout == nil {
+		a.Stdout = os.Stdout
+	}
+	if a.Stderr == nil {
+		a.Stderr = os.Stderr
+	}
+
+	// if there is any error, wrap it into a byte slice
+	// and output it to stderr
+	defer func() {
+		if err != nil {
+			_, errFpr := fmt.Fprintf(a.Stderr, err.Error())
+			if errFpr != nil {
+				err = errFpr
+			}
+		}
+	}()
+
 	if len(args) == 0 {
-		return fmt.Errorf("No arguments given")
+		return fmt.Errorf("no arguments given")
 	}
 
 	a.Flags.AppendHelpIfNotPresent()
 	a.Flags.AppendVersionIfNotPreset()
 
-	args, err := a.Flags.Parse(args)
+	args, err = a.Flags.Parse(args)
 	if err != nil {
 		return err
 	}
@@ -75,44 +115,50 @@ func (a Application) Exec(args []string) error {
 	}
 
 	if len(args) < a.NArgs {
-		return fmt.Errorf("Need at least %d additional arguments", a.NArgs)
+		return fmt.Errorf("need at least %d additional arguments", a.NArgs)
 	}
 
-	return a.Handler(a.Flags, args)
+	return a.Handler(&Context{
+		Flags:  a.Flags,
+		Args:   args,
+		Stdout: a.Stdout,
+		Stderr: a.Stderr,
+	})
 }
 
 var help = `
-{{if .Usage}}{{.Usage}}{{else}}Usage: {{.Name}} [OPTIONS] [ARG...]{{end}}
-       {{.Name}} [ --help | -h | -v | --version ]
+{{if .Usage}}{{.Usage}}\t{{else}}Usage:\t{{.Name}} [OPTIONS] [ARG...]{{end}}
+\t{{.Name}} [ --help | -h | -v | --version ]
 
 {{wrap .Description false}}
 
 Options:
 {{range .Flags}}
-  {{if.Short}}-{{.Short}}{{end}}{{if .Long}} --{{.Long}}{{end}} 	{{wrap .Description true}}{{end}}
+{{if.Short}}-{{.Short}}{{end}} {{if .Long}}--{{.Long}}{{end}}\t\t{{wrap .Description true}}{{end}}
 `[1:]
 
 var version = `
 Version {{.Version}}
 `[1:]
 
+var re = regexp.MustCompile(`(?mi)\S+`)
+
 // render renders the specified template to stdout
 func (a *Application) render(templ string) error {
 	funcMap := template.FuncMap{
 		"wrap": func(description string, tab bool) string {
-			re := regexp.MustCompile(`(?mi)\S+`)
 			if len(description) < 90 {
 				return description
 			}
 			str := ""
 			words := re.FindAllString(description, -1)
 			for key, word := range words {
-				if key != 0 && key%12 == 0 {
-					if !tab {
+				if key != 0 && key%10 == 0 {
+					if tab {
+						str += "\n\\t\\t"
+					} else {
 						str += "\n"
-						continue
 					}
-					str += "\n\t\t"
 				}
 				str += word + " "
 			}
@@ -120,10 +166,16 @@ func (a *Application) render(templ string) error {
 		},
 	}
 
-	t, err := template.New("t").Funcs(funcMap).Parse(templ)
-	if err != nil {
+	t := template.Must(template.New("t").Funcs(funcMap).Parse(templ))
+	buffer := &bytes.Buffer{}
+	if err := t.Execute(buffer, a); err != nil {
 		return err
 	}
-
-	return t.Execute(os.Stdout, a)
+	str := buffer.String()
+	str = strings.Replace(str, "\\t", "\t", -1)
+	w := tabwriter.NewWriter(a.Stdout, 0, 0, 1, ' ', 0)
+	if _, err := fmt.Fprintf(w, str); err != nil {
+		return err
+	}
+	return w.Flush()
 }
