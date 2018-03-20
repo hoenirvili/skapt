@@ -3,6 +3,7 @@ package skapt_test
 import (
 	"bytes"
 	"errors"
+	"io"
 
 	"github.com/hoenirvili/skapt"
 	"github.com/hoenirvili/skapt/argument"
@@ -16,6 +17,17 @@ var _ = gc.Suite(&appSuite{})
 
 func handler(ctx *skapt.Context) error {
 	return nil
+}
+func (a appSuite) defaultApplication(stdout, stderr io.Writer) *skapt.Application {
+	return &skapt.Application{
+		Name:        "test",
+		Description: "test description",
+		Handler: func(ctx *skapt.Context) error {
+			return nil
+		},
+		Stdout: stdout,
+		Stderr: stderr,
+	}
 }
 
 func (a appSuite) TestExecValidateWithErrors(c *gc.C) {
@@ -44,7 +56,7 @@ func (a appSuite) TestExecValidateWithErrors(c *gc.C) {
 
 	so, se := stdout.String(), stderr.String()
 	c.Assert(so, gc.DeepEquals, "")
-	c.Assert(se, gc.DeepEquals, "no arguments given")
+	c.Assert(se, gc.DeepEquals, "No arguments to execute")
 
 }
 
@@ -145,7 +157,7 @@ func (a appSuite) TestExecWithErrors(c *gc.C) {
 	c.Assert(err, gc.NotNil)
 	so, se := stdout.String(), stderr.String()
 	c.Assert(so, gc.DeepEquals, "")
-	c.Assert(se, gc.DeepEquals, "need at least 2 additional arguments")
+	c.Assert(se, gc.DeepEquals, "This require at least 2 additional arguments")
 
 	stdout.Reset()
 	stderr.Reset()
@@ -274,4 +286,29 @@ func (a appSuite) TestExecDeferError(c *gc.C) {
 
 	err := app.Exec(nil)
 	c.Assert(err, gc.DeepEquals, deferr)
+}
+
+func (a appSuite) TestExecRequired(c *gc.C) {
+	stdout, stderr := &bytes.Buffer{}, &bytes.Buffer{}
+	app := a.defaultApplication(stdout, stderr)
+	app.Flags = flag.Flags{
+		{Short: "e", Long: "expl", Required: true},
+	}
+
+	err := app.Exec([]string{"./test"})
+	c.Assert(err, gc.NotNil)
+	so, se := stdout.String(), stderr.String()
+
+	c.Assert(so, gc.DeepEquals, "")
+	c.Assert(se, gc.DeepEquals, "Option -e --expl is required")
+
+	stdout.Reset()
+	stderr.Reset()
+
+	err = app.Exec([]string{"./test", "-e"})
+	c.Assert(err, gc.IsNil)
+	so, se = stdout.String(), stderr.String()
+
+	c.Assert(so, gc.DeepEquals, "")
+	c.Assert(se, gc.DeepEquals, "")
 }

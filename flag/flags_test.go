@@ -114,20 +114,6 @@ func (f flagsSuite) TestParse(c *gc.C) {
 	}
 }
 
-func (f flagsSuite) TestParseRequired(c *gc.C) {
-	flags := f.newFlags()[1:]
-	flags[2].Required = true
-	args := []string{"-u", "--full", "somevlaue"}
-	unparsed, err := flags.Parse(args)
-	c.Assert(err, gc.NotNil)
-	c.Assert(unparsed, gc.IsNil)
-
-	args = []string{"-l"}
-	unparsed, err = flags.Parse(args)
-	c.Assert(err, gc.IsNil)
-	c.Assert(unparsed, gc.IsNil)
-}
-
 func (f flagsSuite) TestValueParse(c *gc.C) {
 	flags := flag.Flags{
 		{Short: "u", Long: "url", Type: argument.String},

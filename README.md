@@ -64,7 +64,7 @@ Example is an example of command line app
 Options:
 
 -e --exp      Print something funny
--w --wait   How many seconds to wait until you print
+-w --wait     How many seconds to wait until you print
 -h --help     Print out the help menu
 -v --version  Print out the version of the program
 ```

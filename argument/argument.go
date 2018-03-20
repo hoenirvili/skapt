@@ -11,15 +11,13 @@ import (
 // Short return true given the arg is a short one
 func Short(arg string) bool {
 	return (len(arg) == 2 &&
-		arg[0] == byte('-') && arg[1] != byte('-') &&
-		!strings.Contains(arg, " "))
+		arg[0] == byte('-') && arg[1] != byte('-'))
 }
 
 // Long return true given the arg is a long one
 func Long(arg string) bool {
 	return (len(arg) > 2 &&
-		arg[:2] == "--" &&
-		!strings.Contains(arg, " "))
+		arg[:2] == "--")
 }
 
 // ShortTrim returns the argument without it's short prefix
@@ -92,7 +90,7 @@ func (v *Value) Parse() error {
 	case Int:
 		vint, err := strconv.ParseInt(v.sv, 10, 32)
 		if err != nil {
-			return fmt.Errorf("cannot parse %s as integer", v.sv)
+			return fmt.Errorf("Cannot parse value %s as int", v.sv)
 		}
 		v.v = int(vint)
 	}

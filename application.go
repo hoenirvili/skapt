@@ -96,7 +96,7 @@ func (a Application) Exec(args []string) (err error) {
 	}()
 
 	if len(args) == 0 {
-		return fmt.Errorf("no arguments given")
+		return fmt.Errorf("No arguments to execute")
 	}
 
 	a.Flags.AppendHelpIfNotPresent()
@@ -115,7 +115,7 @@ func (a Application) Exec(args []string) (err error) {
 	}
 
 	if len(args) < a.NArgs {
-		return fmt.Errorf("need at least %d additional arguments", a.NArgs)
+		return fmt.Errorf("This require at least %d additional arguments", a.NArgs)
 	}
 
 	if err := a.Flags.RequiredAreParsed(); err != nil {

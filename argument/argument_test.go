@@ -22,6 +22,8 @@ func (a argumentSuite) TestShort(c *gc.C) {
 		{"k-", false},
 		{"-k-", false},
 		{"-hguhfuighaisudh", false},
+		{"-1-1-2-5", false},
+		{"-1", true},
 	}
 
 	for _, test := range tests {
@@ -43,6 +45,9 @@ func (a argumentSuite) TestLong(c *gc.C) {
 		{"k-", false},
 		{"-k-", false},
 		{"-hguhfuighaisudh", false},
+		{"--k=iosjdf ijasofij aosidfjoasifj", true},
+		{"--k=--312-3--1321-", true},
+		{"--k=213 88 2882", true},
 	}
 
 	for _, test := range tests {

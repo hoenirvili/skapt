@@ -15,7 +15,7 @@ type Flags []Flag
 func (f Flags) RequiredAreParsed() error {
 	for _, flag := range f {
 		if flag.Required && flag.value == nil {
-			return fmt.Errorf("flag %s is required", flag)
+			return fmt.Errorf("Option %s is required", flag)
 		}
 	}
 
@@ -150,7 +150,8 @@ func (f Flags) Parse(args []string) ([]string, error) {
 		case argument.Long(args[i]):
 			arg, value = argument.LongTrim(args[i])
 		default:
-			arg = args[i]
+			unparsed = append(unparsed, args[i])
+			continue
 		}
 
 		flag := f.Flag(arg)
@@ -160,32 +161,26 @@ func (f Flags) Parse(args []string) ([]string, error) {
 		}
 
 		if flag.Parsed() {
-			return nil, fmt.Errorf("flag %s is already parsed", arg)
+			return nil, fmt.Errorf("Multiple occurrences of %s", arg)
 		}
 
 		switch flag.Type {
 		case argument.Bool:
 			if value != "" {
-				return nil, fmt.Errorf("flag %s does not require a value", arg)
+				return nil, fmt.Errorf("Option %s does not require a value", arg)
 			}
 		case argument.String, argument.Int:
 			if value == "" {
 				if i+1 >= n || argument.Long(args[i]) {
-					return nil, fmt.Errorf("flag %s requires a value", arg)
+					return nil, fmt.Errorf("Option %s requires a value", arg)
 				}
 			}
 			if i+1 < n && value == "" {
 				value = args[i+1]
-				if argument.Short(value) || argument.Long(value) {
-					return nil, fmt.Errorf(
-						"invalid value for %s, need value of type %s ",
-						arg, flag.Type,
-					)
-				}
 				i++
 			}
 		default:
-			return nil, fmt.Errorf("cannot parse flag of type %s", flag.Type)
+			return nil, fmt.Errorf("Cannot parse flag of type %s", flag.Type)
 		}
 
 		v := argument.NewValue(value, flag.Type)
