@@ -159,3 +159,50 @@ func (f flagsSuite) TestParseWithErrors(c *gc.C) {
 		c.Assert(err, gc.NotNil)
 	}
 }
+
+func (f *flagsSuite) TestRequiredAreParsedWithError(c *gc.C) {
+	flags := f.newFlags()
+	flags[1].Required = true
+
+	err := flags.RequiredAreParsed()
+	c.Assert(err, gc.NotNil)
+}
+
+func (f *flagsSuite) TestRequiredAreParsed(c *gc.C) {
+	flgs := flag.Flags{}
+	err := flgs.RequiredAreParsed()
+	c.Assert(err, gc.IsNil)
+
+	flgs = f.newFlags()
+	flgs = append(flgs, flag.ParsedAndRequired)
+	err = flgs.RequiredAreParsed()
+	c.Assert(err, gc.IsNil)
+}
+
+func (f *flagsSuite) TestAppendHelpIfNotPresent(c *gc.C) {
+	flags := f.newFlags()[1:]
+	flags.AppendHelpIfNotPresent()
+
+	flag := flags.Flag("help")
+	c.Assert(flag, gc.NotNil)
+
+	flags.AppendHelpIfNotPresent()
+	err := flags.Validate()
+	c.Assert(err, gc.IsNil)
+	flag = flags.Flag("help")
+	c.Assert(flag, gc.NotNil)
+}
+
+func (f *flagsSuite) TestAppendVersionIfNotPresent(c *gc.C) {
+	flags := f.newFlags()[1:]
+	flags.AppendVersionIfNotPreset()
+
+	flag := flags.Flag("version")
+	c.Assert(flag, gc.NotNil)
+
+	flags.AppendVersionIfNotPreset()
+	err := flags.Validate()
+	c.Assert(err, gc.IsNil)
+	flag = flags.Flag("version")
+	c.Assert(flag, gc.NotNil)
+}

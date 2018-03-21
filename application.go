@@ -114,8 +114,8 @@ func (a Application) Exec(args []string) (err error) {
 		return a.render(version)
 	}
 
-	if len(args) < a.NArgs {
-		return fmt.Errorf("This require at least %d additional arguments", a.NArgs)
+	if len(args)-1 < a.NArgs {
+		return fmt.Errorf("Expecting at least %d additional arguments", a.NArgs)
 	}
 
 	if err := a.Flags.RequiredAreParsed(); err != nil {

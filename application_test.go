@@ -96,7 +96,7 @@ func (a appSuite) TestExecHandler(c *gc.C) {
 	args := []string{
 		"./downloader", "-u", "https://someexternalink.com",
 		"--times=3",
-		"--debug", "--hint=10", "merge-link",
+		"--debug", "--hint=10", "merge-link", "another-arg",
 	}
 
 	stdout, stderr := &bytes.Buffer{}, &bytes.Buffer{}
@@ -118,7 +118,8 @@ func (a appSuite) TestExecHandler(c *gc.C) {
 			c.Assert(t, gc.DeepEquals, 3)
 			c.Assert(d, gc.Equals, true)
 			c.Assert(h, gc.DeepEquals, 10)
-			c.Assert(ctx.Args, gc.DeepEquals, []string{"./downloader", "merge-link"})
+			c.Assert(ctx.Args, gc.DeepEquals, []string{"./downloader",
+				"merge-link", "another-arg"})
 			return nil
 		},
 		Stdout: stdout,
@@ -157,7 +158,7 @@ func (a appSuite) TestExecWithErrors(c *gc.C) {
 	c.Assert(err, gc.NotNil)
 	so, se := stdout.String(), stderr.String()
 	c.Assert(so, gc.DeepEquals, "")
-	c.Assert(se, gc.DeepEquals, "This require at least 2 additional arguments")
+	c.Assert(se, gc.DeepEquals, "Expecting at least 2 additional arguments")
 
 	stdout.Reset()
 	stderr.Reset()
