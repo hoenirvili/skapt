@@ -262,8 +262,9 @@ func (a appSuite) TestExecRender(c *gc.C) {
 	c.Assert(err, gc.IsNil)
 
 	so = stdout.String()
-	se = stdout.String()
+	se = stderr.String()
 	c.Assert(so, gc.DeepEquals, expectedVersion)
+	c.Assert(se, gc.DeepEquals, "")
 
 }
 
