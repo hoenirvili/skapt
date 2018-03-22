@@ -90,7 +90,7 @@ func (v *Value) Parse() error {
 	case Int:
 		vint, err := strconv.ParseInt(v.sv, 10, 32)
 		if err != nil {
-			return fmt.Errorf("Cannot parse value %s as int", v.sv)
+			return fmt.Errorf("Cannot parse value \"%s\" as int", v.sv)
 		}
 		v.v = int(vint)
 	}

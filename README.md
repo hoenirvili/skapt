@@ -8,7 +8,12 @@
 ![experimental](doc/ref.png)
 
 
-# Api example
+# API example
+
+Example of command line with two arguments. One flag is required to be explicitly passed.  
+
+All the code in this example is written in one main.go file.
+
 ```go
 package main
 
@@ -35,27 +40,30 @@ func main() {
 			_, err := fmt.Fprintf(ctx.Stdout, exp)
 			return err
 		},
-		Flags: flag.Flags{
-			{
-				Short: "e", Long: "exp",
-				Description: "Print something funny",
-				Type:        argument.String,
-				Required:    true,
-			},
-			{
-				Short: "w", Long: "wait",
-				Description: "How many seconds to wait until you print",
-				Type:        argument.Int,
-			},
-		},
+		Flags: flag.Flags{{
+			Short: "e", Long: "exp",
+			Description: "Print something funny",
+			Type:        argument.String,
+			Required:	 true,
+		}, {
+			Short: "w", Long: "wait",
+			Description: "How many seconds to wait until you print",
+			Type:        argument.Int,
+		}},
 	}
 
 	app.Exec(os.Args)
 }
+
 ```
+
+If we try to pass a long argument `--help` than we get this auto-generated output.
+
+By default we append help and version flags if the ```Flags``` slice does not contain any of them.
+
 ## Help output
 ```bash
-$ : ./main --help
+$ : main --help
 Usage: Example [OPTIONS] [ARG...]
        Example [ --help | -h | -v | --version ]
 
@@ -69,14 +77,37 @@ Options:
 -v --version  Print out the version of the program
 ```
 
+For the version flag.
+
 ## Version output
 ```bash
-$ : ./main -v
+$ : main -v
+Version 1.0.0
+$ : main --version
 Version 1.0.0
 ```
 
+In our ```Application struct``` we declared 2 flags, -e/--exp and -w/--wait, 
+if we pass valid values, the program sleeps 3 seconds and outputs the message passed in -e.
+
 ## Run output
 ``` bash
-$ : ./main -e "Example text" --wait=3
+$ : main -e "Example text" --wait=3
 Example text
+```
+
+## Error output
+
+We treat all basic errors by default.
+
+```bash
+$ : main
+Option -e --exp is required
+```
+
+This also checks if the value passed is valid.
+
+```bash
+$ : main -w fjsuiajfsd
+Cannot parse value "fjsiadufj" as int
 ```
