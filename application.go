@@ -131,8 +131,8 @@ func (a Application) Exec(args []string) (err error) {
 }
 
 var help = `
-{{if .Usage}}{{.Usage}}\t{{else}}Usage:\t{{.Name}} [OPTIONS] [ARG...]{{end}}
-\t{{.Name}} [ --help | -h | -v | --version ]
+Usage:\t{{if .Usage}}{{wrap .Usage true}}{{else}}{{.Name}}\t[OPTIONS] [ARG...]
+\t{{.Name}}\t[ --help | -h | -v | --version ]{{end}}
 
 {{wrap .Description false}}
 
