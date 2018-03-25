@@ -8,14 +8,11 @@ import "fmt"
 type Type uint8
 
 const (
-	// Bool is the type of flag that
-	// has no value and needs to be present
+	// Bool is the flag value of type bool
 	Bool Type = iota
-	// Int is the type of flag that
-	// receives a value of type int
+	// Int is the flag value of type int
 	Int
-	// String is the type of flag that
-	// receives a value of type string
+	// String is the flag value of type string
 	String
 )
 

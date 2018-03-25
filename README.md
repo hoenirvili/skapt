@@ -1,9 +1,9 @@
 # skapt                                                                                                                                                                                                                                     
 [![Build Status](https://travis-ci.org/hoenirvili/skapt.svg?branch=master)](https://travis-ci.org/hoenirvili/skapt) [![Go Report Card](https://goreportcard.com/badge/github.com/hoenirvili/skapt)](https://goreportcard.com/report/github.com/hoenirvili/skapt) [![GoDoc](https://godoc.org/github.com/hoenirvili/skapt?status.svg)](https://godoc.org/github.com/hoenirvili/skapt) [![Coverage Status](https://coveralls.io/repos/github/hoenirvili/skapt/badge.svg?branch=master)](https://coveralls.io/github/hoenirvili/skapt?branch=master)
 
-### Package for building command line apps in Go
+### Lightweight package for building command line apps in Go
 
-> I was inspired from other command line libraries to do my own implementation in Go.
+> I was inspired from other command line libraries to do my own package in Go.
 
 ![experimental](doc/ref.png)
 
@@ -51,10 +51,8 @@ func main() {
 			Type:        argument.Int,
 		}},
 	}
-
 	app.Exec(os.Args)
 }
-
 ```
 
 If we try to pass a long argument `--help` than we get this auto-generated output.
@@ -111,3 +109,18 @@ This also checks if the value passed is valid.
 $ : main -w fjsuiajfsd
 Cannot parse value "fjsiadufj" as int
 ```
+
+
+# FAQ
+
+1. Why should I use this package instead of a more popular one?
+
+	Really, nothing is stopping you to use one that is more battle tested, a more matured package. 				\
+	The reason for developing another command line parsing package was that I often want to write 				\
+	a simple lightweight command line app and I don't need more features than some basic flag value checking 	\
+	and a simpler flag value retrieval api.
+
+
+2. Why not standard lib one?
+
+	I didn't like the interface they provided and their flag value retrieval.
