@@ -12,7 +12,7 @@ type typeSuite struct{}
 var _ = gc.Suite(&typeSuite{})
 
 func (t typeSuite) TestString(c *gc.C) {
-	unknown := argument.Type(3)
+	unknown := argument.Type(4)
 	tests := []struct {
 		arg argument.Type
 		str string
@@ -20,9 +20,9 @@ func (t typeSuite) TestString(c *gc.C) {
 		{argument.Bool, "bool"},
 		{argument.Int, "int"},
 		{argument.String, "string"},
+		{argument.Float, "float"},
 		{unknown, "unknown type"},
 	}
-
 	for _, test := range tests {
 		str := fmt.Sprintf("%s", test.arg)
 		c.Assert(str, gc.Equals, test.str)

@@ -69,6 +69,12 @@ func (v Value) Bool() bool {
 	return value
 }
 
+// Float returns the value as type float64
+func (v Value) Float() float64 {
+	value, _ := v.v.(float64)
+	return value
+}
+
 // NewValue takes a command line string argument and his desired type
 // and returns a new Value that can convert to t Type
 func NewValue(arg string, t Type) *Value {
@@ -93,6 +99,12 @@ func (v *Value) Parse() error {
 			return fmt.Errorf("Cannot parse value \"%s\" as int", v.sv)
 		}
 		v.v = int(vint)
+	case Float:
+		vfloat, err := strconv.ParseFloat(v.sv, 64)
+		if err != nil {
+			return fmt.Errorf("Cannot parse value \"%s\" as float", v.sv)
+		}
+		v.v = float64(vfloat)
 	}
 
 	return err

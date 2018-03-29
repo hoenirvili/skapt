@@ -127,6 +127,7 @@ func (a argumentSuite) TestValueParse(c *gc.C) {
 		{argument.Bool, ""},
 		{argument.String, "stringvalue"},
 		{argument.Int, "3"},
+		{argument.Float, "3.52"},
 	}
 
 	for _, test := range tests {
@@ -143,6 +144,7 @@ func (a argumentSuite) TestValueParseWithErrors(c *gc.C) {
 		v string
 	}{
 		{argument.Int, "fdsauhfusdihfa"},
+		{argument.Float, "4fashfsd"},
 	}
 
 	for _, test := range tests {
@@ -188,6 +190,24 @@ func (a argumentSuite) TestValueIntWithError(c *gc.C) {
 	value := v.Int()
 	c.Assert(value, gc.Equals, 0)
 
+}
+
+func (a argumentSuite) TestValueFloat(c *gc.C) {
+	v := argument.NewValue("3.52", argument.Float)
+	c.Assert(v, gc.NotNil)
+	err := v.Parse()
+	c.Assert(err, gc.IsNil)
+
+	value := v.Float()
+	c.Assert(value, gc.Equals, 3.52)
+}
+
+func (a argumentSuite) TestValueFloatWithError(c *gc.C) {
+	v := argument.NewValue("3.52", argument.Float)
+	c.Assert(v, gc.NotNil)
+
+	value := v.Float()
+	c.Assert(value, gc.Equals, 0.0)
 }
 
 func (a argumentSuite) TestValueString(c *gc.C) {

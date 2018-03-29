@@ -14,6 +14,8 @@ const (
 	Int
 	// String is the flag value of type string
 	String
+	// Float is the flag value of type float
+	Float
 )
 
 var _ fmt.Stringer = (*Type)(nil)
@@ -27,6 +29,8 @@ func (t Type) String() string {
 		return "bool"
 	case Int:
 		return "int"
+	case Float:
+		return "float"
 	default:
 		return "unknown type"
 	}
