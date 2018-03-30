@@ -50,6 +50,16 @@ func (f flagsSuite) TestString(c *gc.C) {
 	c.Assert(got, gc.Equals, "")
 }
 
+func (f flagsSuite) TestFloat(c *gc.C) {
+	flags := flag.Flags{}
+	got := flags.Float("")
+	c.Assert(got, gc.DeepEquals, 0.0)
+
+	flags = flag.Flags{{Short: "l", Long: "length"}}
+	got = flags.Float("l")
+	c.Assert(got, gc.Equals, 0.0)
+}
+
 func (f flagsSuite) TestValidate(c *gc.C) {
 	flags := f.newFlags()
 	err := flags.Validate()
@@ -119,18 +129,21 @@ func (f flagsSuite) TestValueParse(c *gc.C) {
 		{Short: "u", Long: "url", Type: argument.String},
 		{Short: "d", Long: "debug", Type: argument.Bool},
 		{Short: "t", Long: "times", Type: argument.Int},
+		{Short: "l", Long: "length", Type: argument.Float},
 	}
 
-	args := []string{"-u", "www.google.com", "-t", "3", "--debug"}
+	args := []string{"-u", "www.google.com", "-t", "3", "--debug", "--length=3.25"}
 	unparsed, err := flags.Parse(args)
 	c.Assert(err, gc.IsNil)
 	c.Assert(unparsed, gc.IsNil)
 	link := flags.String("u")
 	n := flags.Int("t")
 	debug := flags.Bool("debug")
+	length := flags.Float("l")
 	c.Assert(link, gc.Equals, "www.google.com")
 	c.Assert(n, gc.Equals, 3)
 	c.Assert(debug, gc.Equals, true)
+	c.Assert(length, gc.DeepEquals, 3.25)
 }
 
 func (f flagsSuite) TestParseWithErrors(c *gc.C) {
@@ -148,7 +161,7 @@ func (f flagsSuite) TestParseWithErrors(c *gc.C) {
 		{[]string{"--ticks", "other", "-l"}, argument.String},
 		{[]string{"--ticks=", "-l"}, argument.Int},
 		{[]string{"-t", "-l"}, argument.Int},
-		{[]string{"--ticks=", "-l"}, argument.Type(3)},
+		{[]string{"--ticks=", "-l"}, argument.Type(5)},
 		{[]string{"--ticks=100", "-t", "3"}, argument.Int},
 	}
 

@@ -125,6 +125,20 @@ func (f Flags) String(arg string) string {
 	return flag.value.String()
 }
 
+// Float return the Float value of the arg
+func (f Flags) Float(arg string) float64 {
+	flag := f.Flag(arg)
+	if flag == nil {
+		return 0.0
+	}
+
+	if flag.value == nil {
+		return 0.0
+	}
+
+	return flag.value.Float()
+}
+
 // Parse parses the command line arguments and returns
 // the one that has are not flags
 func (f Flags) Parse(args []string) ([]string, error) {
@@ -169,7 +183,8 @@ func (f Flags) Parse(args []string) ([]string, error) {
 			if value != "" {
 				return nil, fmt.Errorf("Option %s does not require a value", arg)
 			}
-		case argument.String, argument.Int:
+		case argument.String, argument.Int,
+			argument.Float:
 			if value == "" {
 				if i+1 >= n || argument.Long(args[i]) {
 					return nil, fmt.Errorf("Option %s requires a value", arg)
