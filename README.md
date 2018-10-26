@@ -1,5 +1,6 @@
 # skapt                                                                                                                                                                                                                                     
 [![Build Status](https://travis-ci.org/hoenirvili/skapt.svg?branch=master)](https://travis-ci.org/hoenirvili/skapt) [![Go Report Card](https://goreportcard.com/badge/github.com/hoenirvili/skapt)](https://goreportcard.com/report/github.com/hoenirvili/skapt) [![GoDoc](https://godoc.org/github.com/hoenirvili/skapt?status.svg)](https://godoc.org/github.com/hoenirvili/skapt) [![Coverage Status](https://coveralls.io/repos/github/hoenirvili/skapt/badge.svg?branch=master)](https://coveralls.io/github/hoenirvili/skapt?branch=master)
+ [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ### Lightweight package for building command line apps in Go
 
